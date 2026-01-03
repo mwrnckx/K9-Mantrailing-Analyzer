@@ -30,7 +30,7 @@ Partial Class frmEditComments
         btnOK = New Button()
         btnAnotherLang = New Button()
         lblLanguage = New Label()
-        ComboBox1 = New ComboBox()
+        cbLanguage = New ComboBox()
         txtGoal = New TextBox()
         txtPerformance = New TextBox()
         txtTrail = New TextBox()
@@ -38,12 +38,14 @@ Partial Class frmEditComments
         lblHandlerName = New Label()
         txtDogName = New TextBox()
         txtHandlerName = New TextBox()
+        lblLevelOfBlinding = New Label()
+        cbLevelOfBlinding = New ComboBox()
         SuspendLayout()
         ' 
         ' lblInfo
         ' 
-        lblInfo.BackColor = Color.LightYellow
         resources.ApplyResources(lblInfo, "lblInfo")
+        lblInfo.BackColor = Color.LightYellow
         lblInfo.Name = "lblInfo"
         ' 
         ' lblPerformance
@@ -80,28 +82,28 @@ Partial Class frmEditComments
         resources.ApplyResources(lblLanguage, "lblLanguage")
         lblLanguage.Name = "lblLanguage"
         ' 
-        ' ComboBox1
+        ' cbLanguage
         ' 
-        ComboBox1.FormattingEnabled = True
-        resources.ApplyResources(ComboBox1, "ComboBox1")
-        ComboBox1.Name = "ComboBox1"
+        resources.ApplyResources(cbLanguage, "cbLanguage")
+        cbLanguage.FormattingEnabled = True
+        cbLanguage.Name = "cbLanguage"
         ' 
         ' txtGoal
         ' 
-        txtGoal.AllowDrop = True
         resources.ApplyResources(txtGoal, "txtGoal")
+        txtGoal.AllowDrop = True
         txtGoal.Name = "txtGoal"
         ' 
         ' txtPerformance
         ' 
-        txtPerformance.AllowDrop = True
         resources.ApplyResources(txtPerformance, "txtPerformance")
+        txtPerformance.AllowDrop = True
         txtPerformance.Name = "txtPerformance"
         ' 
         ' txtTrail
         ' 
-        txtTrail.AllowDrop = True
         resources.ApplyResources(txtTrail, "txtTrail")
+        txtTrail.AllowDrop = True
         txtTrail.Name = "txtTrail"
         ' 
         ' lblDogName
@@ -124,11 +126,25 @@ Partial Class frmEditComments
         resources.ApplyResources(txtHandlerName, "txtHandlerName")
         txtHandlerName.Name = "txtHandlerName"
         ' 
+        ' lblLevelOfBlinding
+        ' 
+        resources.ApplyResources(lblLevelOfBlinding, "lblLevelOfBlinding")
+        lblLevelOfBlinding.Name = "lblLevelOfBlinding"
+        ' 
+        ' cbLevelOfBlinding
+        ' 
+        resources.ApplyResources(cbLevelOfBlinding, "cbLevelOfBlinding")
+        cbLevelOfBlinding.FormattingEnabled = True
+        cbLevelOfBlinding.Items.AddRange(New Object() {resources.GetString("cbLevelOfBlinding.Items"), resources.GetString("cbLevelOfBlinding.Items1"), resources.GetString("cbLevelOfBlinding.Items2"), resources.GetString("cbLevelOfBlinding.Items3"), resources.GetString("cbLevelOfBlinding.Items4")})
+        cbLevelOfBlinding.Name = "cbLevelOfBlinding"
+        ' 
         ' frmEditComments
         ' 
         resources.ApplyResources(Me, "$this")
         AutoScaleMode = AutoScaleMode.Font
         BackColor = Color.LightYellow
+        Controls.Add(cbLevelOfBlinding)
+        Controls.Add(lblLevelOfBlinding)
         Controls.Add(txtHandlerName)
         Controls.Add(txtDogName)
         Controls.Add(lblHandlerName)
@@ -136,7 +152,7 @@ Partial Class frmEditComments
         Controls.Add(txtTrail)
         Controls.Add(txtPerformance)
         Controls.Add(txtGoal)
-        Controls.Add(ComboBox1)
+        Controls.Add(cbLanguage)
         Controls.Add(btnAnotherLang)
         Controls.Add(btnOK)
         Controls.Add(lblGoal)
@@ -157,7 +173,7 @@ Partial Class frmEditComments
     Friend WithEvents btnOK As Button
     Friend WithEvents btnAnotherLang As Button
     Friend WithEvents lblLanguage As Label
-    Friend WithEvents ComboBox1 As ComboBox
+    Friend WithEvents cbLanguage As ComboBox
     Friend WithEvents txtGoal As TextBox
     Friend WithEvents txtPerformance As TextBox
     Friend WithEvents txtTrail As TextBox
@@ -165,4 +181,6 @@ Partial Class frmEditComments
     Friend WithEvents lblHandlerName As Label
     Friend WithEvents txtDogName As TextBox
     Friend WithEvents txtHandlerName As TextBox
+    Friend WithEvents lblLevelOfBlinding As Label
+    Friend WithEvents cbLevelOfBlinding As ComboBox
 End Class

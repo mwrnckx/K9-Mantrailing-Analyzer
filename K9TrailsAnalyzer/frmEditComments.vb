@@ -14,11 +14,6 @@ Public Class frmEditComments
     Public Property HandlerName As String
 
 
-    'Public ReadOnly Property AllPartsyy As TrailReport
-    '    Get
-    '        Return New TrailReport("", Me.Category, Me.GoalPart, Me.TrailPart, Me.DogPart, "", (Nothing, Nothing, Nothing, Nothing, Nothing, Nothing))
-    '    End Get
-    'End Property
 
     Dim LanguageAbbreviations As New List(Of String) From {
     "cs", ' čeština
@@ -57,23 +52,23 @@ Public Class frmEditComments
 
         ' Přidejte libovolnou inicializaci po volání InitializeComponent().
         LanguageAbbreviations.Sort()
-        ComboBox1.Items.AddRange(LanguageAbbreviations.ToArray())
-
+        cbLanguage.Items.AddRange(LanguageAbbreviations.ToArray())
+        'cbTrackType.Items.AddRange([Enum].GetNames(GetType(TrailReport.TrackTypeEnum)))
 
     End Sub
 
-    Private Sub frmEditDesc_Load(sender As Object, e As EventArgs) Handles Me.Load
+    Private Sub Me_Load(sender As Object, e As EventArgs) Handles Me.Load
         txtGoal.Text = Me.TrailDescription.Goal.Text
         txtTrail.Text = Me.TrailDescription.Trail.Text
         txtPerformance.Text = Me.TrailDescription.Performance.Text
         txtDogName.Text = Me.TrailDescription.DogName.Text
         txtHandlerName.Text = Me.HandlerName
         If Language IsNot Nothing Then
-            ' Pokud je jazyk nastaven, zablokujeme conmbo!
-            Me.ComboBox1.Enabled = False
+            ' Pokud je jazyk nastaven, zablokujeme combo!
+            Me.cbLanguage.Enabled = False
 
         End If
-        Me.ComboBox1.SelectedItem = Language
+        Me.cbLanguage.SelectedItem = Language
         'lblInfo.MaximumSize = New Size(Me.Width * 0.8, Me.Height * 0.8) 'nastaví maximální šířku popisku
         lblInfo.Text = $"{Form1.mnuFile.Text} {GpxFileName}" &
             vbCrLf & lblInfo.Text
@@ -86,12 +81,37 @@ Public Class frmEditComments
         Me.lblTrail.Text = TrailReport.trailLabel & Me.lblTrail.Text
         Me.lblPerformance.Text = TrailReport.performanceLabel & Me.lblPerformance.Text
 
+        ' Vytvoříme seznam položek s texty z resources
+        ' Vytvoření správce prostředků pro tento formulář
 
+        Dim resources As New System.ComponentModel.ComponentResourceManager(GetType(frmEditComments))
+        Dim displayItems As New List(Of LevelOfBlindingDisplayItem) From {
+    New LevelOfBlindingDisplayItem(LevelOfBlindingType.Unknown, resources.GetString("cbLevelOfBlinding.Items")),
+    New LevelOfBlindingDisplayItem(LevelOfBlindingType.Open, resources.GetString("cbLevelOfBlinding.Items1")),
+    New LevelOfBlindingDisplayItem(LevelOfBlindingType.KnownTrack, resources.GetString("cbLevelOfBlinding.Items2")),
+    New LevelOfBlindingDisplayItem(LevelOfBlindingType.SingleBlind, resources.GetString("cbLevelOfBlinding.Items3")),
+    New LevelOfBlindingDisplayItem(LevelOfBlindingType.DoubleBlind, resources.GetString("cbLevelOfBlinding.Items4"))
+}
 
+        ' Nastavení ComboBoxu
+        cbLevelOfBlinding.DataSource = displayItems
+        cbLevelOfBlinding.DisplayMember = "Text"  ' Co se zobrazuje
+        cbLevelOfBlinding.ValueMember = "Value"    ' Co je "uvnitř" (Enum)
+        ' Předpokládejme, že z databáze přišlo číslo 2
+        'Dim valueFromDb As LevelOfBlindingType = 2
+        cbLevelOfBlinding.SelectedValue = Me.TrailDescription.LevelOfBlinding
         Me.btnOK.Focus() 'aby šlo jen odkliknout
     End Sub
 
     Private Sub SaveFormData()
+        ' Získáte přímo Enum
+
+        If cbLevelOfBlinding.SelectedItem IsNot Nothing Then
+            'Dim selectedLevelOfBlindingType As LevelOfBlindingType = DirectCast(cbLevelOfBlinding.SelectedValue, LevelOfBlindingType)
+            Me.TrailDescription.LevelOfBlinding = cbLevelOfBlinding.SelectedValue
+            Me.TrailDescription.LevelOfBlindingText = cbLevelOfBlinding.SelectedItem.Text
+        End If
+
         Me.TrailDescription.GoalText = txtGoal.Text
         Me.TrailDescription.TrailText = txtTrail.Text
         Me.TrailDescription.PerformanceText = txtPerformance.Text
@@ -100,8 +120,8 @@ Public Class frmEditComments
         Me.TrailDescription.DogName.Text = txtDogName.Text
         Me.HandlerName = txtHandlerName.Text
         If Me.Language Is Nothing Then
-            Me.Language = ComboBox1.SelectedItem?.ToString()?.ToLowerInvariant() ' Uloží vybraný jazyk
-        ElseIf Me.Language <> ComboBox1.SelectedItem?.ToString()?.ToLowerInvariant() Then
+            Me.Language = cbLanguage.SelectedItem?.ToString()?.ToLowerInvariant() ' Uloží vybraný jazyk
+        ElseIf Me.Language <> cbLanguage.SelectedItem?.ToString()?.ToLowerInvariant() Then
             ' Pokud se jazyk změnil, aktualizujeme ho
             mboxEx("The language of the existing description cannot be changed!")
 
@@ -145,7 +165,7 @@ Public Class frmEditComments
     End Sub
 
     Private Sub frmEditComments_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
-        If Me.ComboBox1.SelectedItem = Nothing Then
+        If Me.cbLanguage.SelectedItem = Nothing Then
             Select Case Me.DialogResult
                 Case DialogResult.OK, DialogResult.Retry
                     e.Cancel = True
@@ -154,3 +174,4 @@ Public Class frmEditComments
         End If
     End Sub
 End Class
+

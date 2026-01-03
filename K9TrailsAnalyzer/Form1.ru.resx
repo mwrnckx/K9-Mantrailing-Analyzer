@@ -232,7 +232,7 @@
     <value>Последние 30 дней</value>
   </data>
   <data name="cmbTimeInterval.Items2" xml:space="preserve">
-    <value>Последние 365 дней (по умолчанию)</value>
+    <value>Последние 365 дней</value>
   </data>
   <data name="cmbTimeInterval.Items3" xml:space="preserve">
     <value>Текущий год</value>

@@ -185,7 +185,7 @@ Public Class PngRenderer
                 g.DrawLines(New Pen(track.Color, penWidth), TrackPoints.ToArray)
 
                 ' popis, poslední bod atd.
-                Dim time As String = track.TrackPointsF.Last.Time.ToString("HH:mm")
+                'Dim time As String = track.TrackPointsF.Last.Time.ToString("HH:mm")
                 Dim p As PointF = TrackPoints.Last  ' poslední bod, posunutý o offset
                 g.FillEllipse(New SolidBrush(track.Color), p.X - radius / 2, p.Y - radius / 2, radius, radius)
 
@@ -380,7 +380,7 @@ Public Class PngRenderer
                     ' popis, poslední bod atd.
 
                     'Dim font As New Font("Cascadia Code", emSize, FontStyle.Bold)
-                    Dim popis As String = frameTime.ToString("HH:mm:ss") 'todo: přidat doglabel?
+                    Dim popis As String = "Dog " & frameTime.ToString("HH:mm:ss")
                     Dim textSize = g.MeasureString(popis, font)
                     Dim offsetX As Single
                     If p.X - textSize.Width - radius < 0 Then

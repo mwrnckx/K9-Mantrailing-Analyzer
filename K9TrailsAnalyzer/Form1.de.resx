@@ -235,7 +235,7 @@
     <value>Letzte 30 Tage</value>
   </data>
   <data name="cmbTimeInterval.Items2" xml:space="preserve">
-    <value>Letzte 365 Tage (Standard)</value>
+    <value>Letzte 365 Tage</value>
   </data>
   <data name="cmbTimeInterval.Items4" xml:space="preserve">
     <value>Letztes Jahr</value>

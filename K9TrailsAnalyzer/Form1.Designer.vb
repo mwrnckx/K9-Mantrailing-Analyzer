@@ -118,6 +118,7 @@ Partial Class Form1
         ' lblRemoteDirectory
         ' 
         lblRemoteDirectory.BackColor = Color.LightYellow
+        lblRemoteDirectory.FlatStyle = FlatStyle.Flat
         resources.ApplyResources(lblRemoteDirectory, "lblRemoteDirectory")
         lblRemoteDirectory.Name = "lblRemoteDirectory"
         ToolTip1.SetToolTip(lblRemoteDirectory, resources.GetString("lblRemoteDirectory.ToolTip"))
@@ -582,7 +583,7 @@ Partial Class Form1
         'mnuTrimGPSNoise.Checked = My.Settings.TrimGPSnoise
 
         CreateGpxFileManager()
-        Me.cmbTimeInterval.SelectedIndex = 2 'last 365 days
+        Me.cmbTimeInterval.SelectedIndex = 1 'last 30 days
 
         lblRemoteDirectory.Width = Me.Width - lblRemoteDirectory.Left - 20
         lblRemoteDirectory.Text = ShortenPathToFit(lblRemoteDirectory, $"Source GPX folder: {ActiveCategoryInfo.RemoteDirectory}")

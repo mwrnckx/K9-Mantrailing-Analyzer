@@ -250,17 +250,28 @@ Partial Public Class Form1
     Private Sub UpdateRankingAndDisplay(Optional resetBindings As Boolean = False)
         ' 1. Seřadit displayList (sestupně podle TotalPoints)
         ' Funkce CompareTo pro Integer je nejpřímější. Pro sestupné řazení se vymění a a b
-        Me.displayList.Sort(Function(a, b) b.TotalPoints.CompareTo(a.TotalPoints))
+        If Me.displayList.Count < 25 Then
+            Me.displayList.Sort(Function(a, b) b.TotalPoints.CompareTo(a.TotalPoints))
+            ' 2. Aktualizovat vlastnost Ranking
+            Dim ranking As Integer = 1
+            For Each item In Me.displayList
+                ' Důležité: Nastavte Ranking pomocí vlastnosti, kde máte implementovaný INotifyPropertyChanged
+                ' i pro Ranking. Pokud Ranking nemá INotifyPropertyChanged, musíte ho přidat.
+                ' Předpokládáme, že jej nyní přidáme do TrailStatsDisplay (viz Krok 2).
+                item.Ranking = ranking.ToString() & "."
+                ranking += 1
+            Next
+        Else 'Velký počet záznamů - pak seřadit podle data
+            Me.displayList.Sort(Function(a, b) b.GPXFilename.CompareTo(a.GPXFilename))
+            For Each item In Me.displayList
+                ' Důležité: Nastavte Ranking pomocí vlastnosti, kde máte implementovaný INotifyPropertyChanged
+                ' i pro Ranking. Pokud Ranking nemá INotifyPropertyChanged, musíte ho přidat.
+                ' Předpokládáme, že jej nyní přidáme do TrailStatsDisplay (viz Krok 2).
+                item.Ranking = "-"
+            Next
 
-        ' 2. Aktualizovat vlastnost Ranking
-        Dim ranking As Integer = 1
-        For Each item In Me.displayList
-            ' Důležité: Nastavte Ranking pomocí vlastnosti, kde máte implementovaný INotifyPropertyChanged
-            ' i pro Ranking. Pokud Ranking nemá INotifyPropertyChanged, musíte ho přidat.
-            ' Předpokládáme, že jej nyní přidáme do TrailStatsDisplay (viz Krok 2).
-            item.Ranking = ranking.ToString() & "."
-            ranking += 1
-        Next
+        End If
+
 
         ' 3. Vynutit aktualizaci DataGridView (klíčové)
         ' Protože jsme změnili pořadí v podkladovém listu, musíme BindingSource
@@ -1741,8 +1752,8 @@ Partial Public Class Form1
             ' Přepnutí směru, pokud se kliklo na stejný sloupec
             sortDirection = IIf(sortDirection = SortOrder.Ascending, SortOrder.Descending, SortOrder.Ascending)
         Else
-            ' První kliknutí na nový sloupec: seřaď vzestupně
-            sortDirection = SortOrder.Ascending
+            ' První kliknutí na nový sloupec: seřaď sestupně (kvůli datu)
+            sortDirection = SortOrder.Descending
             sortColumnName = columnName
         End If
 

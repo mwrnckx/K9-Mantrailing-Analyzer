@@ -196,7 +196,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Could not find any gpx files!.
+        '''  Vyhledá lokalizovaný řetězec podobný Could not find any gpx file in the time interval selected!.
         '''</summary>
         Friend Shared ReadOnly Property mBoxDataRetrievalFailed() As String
             Get

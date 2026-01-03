@@ -263,7 +263,7 @@
     <value>Posledních 30 dní</value>
   </data>
   <data name="cmbTimeInterval.Items2" xml:space="preserve">
-    <value>Posledních 365 dní (výchozí)</value>
+    <value>Posledních 365 dní</value>
   </data>
   <data name="cmbTimeInterval.Items3" xml:space="preserve">
     <value>Aktuální rok</value>

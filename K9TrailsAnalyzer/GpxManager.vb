@@ -864,7 +864,7 @@ Public Class GPXRecord
 
     Public Property WeatherData As WeatherData
 
-    Private Const NBSP As String = ChrW(160)
+    Public Const NBSP As String = ChrW(160)
 
     Public ReadOnly Property TrkNodes As XmlNodeList
         Get
@@ -1729,18 +1729,27 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             Dim timeNode As XmlNode = Me.Reader.SelectSingleChildNode(Me.Reader.GPX_DEFAULT_PREFIX & ":" & "time", trkpt)
             Dim extensionsNode As XmlNode = Me.Reader.SelectSingleChildNode(Me.Reader.GPX_DEFAULT_PREFIX & ":" & "extensions", trkNode)
 
-            ' Zjisti  typ tracku:
+            ' Zjisti  typ tracku,   'zjisti level of blinding:
             Dim trkTypeText As String = "Unknown"
             Dim trkTypeEnum As TrackType = TrackType.Unknown
+            Dim levelOfBlindingText As String = "Unknown"
+            Dim levelOfBlindingEnum As LevelOfBlindingType = LevelOfBlindingType.Unknown
             If extensionsNode IsNot Nothing Then
                 trkTypeText = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "TrackType", extensionsNode)?.InnerText
-            End If
 
+                levelOfBlindingText = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "LevelOfBlindingType", extensionsNode)?.InnerText
+            End If
 
             If trkTypeText Is Nothing Then
                 'unknown
             ElseIf Not [Enum].TryParse(trkTypeText.Trim(), ignoreCase:=True, result:=trkTypeEnum) Then
                 trkTypeEnum = TrackType.Unknown ' pokud není typ, nastavíme na Unknown
+            End If
+
+            If levelOfBlindingText IsNot Nothing Then
+                If Not [Enum].TryParse(levelOfBlindingText.Trim(), ignoreCase:=True, result:=levelOfBlindingEnum) Then
+                    levelOfBlindingEnum = LevelOfBlindingType.Unknown
+                End If
             End If
             'pokud některý track je uknown musí se znovu zpracovat
             'If trkTypeEnum = TrackType.Unknown Then _IsAlreadyProcessed = False
@@ -1761,7 +1770,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         ' --- Doplnění <type> ---
 
         ' Kód v místě, kde rozhoduješ, jestli máš form ukázat:
-        If ValidateTypes(types, False) And Me.IsAlreadyProcessed Then
+        If ValidateTypes(types, False) Then
             ' Všechny typy jsou platné a soubor již byl zpracován, nemusíš ukazovat formulář
             ' pokračuj dál — formulář není potřeba
         Else
@@ -2230,10 +2239,9 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
             maxDeviationPointList.Add(dogGeoPoints(maxDevDogIndex)) 'Nejprve bod psa pak runner, neměnit pořadí!
             maxDeviationPointList.Add(runnerGeoPoints(maxDevRunnerIndex))
             maxDeviationGeoPoints = New TrackAsGeoPoints(TrackType.Unknown, maxDeviationPointList)
-        End If
-        ' Update the minimum distance to the end of the runner's path
-        Dim index As Integer = 0
-        If runnerEndPoint IsNot Nothing Then
+
+            ' Update the minimum distance to the end of the runner's path
+            Dim index As Integer = 0
             For Each dogPointXY In dogXY
                 Dim distToEnd As Double = Math.Sqrt((dogPointXY.X - runnerEndPoint.Value.X) ^ 2 + (dogPointXY.Y - runnerEndPoint.Value.Y) ^ 2)
                 If distToEnd < minDeviationFromRunnerEnd Then
@@ -3070,8 +3078,13 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
             Dim reportNode As XmlNode = Me.Reader.CreateAndAddElement(extensionsNode, GpxReader.K9_PREFIX & ":" & "report", "", True, "lang", key, GpxReader.K9_NAMESPACE_URI)
             'přidá do <report>  <goal>, <trail>, <performance>, <weather>
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "goal", localizedReport.Goal.Text, True,,, GpxReader.K9_NAMESPACE_URI)
+            Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "trailType", localizedReport.LevelOfBlinding.ToString, True,,, GpxReader.K9_NAMESPACE_URI)
+            Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "goal", localizedReport.Goal.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "trail", localizedReport.Trail.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "performance", localizedReport.Performance.Text, True,,, GpxReader.K9_NAMESPACE_URI)
+            Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "levelOfBlindingType", localizedReport.LevelOfBlinding.ToString, True,,, GpxReader.K9_NAMESPACE_URI)
+            Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "levelOfBlindingText", localizedReport.LevelOfBlindingStyledText.Text, True,,, GpxReader.K9_NAMESPACE_URI)
+
             Dim weatherNode As XmlNode = Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "weather", localizedReport.Weather.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             WriteWeatherDataToXml(weatherNode, localizedReport.WeatherData)
             Dim ScoringNode As XmlNode = Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "scoring", localizedReport.PerformancePoints.Text, True,,, GpxReader.K9_NAMESPACE_URI)
@@ -3183,6 +3196,8 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
         Dim goalNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "goal", reportNode)
         Dim trailNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "trail", reportNode)
         Dim performanceNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "performance", reportNode)
+        Dim levelOfBlindingTypeNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "levelOfBlindingType", reportNode)
+        Dim levelOfBlindingTextNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "levelOfBlindingType", reportNode)
 
         If goalNode Is Nothing OrElse trailNode Is Nothing OrElse performanceNode Is Nothing Then Return False
 
@@ -3190,6 +3205,13 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
             .GoalText = If(goalNode?.InnerText, "")
             .TrailText = If(trailNode?.InnerText, "")
             .PerformanceText = If(performanceNode?.InnerText, "")
+            Dim blindingValue As LevelOfBlindingType
+            If [Enum].TryParse(levelOfBlindingTypeNode?.InnerText, blindingValue) Then
+                .LevelOfBlinding = blindingValue
+            Else
+                .LevelOfBlinding = LevelOfBlindingType.Unknown ' nebo jiná výchozí hodnota
+            End If
+            .LevelOfBlindingText = If(levelOfBlindingTextNode?.InnerText, "")
         End With
         Return True
 

@@ -139,7 +139,7 @@
     <value>Date  </value>
   </data>
   <data name="mBoxDataRetrievalFailed" xml:space="preserve">
-    <value>Could not find any gpx files!</value>
+    <value>Could not find any gpx file in the time interval selected!</value>
   </data>
   <data name="mBoxErrorCreatingCSV" xml:space="preserve">
     <value>Error Creating CSV</value>

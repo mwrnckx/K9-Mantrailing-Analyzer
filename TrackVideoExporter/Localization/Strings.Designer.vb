@@ -81,18 +81,9 @@ Namespace My.Resources
                 Return ResourceManager.GetString("DogReading", resourceCulture)
             End Get
         End Property
-
+        
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Pick-up.
-        '''</summary>
-        Friend Shared ReadOnly Property TrailPickup() As String
-            Get
-                Return ResourceManager.GetString("TrailPickup", resourceCulture)
-            End Get
-        End Property
-
-        '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný FinalFind.
+        '''  Vyhledá lokalizovaný řetězec podobný Final Find.
         '''</summary>
         Friend Shared ReadOnly Property FinalFind() As String
             Get
@@ -151,6 +142,15 @@ Namespace My.Resources
         Friend Shared ReadOnly Property Trail_description() As String
             Get
                 Return ResourceManager.GetString("Trail_description", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Trail Pick up.
+        '''</summary>
+        Friend Shared ReadOnly Property TrailPickup() As String
+            Get
+                Return ResourceManager.GetString("TrailPickup", resourceCulture)
             End Get
         End Property
     End Class

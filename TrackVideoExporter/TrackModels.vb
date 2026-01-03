@@ -1,4 +1,5 @@
 ﻿Imports System.Drawing
+Imports System.Globalization
 Imports System.Windows.Forms
 Imports System.Xml
 
@@ -269,6 +270,35 @@ Public Enum TrackType
 End Enum
 
 ''' <summary>
+''' TrailType enumeration defines the types of trails in a competition.
+''' </summary>
+''' <remarks>
+''' This enumeration is used to categorize different types of trails, such as Open, Known Track, Single Blind, and Double Blind.
+''' </remarks>
+Public Enum LevelOfBlindingType
+    Unknown = 0
+    Open
+    KnownTrack
+    SingleBlind
+    DoubleBlind
+End Enum
+''' <summary>
+''' TrailTypeDisplayItem class represents a display item for trail types.
+''' </summary>
+''' <remarks>
+''' This class is used to associate a TrailType value with its corresponding display text.
+''' </remarks>
+Public Class LevelOfBlindingDisplayItem
+    Public Property Value As LevelOfBlindingType
+    Public Property Text As String
+
+    Public Sub New(val As LevelOfBlindingType, txt As String)
+        Me.Value = val
+        Me.Text = txt
+    End Sub
+End Class
+
+''' <summary>
 ''' TrackTypeResolvers module provides default resolvers for track type labels.
 ''' </summary>
 ''' <remarks>
@@ -278,6 +308,7 @@ End Enum
 Public Module TrackTypeResolvers ' This module provides default resolvers for track type labels
     Public Property LabelResolver As Func(Of TrackType, String) = Function(tt) tt.ToString()
 End Module
+
 
 
 ''' <summary>
@@ -317,7 +348,8 @@ Public Class StyledText
 End Class
 
 Public Class TrailReport
-    ' 🔧 Lokálně nastav labely
+    ' 🔧 Lokálně nastav labely 
+    Public Const levelOfBlindingLabel As String = "❓" '"🦯"
     Public Const dogLabel As String = "🐕"
     Public Const goalLabel As String = "📍"
     Public Const trailLabel As String = "👣"
@@ -334,6 +366,9 @@ Public Class TrailReport
     Private _performanceText As String = ""
     Private _performancePointsText As String = ""
     Private _weatherText As String = " "
+    Private _levelOfBlindingText As String = " "
+    Private _levelOfBlinding As LevelOfBlindingType = 0
+
 
     ' Veřejné StyledText vlastnosti (ReadOnly) - Získáte je, ale nemůžete je přímo nastavit
     Public ReadOnly Property Title As StyledText
@@ -347,6 +382,7 @@ Public Class TrailReport
             Return New StyledText(_dogNameText, Color.Maroon, mainFont, dogLabel)
         End Get
     End Property
+
 
     Public ReadOnly Property Goal As StyledText
         Get
@@ -375,6 +411,12 @@ Public Class TrailReport
     Public ReadOnly Property Weather As StyledText
         Get
             Return New StyledText(_weatherText, Color.Maroon, mainFont, "")
+        End Get
+    End Property
+
+    Public ReadOnly Property LevelOfBlindingStyledText As StyledText
+        Get
+            Return New StyledText(_levelOfBlindingText, Color.DarkGreen, mainFont, levelOfBlindingLabel)
         End Get
     End Property
 
@@ -420,6 +462,25 @@ Public Class TrailReport
         End Set
     End Property
 
+
+    Public Property LevelOfBlinding As LevelOfBlindingType
+        Get
+            Return _levelOfBlinding
+        End Get
+        Set(value As LevelOfBlindingType)
+            _levelOfBlinding = value
+        End Set
+    End Property
+
+    Public Property LevelOfBlindingText As String
+        Get
+            Return _levelOfBlindingText
+        End Get
+        Set(value As String)
+            _levelOfBlindingText = value
+        End Set
+    End Property
+
     Public Property PerformanceText As String
         Get
             Return _performanceText
@@ -448,14 +509,15 @@ Public Class TrailReport
     End Property
 
 
-    ' Ponecháme i vaši WeatherData
+    ' Ponecháme i WeatherData
     Public Property WeatherData As WeatherData
 
 
     ' Konstruktor pro snadné vytvoření a nastavení
-    Public Sub New(ByVal title As String, ByVal dogName As String, ByVal goal As String, ByVal trail As String, ByVal performance As String, Optional points As String = "", Optional _weatherdata As WeatherData = Nothing, Optional weather As String = " ")
+    Public Sub New(ByVal title As String, ByVal dogName As String, ByVal goal As String, ByVal trail As String, ByVal performance As String, Optional points As String = "", Optional _weatherdata As WeatherData = Nothing, Optional weather As String = " ", Optional _levelOfBlinding As LevelOfBlindingType = 0)
         Me.TitleText = title
         Me.DogNameText = dogName
+        Me.LevelOfBlinding = _levelOfBlinding
         Me.GoalText = goal
         Me.TrailText = trail
         Me.PerformanceText = performance
@@ -474,6 +536,7 @@ Public Class TrailReport
         Dim result As New List(Of StyledText) From {
             Me.Title,
             Me.DogName,
+            Me.LevelOfBlindingStyledText,
             Me.Goal,
             Me.Trail,
             Me.Performance,
@@ -486,6 +549,7 @@ Public Class TrailReport
         Me.TitleText = title
         Dim result As New List(Of StyledText) From {
           Me.Title,
+            Me.LevelOfBlindingStyledText,
           Me.PerformancePoints
         }
         Return result

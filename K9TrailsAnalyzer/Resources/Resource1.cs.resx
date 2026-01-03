@@ -139,7 +139,7 @@
     <value>Datum  </value>
   </data>
   <data name="mBoxDataRetrievalFailed" xml:space="preserve">
-    <value>Nepodařilo se najít žádné gpx soubory!
+    <value>Nepodařilo se najít žádné gpx soubory ve zvoleném časovém intervalu!
 </value>
   </data>
   <data name="mBoxErrorCreatingCSV" xml:space="preserve">
@@ -286,16 +286,16 @@ Pro další zpracování je třeba rozhodnout, která trasa odpovídá
 Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče, druhá je trasa psa. Ale pokud je trasa jen jedna nebo jich je více než dvě musíte to rozhodnout vy. Aplikace se to pokusí odhadnout, ale nemusí se vždy trefit 😉!</value>
   </data>
   <data name="CrossingTrail" xml:space="preserve">
-    <value>Křížení</value>
+    <value>Crossing trail</value>
   </data>
   <data name="dogTrack" xml:space="preserve">
-    <value>Trasa psa</value>
+    <value>Dog's track</value>
   </data>
   <data name="RunnerTrail" xml:space="preserve">
-    <value>Trasa kladeče</value>
+    <value>Runner's trail</value>
   </data>
   <data name="article" xml:space="preserve">
-    <value>Kontrolní bod</value>
+    <value>Checkpoint</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="points" type="System.Resources.ResXNullRef, System.Windows.Forms">
