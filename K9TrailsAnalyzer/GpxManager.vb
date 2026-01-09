@@ -1303,8 +1303,35 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         Dim goalPart As String = ""
         Dim trailPart As String = ""
         Dim performancePart As String = ""
+
+
+
         ' 1️⃣ Odstraníme HTML tagy
         Dim cleanDescription As String = System.Text.RegularExpressions.Regex.Replace(originalDescription, "<.*?>", "").Trim()
+
+        'pokusí se nalézt level of blinding:
+        Dim levelOfBlinding As LevelOfBlindingType = LevelOfBlindingType.Unknown
+        ' 1. Definice pravidel (Vzor -> Typ)
+        Dim blindingRules As New Dictionary(Of String, LevelOfBlindingType) From {
+    {"\b(double\s?blind|Double\s?blind|Double\s?Blind|DBA)\b", LevelOfBlindingType.DoubleBlindAssisted},
+        {"\b(double\s?blind|Double\s?blind|Double\s?Blind|DBS)\b", LevelOfBlindingType.DoubleBlindSolo},
+    {"\b(single\s?blind|Single\s?blind|Single\s?Blind|SB)\b", LevelOfBlindingType.SingleBlind},
+    {"\b(known\s?track|Known\s?track|Known\s?Track|KT)\b", LevelOfBlindingType.KnownTrack},
+    {"\b(open\s?track|Open\s?track|Open\s?Track|OT)\b", LevelOfBlindingType.Open}
+}
+
+        ' 2. Logika (projde všechny pravidla)
+        For Each rule In blindingRules
+            If Regex.IsMatch(cleanDescription, rule.Key) Then
+                levelOfBlinding = rule.Value
+                ' Odstraníme nalezený text a ukončíme cyklus 
+                cleanDescription = Regex.Replace(cleanDescription, rule.Key, "")
+                Exit For
+            End If
+        Next
+
+        ' 3. Finální vyčištění mezer
+        cleanDescription = Regex.Replace(cleanDescription, "\s+", " ").Trim()
 
         ' 2️⃣ Najdeme části pomocí regexu
         Dim g = TrailReport.goalLabel
@@ -1314,8 +1341,8 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
                             $"(?:(?:(?<trail>{t}|t:)\s*(?<trailText>.*?))(?=({g}|g:|{p}|p:|🌡|$)))?" &
                             $"(?:(?:(?<dog>{p}|p:)\s*(?<performanceText>.*?))(?=({g}|g:|{t}|t:|🌡|$)))?"
 
-        Dim regex As New Regex(pattern, RegexOptions.Singleline Or RegexOptions.IgnoreCase)
-        Dim match As Match = regex.Match(cleanDescription)
+        Dim _regex As New Regex(pattern, RegexOptions.Singleline Or RegexOptions.IgnoreCase)
+        Dim match As Match = _regex.Match(cleanDescription)
 
         If match.Success Then
             goalPart = match.Groups("goalText").Value.Trim()
@@ -1361,7 +1388,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
         End If
 
-        Return New TrailReport("", "", goalPart, trailPart, performancePart, "", Nothing)
+        Return New TrailReport("", "", goalPart, trailPart, performancePart, "", Nothing, "", levelOfBlinding)
     End Function
 
 
@@ -1511,8 +1538,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
                 report = New TrailReport("", firstLocalisedReport.Value.DogName.Text, firstLocalisedReport.Value.Goal.Text,
                                         firstLocalisedReport.Value.Trail.Text,
                                         firstLocalisedReport.Value.Performance.Text,
-                                        "",
-                                         Nothing)
+                                        "", , , firstLocalisedReport.Value.LevelOfBlinding)
                 ' Nová položka – prázdná, připravená k vyplnění
                 Debug.WriteLine($"{i + 1}. [Nový záznam]")
 
@@ -3078,7 +3104,6 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
             Dim reportNode As XmlNode = Me.Reader.CreateAndAddElement(extensionsNode, GpxReader.K9_PREFIX & ":" & "report", "", True, "lang", key, GpxReader.K9_NAMESPACE_URI)
             'přidá do <report>  <goal>, <trail>, <performance>, <weather>
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "goal", localizedReport.Goal.Text, True,,, GpxReader.K9_NAMESPACE_URI)
-            Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "trailType", localizedReport.LevelOfBlinding.ToString, True,,, GpxReader.K9_NAMESPACE_URI)
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "goal", localizedReport.Goal.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "trail", localizedReport.Trail.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "performance", localizedReport.Performance.Text, True,,, GpxReader.K9_NAMESPACE_URI)

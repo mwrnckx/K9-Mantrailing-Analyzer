@@ -269,25 +269,17 @@ Public Enum TrackType
     Article 'scent article or checkPoint
 End Enum
 
-''' <summary>
-''' TrailType enumeration defines the types of trails in a competition.
-''' </summary>
-''' <remarks>
-''' This enumeration is used to categorize different types of trails, such as Open, Known Track, Single Blind, and Double Blind.
-''' </remarks>
+
 Public Enum LevelOfBlindingType
     Unknown = 0
     Open
     KnownTrack
     SingleBlind
-    DoubleBlind
+    DoubleBlindAssisted
+    DoubleBlindSolo
 End Enum
-''' <summary>
-''' TrailTypeDisplayItem class represents a display item for trail types.
-''' </summary>
-''' <remarks>
-''' This class is used to associate a TrailType value with its corresponding display text.
-''' </remarks>
+
+
 Public Class LevelOfBlindingDisplayItem
     Public Property Value As LevelOfBlindingType
     Public Property Text As String
@@ -349,7 +341,7 @@ End Class
 
 Public Class TrailReport
     ' 🔧 Lokálně nastav labely 
-    Public Const levelOfBlindingLabel As String = "❓" '"🦯"
+    Public Const levelOfBlindingLabel As String = "🦯"
     Public Const dogLabel As String = "🐕"
     Public Const goalLabel As String = "📍"
     Public Const trailLabel As String = "👣"

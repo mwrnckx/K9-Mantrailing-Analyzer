@@ -44,8 +44,8 @@ Partial Class frmEditComments
         ' 
         ' lblInfo
         ' 
-        resources.ApplyResources(lblInfo, "lblInfo")
         lblInfo.BackColor = Color.LightYellow
+        resources.ApplyResources(lblInfo, "lblInfo")
         lblInfo.Name = "lblInfo"
         ' 
         ' lblPerformance
@@ -84,26 +84,26 @@ Partial Class frmEditComments
         ' 
         ' cbLanguage
         ' 
-        resources.ApplyResources(cbLanguage, "cbLanguage")
         cbLanguage.FormattingEnabled = True
+        resources.ApplyResources(cbLanguage, "cbLanguage")
         cbLanguage.Name = "cbLanguage"
         ' 
         ' txtGoal
         ' 
-        resources.ApplyResources(txtGoal, "txtGoal")
         txtGoal.AllowDrop = True
+        resources.ApplyResources(txtGoal, "txtGoal")
         txtGoal.Name = "txtGoal"
         ' 
         ' txtPerformance
         ' 
-        resources.ApplyResources(txtPerformance, "txtPerformance")
         txtPerformance.AllowDrop = True
+        resources.ApplyResources(txtPerformance, "txtPerformance")
         txtPerformance.Name = "txtPerformance"
         ' 
         ' txtTrail
         ' 
-        resources.ApplyResources(txtTrail, "txtTrail")
         txtTrail.AllowDrop = True
+        resources.ApplyResources(txtTrail, "txtTrail")
         txtTrail.Name = "txtTrail"
         ' 
         ' lblDogName
@@ -133,9 +133,10 @@ Partial Class frmEditComments
         ' 
         ' cbLevelOfBlinding
         ' 
-        resources.ApplyResources(cbLevelOfBlinding, "cbLevelOfBlinding")
+        cbLevelOfBlinding.DropDownWidth = 800
         cbLevelOfBlinding.FormattingEnabled = True
-        cbLevelOfBlinding.Items.AddRange(New Object() {resources.GetString("cbLevelOfBlinding.Items"), resources.GetString("cbLevelOfBlinding.Items1"), resources.GetString("cbLevelOfBlinding.Items2"), resources.GetString("cbLevelOfBlinding.Items3"), resources.GetString("cbLevelOfBlinding.Items4")})
+        cbLevelOfBlinding.Items.AddRange(New Object() {resources.GetString("cbLevelOfBlinding.Items"), resources.GetString("cbLevelOfBlinding.Items1"), resources.GetString("cbLevelOfBlinding.Items2"), resources.GetString("cbLevelOfBlinding.Items3"), resources.GetString("cbLevelOfBlinding.Items4"), resources.GetString("cbLevelOfBlinding.Items5")})
+        resources.ApplyResources(cbLevelOfBlinding, "cbLevelOfBlinding")
         cbLevelOfBlinding.Name = "cbLevelOfBlinding"
         ' 
         ' frmEditComments
