@@ -132,4 +132,16 @@
   <data name="lblLanguage.Text" xml:space="preserve">
     <value>Язык:</value>
   </data>
+  <data name="lblDogName.Text" xml:space="preserve">
+    <value>Имя собаки:</value>
+  </data>
+  <data name="cbLevelOfBlinding.Items5" xml:space="preserve">
+    <value>Двойное слепое соло: хэндлер не знаком с трассой</value>
+  </data>
+  <data name="cbLevelOfBlinding.Items2" xml:space="preserve">
+    <value>Известная трасса, также известная как «Синяя линия»: проводник знаком с трассой.</value>
+  </data>
+  <data name="lblLevelOfBlinding.Text" xml:space="preserve">
+    <value>Уровень ослепления:</value>
+  </data>
 </root>

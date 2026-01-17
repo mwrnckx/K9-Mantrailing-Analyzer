@@ -149,7 +149,7 @@ Otherwise, click 'OK'.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblInfo.ZOrder" xml:space="preserve">
-    <value>16</value>
+    <value>18</value>
   </data>
   <data name="lblPerformance.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -158,7 +158,7 @@ Otherwise, click 'OK'.</value>
     <value>Cascadia Code, 12pt, style=Bold</value>
   </data>
   <data name="lblPerformance.Location" type="System.Drawing.Point, System.Drawing">
-    <value>34, 377</value>
+    <value>34, 433</value>
   </data>
   <data name="lblPerformance.Size" type="System.Drawing.Size, System.Drawing">
     <value>190, 21</value>
@@ -179,7 +179,7 @@ Otherwise, click 'OK'.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblPerformance.ZOrder" xml:space="preserve">
-    <value>15</value>
+    <value>17</value>
   </data>
   <data name="lblTrail.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -188,7 +188,7 @@ Otherwise, click 'OK'.</value>
     <value>Cascadia Code, 12pt, style=Bold</value>
   </data>
   <data name="lblTrail.Location" type="System.Drawing.Point, System.Drawing">
-    <value>34, 301</value>
+    <value>34, 360</value>
   </data>
   <data name="lblTrail.Size" type="System.Drawing.Size, System.Drawing">
     <value>64, 21</value>
@@ -209,7 +209,7 @@ Otherwise, click 'OK'.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblTrail.ZOrder" xml:space="preserve">
-    <value>13</value>
+    <value>15</value>
   </data>
   <data name="lblGoal.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -218,7 +218,7 @@ Otherwise, click 'OK'.</value>
     <value>Cascadia Code, 12pt, style=Bold</value>
   </data>
   <data name="lblGoal.Location" type="System.Drawing.Point, System.Drawing">
-    <value>34, 232</value>
+    <value>34, 288</value>
   </data>
   <data name="lblGoal.Size" type="System.Drawing.Size, System.Drawing">
     <value>136, 21</value>
@@ -239,7 +239,7 @@ Otherwise, click 'OK'.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblGoal.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>14</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="btnOK.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
@@ -252,7 +252,7 @@ Otherwise, click 'OK'.</value>
     <value>Segoe UI, 14pt, style=Bold</value>
   </data>
   <data name="btnOK.Location" type="System.Drawing.Point, System.Drawing">
-    <value>739, 456</value>
+    <value>739, 528</value>
   </data>
   <data name="btnOK.Size" type="System.Drawing.Size, System.Drawing">
     <value>80, 60</value>
@@ -273,7 +273,7 @@ Otherwise, click 'OK'.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnOK.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>12</value>
   </data>
   <data name="btnAnotherLang.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
@@ -288,7 +288,7 @@ Otherwise, click 'OK'.</value>
     <value>NoControl</value>
   </data>
   <data name="btnAnotherLang.Location" type="System.Drawing.Point, System.Drawing">
-    <value>593, 456</value>
+    <value>593, 528</value>
   </data>
   <data name="btnAnotherLang.Size" type="System.Drawing.Size, System.Drawing">
     <value>134, 60</value>
@@ -309,7 +309,7 @@ Otherwise, click 'OK'.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnAnotherLang.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>11</value>
   </data>
   <data name="lblLanguage.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -321,7 +321,7 @@ Otherwise, click 'OK'.</value>
     <value>NoControl</value>
   </data>
   <data name="lblLanguage.Location" type="System.Drawing.Point, System.Drawing">
-    <value>485, 456</value>
+    <value>485, 512</value>
   </data>
   <data name="lblLanguage.Size" type="System.Drawing.Size, System.Drawing">
     <value>91, 21</value>
@@ -342,10 +342,10 @@ Otherwise, click 'OK'.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblLanguage.ZOrder" xml:space="preserve">
-    <value>14</value>
+    <value>16</value>
   </data>
   <data name="cbLanguage.Location" type="System.Drawing.Point, System.Drawing">
-    <value>507, 487</value>
+    <value>507, 543</value>
   </data>
   <data name="cbLanguage.Size" type="System.Drawing.Size, System.Drawing">
     <value>69, 29</value>
@@ -363,10 +363,10 @@ Otherwise, click 'OK'.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;cbLanguage.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>10</value>
   </data>
   <data name="txtGoal.Location" type="System.Drawing.Point, System.Drawing">
-    <value>34, 256</value>
+    <value>34, 312</value>
   </data>
   <data name="txtGoal.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -390,10 +390,10 @@ Otherwise, click 'OK'.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;txtGoal.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>9</value>
   </data>
   <data name="txtPerformance.Location" type="System.Drawing.Point, System.Drawing">
-    <value>34, 401</value>
+    <value>34, 457</value>
   </data>
   <data name="txtPerformance.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -417,10 +417,10 @@ Otherwise, click 'OK'.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;txtPerformance.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>8</value>
   </data>
   <data name="txtTrail.Location" type="System.Drawing.Point, System.Drawing">
-    <value>34, 325</value>
+    <value>34, 381</value>
   </data>
   <data name="txtTrail.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -444,13 +444,13 @@ Otherwise, click 'OK'.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;txtTrail.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>7</value>
   </data>
   <data name="lblDogName.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="lblDogName.Location" type="System.Drawing.Point, System.Drawing">
-    <value>34, 456</value>
+    <value>34, 515</value>
   </data>
   <data name="lblDogName.Size" type="System.Drawing.Size, System.Drawing">
     <value>91, 21</value>
@@ -471,7 +471,7 @@ Otherwise, click 'OK'.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblDogName.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
   <data name="lblHandlerName.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -480,7 +480,7 @@ Otherwise, click 'OK'.</value>
     <value>NoControl</value>
   </data>
   <data name="lblHandlerName.Location" type="System.Drawing.Point, System.Drawing">
-    <value>34, 495</value>
+    <value>34, 551</value>
   </data>
   <data name="lblHandlerName.Size" type="System.Drawing.Size, System.Drawing">
     <value>127, 21</value>
@@ -489,7 +489,7 @@ Otherwise, click 'OK'.</value>
     <value>16</value>
   </data>
   <data name="lblHandlerName.Text" xml:space="preserve">
-    <value>Handler name:</value>
+    <value>Dog-handler name:</value>
   </data>
   <data name="&gt;&gt;lblHandlerName.Name" xml:space="preserve">
     <value>lblHandlerName</value>
@@ -501,10 +501,10 @@ Otherwise, click 'OK'.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblHandlerName.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="txtDogName.Location" type="System.Drawing.Point, System.Drawing">
-    <value>176, 454</value>
+    <value>176, 510</value>
   </data>
   <data name="txtDogName.Size" type="System.Drawing.Size, System.Drawing">
     <value>218, 26</value>
@@ -522,10 +522,10 @@ Otherwise, click 'OK'.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;txtDogName.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="txtHandlerName.Location" type="System.Drawing.Point, System.Drawing">
-    <value>176, 492</value>
+    <value>176, 548</value>
   </data>
   <data name="txtHandlerName.Size" type="System.Drawing.Size, System.Drawing">
     <value>218, 26</value>
@@ -543,7 +543,7 @@ Otherwise, click 'OK'.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;txtHandlerName.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="lblLevelOfBlinding.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -576,7 +576,7 @@ Otherwise, click 'OK'.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblLevelOfBlinding.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="cbLevelOfBlinding.Items" xml:space="preserve">
     <value>Select the level of blinding</value>
@@ -615,6 +615,93 @@ Otherwise, click 'OK'.</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;cbLevelOfBlinding.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="lblNoOFArticles.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblNoOFArticles.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Cascadia Code, 12pt, style=Bold</value>
+  </data>
+  <data name="lblNoOFArticles.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="lblNoOFArticles.Location" type="System.Drawing.Point, System.Drawing">
+    <value>34, 235</value>
+  </data>
+  <data name="lblNoOFArticles.Size" type="System.Drawing.Size, System.Drawing">
+    <value>235, 21</value>
+  </data>
+  <data name="lblNoOFArticles.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="lblNoOFArticles.Text" xml:space="preserve">
+    <value>Number of articles found:</value>
+  </data>
+  <data name="&gt;&gt;lblNoOFArticles.Name" xml:space="preserve">
+    <value>lblNoOFArticles</value>
+  </data>
+  <data name="&gt;&gt;lblNoOFArticles.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblNoOFArticles.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblNoOFArticles.ZOrder" xml:space="preserve">
+    <value>13</value>
+  </data>
+  <data name="cbNumberOfArticlesFound.Items" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="cbNumberOfArticlesFound.Items1" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="cbNumberOfArticlesFound.Items2" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="cbNumberOfArticlesFound.Items3" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="cbNumberOfArticlesFound.Items4" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="cbNumberOfArticlesFound.Items5" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="cbNumberOfArticlesFound.Items6" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="cbNumberOfArticlesFound.Items7" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="cbNumberOfArticlesFound.Items8" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="cbNumberOfArticlesFound.Items9" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="cbNumberOfArticlesFound.Items10" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="cbNumberOfArticlesFound.Location" type="System.Drawing.Point, System.Drawing">
+    <value>276, 231</value>
+  </data>
+  <data name="cbNumberOfArticlesFound.Size" type="System.Drawing.Size, System.Drawing">
+    <value>121, 29</value>
+  </data>
+  <data name="cbNumberOfArticlesFound.TabIndex" type="System.Int32, mscorlib">
+    <value>21</value>
+  </data>
+  <data name="&gt;&gt;cbNumberOfArticlesFound.Name" xml:space="preserve">
+    <value>cbNumberOfArticlesFound</value>
+  </data>
+  <data name="&gt;&gt;cbNumberOfArticlesFound.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbNumberOfArticlesFound.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cbNumberOfArticlesFound.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -627,7 +714,7 @@ Otherwise, click 'OK'.</value>
     <value>True</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>918, 524</value>
+    <value>918, 596</value>
   </data>
   <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
     <value>Cascadia Mono, 12pt</value>

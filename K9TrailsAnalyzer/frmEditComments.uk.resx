@@ -132,4 +132,16 @@
   <data name="lblLanguage.Text" xml:space="preserve">
     <value>Мова:</value>
   </data>
+  <data name="cbLevelOfBlinding.Items4" xml:space="preserve">
+    <value>Double-blind Assisted: ні хендлер, ні асистент не знайомі з трасою</value>
+  </data>
+  <data name="cbLevelOfBlinding.Items5" xml:space="preserve">
+    <value>Подвійне сліпе соло: хендлер не знайомий з трасою</value>
+  </data>
+  <data name="cbLevelOfBlinding.Items2" xml:space="preserve">
+    <value>Відома доріжка, також синя лінія: обробник знайомий із доріжкою</value>
+  </data>
+  <data name="lblLevelOfBlinding.Text" xml:space="preserve">
+    <value>Рівень засліплення:</value>
+  </data>
 </root>

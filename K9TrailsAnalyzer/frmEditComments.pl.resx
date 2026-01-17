@@ -132,4 +132,16 @@
   <data name="lblLanguage.Text" xml:space="preserve">
     <value>Język:</value>
   </data>
+  <data name="lblDogName.Text" xml:space="preserve">
+    <value>Imię psa:</value>
+  </data>
+  <data name="cbLevelOfBlinding.Items5" xml:space="preserve">
+    <value>Podwójnie ślepe solo: przewodnik nie zna toru</value>
+  </data>
+  <data name="cbLevelOfBlinding.Items2" xml:space="preserve">
+    <value>Znany tor, czyli niebieska linia: przewodnik zna ten tor</value>
+  </data>
+  <data name="lblLevelOfBlinding.Text" xml:space="preserve">
+    <value>Poziom oślepienia:</value>
+  </data>
 </root>

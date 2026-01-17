@@ -7375,4 +7375,10 @@
   <data name="$this.Text" xml:space="preserve">
     <value>Upravit komentáře</value>
   </data>
+  <data name="lblDogName.Text" xml:space="preserve">
+    <value>Jméno psa:</value>
+  </data>
+  <data name="lblNoOFArticles.Text" xml:space="preserve">
+    <value>Počet nalezených předmětů:</value>
+  </data>
 </root>

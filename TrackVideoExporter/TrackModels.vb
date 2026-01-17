@@ -454,6 +454,7 @@ Public Class TrailReport
         End Set
     End Property
 
+    Public Property NumberOfArticlesFound As String
 
     Public Property LevelOfBlinding As LevelOfBlindingType
         Get

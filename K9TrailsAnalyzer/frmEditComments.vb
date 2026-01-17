@@ -87,6 +87,7 @@ Public Class frmEditComments
         ' Nastavení vybrané hodnoty z popisu trailu (musí být až po UpdateBlindingComboBox!)
         cbLevelOfBlinding.SelectedValue = Me.TrailDescription.LevelOfBlinding
 
+        cbNumberOfArticlesFound.SelectedItem = Me.TrailDescription.NumberOfArticlesFound
         ' 4. Vizuální úpravy a popisky
         lblInfo.Text = $"{Form1.mnuFile.Text} {GpxFileName}" & vbCrLf & lblInfo.Text
 
@@ -141,6 +142,9 @@ Public Class frmEditComments
             'Dim selectedLevelOfBlindingType As LevelOfBlindingType = DirectCast(cbLevelOfBlinding.SelectedValue, LevelOfBlindingType)
             Me.TrailDescription.LevelOfBlinding = cbLevelOfBlinding.SelectedValue
             Me.TrailDescription.LevelOfBlindingText = cbLevelOfBlinding.SelectedItem.Text
+        End If
+        If cbNumberOfArticlesFound.SelectedItem IsNot Nothing Then
+            Me.TrailDescription.NumberOfArticlesFound = cbNumberOfArticlesFound.SelectedItem.ToString
         End If
 
         Me.TrailDescription.GoalText = txtGoal.Text

@@ -40,6 +40,8 @@ Partial Class frmEditComments
         txtHandlerName = New TextBox()
         lblLevelOfBlinding = New Label()
         cbLevelOfBlinding = New ComboBox()
+        lblNoOFArticles = New Label()
+        cbNumberOfArticlesFound = New ComboBox()
         SuspendLayout()
         ' 
         ' lblInfo
@@ -133,17 +135,32 @@ Partial Class frmEditComments
         ' 
         ' cbLevelOfBlinding
         ' 
+        cbLevelOfBlinding.DropDownStyle = ComboBoxStyle.DropDownList
         cbLevelOfBlinding.DropDownWidth = 800
         cbLevelOfBlinding.FormattingEnabled = True
         cbLevelOfBlinding.Items.AddRange(New Object() {resources.GetString("cbLevelOfBlinding.Items"), resources.GetString("cbLevelOfBlinding.Items1"), resources.GetString("cbLevelOfBlinding.Items2"), resources.GetString("cbLevelOfBlinding.Items3"), resources.GetString("cbLevelOfBlinding.Items4"), resources.GetString("cbLevelOfBlinding.Items5")})
         resources.ApplyResources(cbLevelOfBlinding, "cbLevelOfBlinding")
         cbLevelOfBlinding.Name = "cbLevelOfBlinding"
         ' 
+        ' lblNoOFArticles
+        ' 
+        resources.ApplyResources(lblNoOFArticles, "lblNoOFArticles")
+        lblNoOFArticles.Name = "lblNoOFArticles"
+        ' 
+        ' cbNumberOfArticlesFound
+        ' 
+        cbNumberOfArticlesFound.DropDownStyle = ComboBoxStyle.DropDownList
+        cbNumberOfArticlesFound.FormattingEnabled = True
+        cbNumberOfArticlesFound.Items.AddRange(New Object() {resources.GetString("cbNumberOfArticlesFound.Items"), resources.GetString("cbNumberOfArticlesFound.Items1"), resources.GetString("cbNumberOfArticlesFound.Items2"), resources.GetString("cbNumberOfArticlesFound.Items3"), resources.GetString("cbNumberOfArticlesFound.Items4"), resources.GetString("cbNumberOfArticlesFound.Items5"), resources.GetString("cbNumberOfArticlesFound.Items6"), resources.GetString("cbNumberOfArticlesFound.Items7"), resources.GetString("cbNumberOfArticlesFound.Items8"), resources.GetString("cbNumberOfArticlesFound.Items9"), resources.GetString("cbNumberOfArticlesFound.Items10")})
+        resources.ApplyResources(cbNumberOfArticlesFound, "cbNumberOfArticlesFound")
+        cbNumberOfArticlesFound.Name = "cbNumberOfArticlesFound"
+        ' 
         ' frmEditComments
         ' 
         resources.ApplyResources(Me, "$this")
         AutoScaleMode = AutoScaleMode.Font
         BackColor = Color.LightYellow
+        Controls.Add(cbNumberOfArticlesFound)
         Controls.Add(cbLevelOfBlinding)
         Controls.Add(lblLevelOfBlinding)
         Controls.Add(txtHandlerName)
@@ -156,6 +173,7 @@ Partial Class frmEditComments
         Controls.Add(cbLanguage)
         Controls.Add(btnAnotherLang)
         Controls.Add(btnOK)
+        Controls.Add(lblNoOFArticles)
         Controls.Add(lblGoal)
         Controls.Add(lblTrail)
         Controls.Add(lblLanguage)
@@ -184,4 +202,6 @@ Partial Class frmEditComments
     Friend WithEvents txtHandlerName As TextBox
     Friend WithEvents lblLevelOfBlinding As Label
     Friend WithEvents cbLevelOfBlinding As ComboBox
+    Friend WithEvents lblNoOFArticles As Label
+    Friend WithEvents cbNumberOfArticlesFound As ComboBox
 End Class

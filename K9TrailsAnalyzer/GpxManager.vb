@@ -3109,6 +3109,7 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "performance", localizedReport.Performance.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "levelOfBlindingType", localizedReport.LevelOfBlinding.ToString, True,,, GpxReader.K9_NAMESPACE_URI)
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "levelOfBlindingText", localizedReport.LevelOfBlindingStyledText.Text, True,,, GpxReader.K9_NAMESPACE_URI)
+            Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "numberOfArticlesFound", localizedReport.NumberOfArticlesFound, True,,, GpxReader.K9_NAMESPACE_URI)
 
             Dim weatherNode As XmlNode = Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "weather", localizedReport.Weather.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             WriteWeatherDataToXml(weatherNode, localizedReport.WeatherData)
@@ -3223,6 +3224,8 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
         Dim performanceNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "performance", reportNode)
         Dim levelOfBlindingTypeNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "levelOfBlindingType", reportNode)
         Dim levelOfBlindingTextNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "levelOfBlindingType", reportNode)
+        Dim NumberOfArticlesFoundNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "numberOfArticlesFound", reportNode)
+
 
         If goalNode Is Nothing OrElse trailNode Is Nothing OrElse performanceNode Is Nothing Then Return False
 
@@ -3237,6 +3240,7 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
                 .LevelOfBlinding = LevelOfBlindingType.Unknown ' nebo jiná výchozí hodnota
             End If
             .LevelOfBlindingText = If(levelOfBlindingTextNode?.InnerText, "")
+            .NumberOfArticlesFound = If(NumberOfArticlesFoundNode?.InnerText, "0")
         End With
         Return True
 

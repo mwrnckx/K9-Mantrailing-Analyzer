@@ -135,4 +135,19 @@
   <data name="lblLanguage.Text" xml:space="preserve">
     <value>Sprache:</value>
   </data>
+  <data name="cbLevelOfBlinding.Items4" xml:space="preserve">
+    <value>Doppelblind Assistiert: Weder der Hundeführer noch der Assistent sind mit der Strecke vertraut</value>
+  </data>
+  <data name="cbLevelOfBlinding.Items5" xml:space="preserve">
+    <value>Doppelblind-Solo: Der Hundeführer ist mit der Strecke nicht vertraut</value>
+  </data>
+  <data name="cbLevelOfBlinding.Items2" xml:space="preserve">
+    <value>Bekannte Strecke, auch Blaue Linie genannt: Der Hundeführer ist mit der Strecke vertraut</value>
+  </data>
+  <data name="lblLevelOfBlinding.Text" xml:space="preserve">
+    <value>Grad der Verblindung:</value>
+  </data>
+  <data name="lblNoOFArticles.Text" xml:space="preserve">
+    <value>Anzahl der gefundenen Artikel:</value>
+  </data>
 </root>
