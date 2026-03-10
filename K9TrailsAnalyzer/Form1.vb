@@ -1,11 +1,6 @@
 ﻿Imports System.ComponentModel
-Imports System.Data.Common
-Imports System.Diagnostics.Metrics
-Imports System.DirectoryServices.ActiveDirectory
 Imports System.Globalization
 Imports System.IO
-Imports System.Reflection
-Imports System.Runtime.InteropServices.JavaScript.JSType
 Imports System.Text
 Imports System.Text.Encodings.Web
 Imports System.Text.Json
@@ -13,10 +8,7 @@ Imports System.Text.Json.Serialization
 Imports System.Threading
 Imports System.Windows.Forms.DataVisualization.Charting
 Imports GPXTrailAnalyzer.My.Resources
-Imports Microsoft.VisualBasic.Logging
-Imports TrackVideoExporter
 Imports TrackVideoExporter.TrackVideoExporter
-Imports Windows.Win32.System
 
 
 
@@ -105,7 +97,7 @@ Partial Public Class Form1
         FillListViewWithGpxRecords()
 
         Enabled = True
-        Me.AcceptButton = Me.btnCharts
+        AcceptButton = btnCharts
 
     End Sub
 
@@ -175,18 +167,18 @@ Partial Public Class Form1
         Next i
 
 
-        For Each item In Me.displayList
+        For Each item In displayList
             ' Přihlášení k události PropertyChanged každého objektu
-            AddHandler item.PropertyChanged, AddressOf Me.TrailItem_PropertyChanged
+            AddHandler item.PropertyChanged, AddressOf TrailItem_PropertyChanged
         Next
 
         UpdateRankingAndDisplay(False) ' Aktualizuje řazení a pořadí
 
         dgvCompetition.Columns.Clear()
-        Me.bsCompetitions.DataSource = Me.displayList 'bindingSource kvůli řazení sloupců
-        Me.dgvCompetition.DataSource = Me.bsCompetitions
+        bsCompetitions.DataSource = displayList 'bindingSource kvůli řazení sloupců
+        dgvCompetition.DataSource = bsCompetitions
         'zformátovat dgvCompetition:
-        Me.FormatDgvCompetition()
+        FormatDgvCompetition()
     End Sub
 
 
@@ -195,7 +187,7 @@ Partial Public Class Form1
         ' Zkontrolujte, zda se změnily vypočítané TotalPoints.
         If e.PropertyName = NameOf(TrailStatsDisplay.TotalPoints) Then
             ' TotalPoints se změnily, musíme znovu seřadit celý seznam a aktualizovat pořadí
-            Me.UpdateRankingAndDisplay(True)
+            UpdateRankingAndDisplay(True)
         End If
 
         Dim changedItem As TrailStatsDisplay = TryCast(sender, TrailStatsDisplay)
@@ -250,11 +242,11 @@ Partial Public Class Form1
     Private Sub UpdateRankingAndDisplay(Optional resetBindings As Boolean = False)
         ' 1. Seřadit displayList (sestupně podle TotalPoints)
         ' Funkce CompareTo pro Integer je nejpřímější. Pro sestupné řazení se vymění a a b
-        If Me.displayList.Count < 25 Then
-            Me.displayList.Sort(Function(a, b) b.TotalPoints.CompareTo(a.TotalPoints))
+        If displayList.Count < 25 Then
+            displayList.Sort(Function(a, b) b.TotalPoints.CompareTo(a.TotalPoints))
             ' 2. Aktualizovat vlastnost Ranking
             Dim ranking As Integer = 1
-            For Each item In Me.displayList
+            For Each item In displayList
                 ' Důležité: Nastavte Ranking pomocí vlastnosti, kde máte implementovaný INotifyPropertyChanged
                 ' i pro Ranking. Pokud Ranking nemá INotifyPropertyChanged, musíte ho přidat.
                 ' Předpokládáme, že jej nyní přidáme do TrailStatsDisplay (viz Krok 2).
@@ -262,8 +254,8 @@ Partial Public Class Form1
                 ranking += 1
             Next
         Else 'Velký počet záznamů - pak seřadit podle data
-            Me.displayList.Sort(Function(a, b) b.GPXFilename.CompareTo(a.GPXFilename))
-            For Each item In Me.displayList
+            displayList.Sort(Function(a, b) b.GPXFilename.CompareTo(a.GPXFilename))
+            For Each item In displayList
                 ' Důležité: Nastavte Ranking pomocí vlastnosti, kde máte implementovaný INotifyPropertyChanged
                 ' i pro Ranking. Pokud Ranking nemá INotifyPropertyChanged, musíte ho přidat.
                 ' Předpokládáme, že jej nyní přidáme do TrailStatsDisplay (viz Krok 2).
@@ -276,14 +268,14 @@ Partial Public Class Form1
         ' 3. Vynutit aktualizaci DataGridView (klíčové)
         ' Protože jsme změnili pořadí v podkladovém listu, musíme BindingSource
         ' upozornit, že se všechna data změnila.
-        If resetBindings Then Me.bsCompetitions.ResetBindings(False)
+        If resetBindings Then bsCompetitions.ResetBindings(False)
 
     End Sub
 
     Private Sub FormatDgvCompetition()
 
         ' Krok 3: Projít sloupce, lokalizovat, vynutit zalomení a nastavit Autosize
-        For Each column As DataGridViewColumn In Me.dgvCompetition.Columns
+        For Each column As DataGridViewColumn In dgvCompetition.Columns
 
             ' Příklad získání lokalizovaného textu TODO:!!!!!!
             Dim propertyName As String = column.DataPropertyName
@@ -304,13 +296,13 @@ Partial Public Class Form1
             column.Width = 10
             column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
 
-            column.DefaultCellStyle.Font = New Font("Cascadia Code", 12.0F, FontStyle.Regular, GraphicsUnit.Point, CByte(238))
+            column.DefaultCellStyle.Font = New Font("Cascadia Code", 12.0F, FontStyle.Regular, GraphicsUnit.Point, 238)
             column.HeaderCell.Style.ForeColor = Color.Black
         Next
-        Me.dgvCompetition.Columns("GPXFilename").HeaderText = ActiveCategoryInfo.Name
-        Me.dgvCompetition.Columns("GPXFilename").HeaderCell.Style.Font = New Font("Cascadia Code", 16.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
+        dgvCompetition.Columns("GPXFilename").HeaderText = ActiveCategoryInfo.Name
+        dgvCompetition.Columns("GPXFilename").HeaderCell.Style.Font = New Font("Cascadia Code", 16.0F, FontStyle.Bold, GraphicsUnit.Point, 238)
         ' Krok 4: Vynutit automatické přizpůsobení šířky po dokončení
-        Me.dgvCompetition.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells)
+        dgvCompetition.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells)
 
 
         Dim columnsIntegerData As String() = {
@@ -327,8 +319,8 @@ Partial Public Class Form1
 
         For Each columnName As String In columnsIntegerData
             ' Zkontrolujte, jestli sloupec existuje
-            If Me.dgvCompetition.Columns.Contains(columnName) Then
-                Dim column As DataGridViewColumn = Me.dgvCompetition.Columns(columnName)
+            If dgvCompetition.Columns.Contains(columnName) Then
+                Dim column As DataGridViewColumn = dgvCompetition.Columns(columnName)
 
                 ' Nastavte formát na jedno desetinné místo ("N1")
                 ' N1 = Číslo s oddělovači tisíců a 1 desetinným místem (podle aktuální regionální kultury)
@@ -346,8 +338,8 @@ Partial Public Class Form1
 }
         For Each columnName As String In columnsFloatData
             ' Zkontrolujte, jestli sloupec existuje
-            If Me.dgvCompetition.Columns.Contains(columnName) Then
-                Dim column As DataGridViewColumn = Me.dgvCompetition.Columns(columnName)
+            If dgvCompetition.Columns.Contains(columnName) Then
+                Dim column As DataGridViewColumn = dgvCompetition.Columns(columnName)
                 ' Nastavte formát na jedno desetinné místo ("N1")
                 ' N1 = Číslo s oddělovači tisíců a 1 desetinným místem (podle aktuální regionální kultury)
                 ' F1 = Pevný počet desetinných míst, 1 desetinné místo
@@ -355,20 +347,20 @@ Partial Public Class Form1
             End If
         Next
 
-        If Me.dgvCompetition.Columns.Contains("WeightedDistanceAlongTrailPerCent") Then
-            Dim column As DataGridViewColumn = Me.dgvCompetition.Columns("WeightedDistanceAlongTrailPerCent")
+        If dgvCompetition.Columns.Contains("WeightedDistanceAlongTrailPerCent") Then
+            Dim column As DataGridViewColumn = dgvCompetition.Columns("WeightedDistanceAlongTrailPerCent")
             ' P2 = Procenta na 2 desetinná místa (např. 12,34 %)
             column.DefaultCellStyle.Format = "P0"
         End If
 
-        If Me.dgvCompetition.Columns.Contains("WeightedTimePerCent") Then
-            Dim column As DataGridViewColumn = Me.dgvCompetition.Columns("WeightedTimePerCent")
+        If dgvCompetition.Columns.Contains("WeightedTimePerCent") Then
+            Dim column As DataGridViewColumn = dgvCompetition.Columns("WeightedTimePerCent")
             ' P2 = Procenta na 2 desetinná místa (např. 12,34 %)
             column.DefaultCellStyle.Format = "P0"
         End If
 
-        If Me.dgvCompetition.Columns.Contains("StartTime") Then
-            Dim column As DataGridViewColumn = Me.dgvCompetition.Columns("StartTime")
+        If dgvCompetition.Columns.Contains("StartTime") Then
+            Dim column As DataGridViewColumn = dgvCompetition.Columns("StartTime")
             column.DefaultCellStyle.Format = "HH:mm"
             column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
         End If
@@ -384,8 +376,8 @@ Partial Public Class Form1
     }
         For Each columnName As String In columnsPointsData
             ' Zkontrolujte, jestli sloupec existuje
-            If Me.dgvCompetition.Columns.Contains(columnName) Then
-                Dim column As DataGridViewColumn = Me.dgvCompetition.Columns(columnName)
+            If dgvCompetition.Columns.Contains(columnName) Then
+                Dim column As DataGridViewColumn = dgvCompetition.Columns(columnName)
                 ' Nastavte formát na jedno desetinné místo ("N1")
                 ' N1 = Číslo s oddělovači tisíců a 1 desetinným místem (podle aktuální regionální kultury)
                 ' F1 = Pevný počet desetinných míst, 1 desetinné místo
@@ -395,11 +387,11 @@ Partial Public Class Form1
                 'column.HeaderCell.Style.BackColor = Color.DarkSeaGreen
             End If
         Next
-        Me.dgvCompetition.Columns("TotalPoints").DefaultCellStyle.Font = New Font(Me.dgvCompetition.Columns("TotalPoints").DefaultCellStyle.Font, FontStyle.Bold)
+        dgvCompetition.Columns("TotalPoints").DefaultCellStyle.Font = New Font(dgvCompetition.Columns("TotalPoints").DefaultCellStyle.Font, FontStyle.Bold)
 
         ' Ranking je pouze pro čtení
-        If Me.dgvCompetition.Columns.Contains(NameOf(TrailStatsDisplay.Ranking)) Then
-            Me.dgvCompetition.Columns(NameOf(TrailStatsDisplay.Ranking)).ReadOnly = True
+        If dgvCompetition.Columns.Contains(NameOf(TrailStatsDisplay.Ranking)) Then
+            dgvCompetition.Columns(NameOf(TrailStatsDisplay.Ranking)).ReadOnly = True
         End If
 
     End Sub
@@ -450,34 +442,34 @@ Partial Public Class Form1
 
         ' Vytvoření nové instance
         GPXFilesManager = New GpxFileManager()
-        GPXFilesManager.ForceProcess = Me.mnuProcessProcessed.Checked
+        GPXFilesManager.ForceProcess = mnuProcessProcessed.Checked
         AddHandler GPXFilesManager.WarningOccurred, AddressOf WriteRTBWarning
 
     End Sub
 
     Private Sub WriteRTBWarning(message As String, _color As Color)
-        Me.rtbWarnings.SelectionStart = Me.rtbOutput.Text.Length ' Pozice na konec textu
-        Me.rtbWarnings.SelectionColor = _color ' Nastavit barvu
-        Me.rtbWarnings.AppendText(message & vbCrLf) ' Přidání odřádkování
-        Me.rtbWarnings.ScrollToCaret() ' Pozice na konec textu
+        rtbWarnings.SelectionStart = rtbOutput.Text.Length ' Pozice na konec textu
+        rtbWarnings.SelectionColor = _color ' Nastavit barvu
+        rtbWarnings.AppendText(message & vbCrLf) ' Přidání odřádkování
+        rtbWarnings.ScrollToCaret() ' Pozice na konec textu
     End Sub
 
     Private Sub WriteRTBOutput(_gpxFilesManager As GpxFileManager)
         Dim _gpxRecords As List(Of GPXRecord) = _gpxFilesManager.GpxRecords
 
-        Me.rtbOutput.Clear()
-        Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Underline Or FontStyle.Bold) ' Nastavit font
-        Me.rtbOutput.SelectionColor = Color.DarkGreen ' Nastavit barvu
+        rtbOutput.Clear()
+        rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Underline Or FontStyle.Bold) ' Nastavit font
+        rtbOutput.SelectionColor = Color.DarkGreen ' Nastavit barvu
 
         Dim manySpaces As String = "                                                 "
-        Me.rtbOutput.AppendText(("    " & My.Resources.Resource1.outgpxFileName & manySpaces).Substring(0, 35))
+        rtbOutput.AppendText(("    " & My.Resources.Resource1.outgpxFileName & manySpaces).Substring(0, 35))
         'Me.rtbOutput.AppendText((My.Resources.Resource1.X_AxisLabel & manySpaces).Substring(0, 12))
-        Me.rtbOutput.AppendText((My.Resources.Resource1.outLength & manySpaces).Substring(0, 12))
-        Me.rtbOutput.AppendText((My.Resources.Resource1.outAge & manySpaces).Substring(0, 8))
-        Me.rtbOutput.AppendText((My.Resources.Resource1.outSpeed & manySpaces).Substring(0, 11))
-        Me.rtbOutput.AppendText((My.Resources.Resource1.Y_AxisLabelDeviation & manySpaces).Substring(0, 12))
-        Me.rtbOutput.AppendText(My.Resources.Resource1.outDescription)
-        Me.rtbOutput.AppendText(vbCrLf)
+        rtbOutput.AppendText((My.Resources.Resource1.outLength & manySpaces).Substring(0, 12))
+        rtbOutput.AppendText((My.Resources.Resource1.outAge & manySpaces).Substring(0, 8))
+        rtbOutput.AppendText((My.Resources.Resource1.outSpeed & manySpaces).Substring(0, 11))
+        rtbOutput.AppendText((My.Resources.Resource1.Y_AxisLabelDeviation & manySpaces).Substring(0, 12))
+        rtbOutput.AppendText(My.Resources.Resource1.outDescription)
+        rtbOutput.AppendText(vbCrLf)
 
         ' Display results
         Dim i As Integer = 0
@@ -486,50 +478,50 @@ Partial Public Class Form1
                 Dim fileShortName As String = (IO.Path.GetFileNameWithoutExtension(_gpxRecord.Reader.FilePath) & manySpaces).Substring(0, 30)
                 i += 1
                 ' Nastavení fontu a barvy textu
-                Me.rtbOutput.SelectionStart = Me.rtbOutput.Text.Length ' Pozice na konec textu
-                Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
+                rtbOutput.SelectionStart = rtbOutput.Text.Length ' Pozice na konec textu
+                rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
 
-                Me.rtbOutput.SelectionColor = Color.Maroon ' Nastavit barvu
-                Me.rtbOutput.AppendText($"{i.ToString("D3")} {fileShortName} ")
+                rtbOutput.SelectionColor = Color.Maroon ' Nastavit barvu
+                rtbOutput.AppendText($"{i.ToString("D3")} {fileShortName} ")
 
-                Me.rtbOutput.SelectionColor = Color.DarkGreen ' Nastavit barvu
+                rtbOutput.SelectionColor = Color.DarkGreen ' Nastavit barvu
                 'Me.rtbOutput.AppendText(_gpxRecord.TrailStart.Time.ToString("dd.MM.yy") & "    ")
-                Me.rtbOutput.AppendText((_gpxRecord.TrailDistance / 1000.0).ToString("F2") & " km" & "     ")
+                rtbOutput.AppendText((_gpxRecord.TrailDistance / 1000.0).ToString("F2") & " km" & "     ")
                 If _gpxRecord.TrailStats.TrailAge.TotalHours > 0 Then
-                    Me.rtbOutput.AppendText(_gpxRecord.TrailStats.TrailAge.TotalHours.ToString("F1") & " h" & "   ")
+                    rtbOutput.AppendText(_gpxRecord.TrailStats.TrailAge.TotalHours.ToString("F1") & " h" & "   ")
                 Else
-                    Me.rtbOutput.AppendText("        ")
+                    rtbOutput.AppendText("        ")
                 End If
                 'Dim dogspeed As Double = _gpxRecord.DogSpeed
                 If _gpxRecord.TrailStats.DogNetSpeed > 0 Then
-                    Me.rtbOutput.AppendText(_gpxRecord.TrailStats.DogNetSpeed.ToString("F1") & " km/h" & "   ")
+                    rtbOutput.AppendText(_gpxRecord.TrailStats.DogNetSpeed.ToString("F1") & " km/h" & "   ")
                 Else
-                    Me.rtbOutput.AppendText("           ")
+                    rtbOutput.AppendText("           ")
                 End If
                 If _gpxRecord.TrailStats.AverDeviation > 0 Then
-                    Me.rtbOutput.AppendText(_gpxRecord.TrailStats.AverDeviation.ToString("F1") & " m" & "   ")
+                    rtbOutput.AppendText(_gpxRecord.TrailStats.AverDeviation.ToString("F1") & " m" & "   ")
                 Else
-                    Me.rtbOutput.AppendText("        ")
+                    rtbOutput.AppendText("        ")
                 End If
                 If Not _gpxRecord.Description = Nothing Then
-                    Me.rtbOutput.AppendText(_gpxRecord.Description)
+                    rtbOutput.AppendText(_gpxRecord.Description)
                 End If
 
                 If Not _gpxRecord.Link = Nothing Then
 
-                    Me.rtbOutput.AppendText("    Video: ")
-                    Me.rtbOutput.SelectionColor = Color.Blue ' Nastavit barvu
-                    Me.rtbOutput.AppendText(_gpxRecord.Link)
+                    rtbOutput.AppendText("    Video: ")
+                    rtbOutput.SelectionColor = Color.Blue ' Nastavit barvu
+                    rtbOutput.AppendText(_gpxRecord.Link)
 
                 End If
 
-                Me.rtbOutput.AppendText(vbCrLf)
+                rtbOutput.AppendText(vbCrLf)
 
                 ' Posunutí kurzoru na konec textu
-                Me.rtbOutput.SelectionStart = Me.rtbOutput.Text.Length
+                rtbOutput.SelectionStart = rtbOutput.Text.Length
 
                 ' Skrolování na aktuální pozici kurzoru
-                Me.rtbOutput.ScrollToCaret()
+                rtbOutput.ScrollToCaret()
             Catch ex As Exception
                 MessageBox.Show(My.Resources.Resource1.mBoxDataRetrievalFailed & vbCrLf & "File: " & IO.Path.GetFileNameWithoutExtension(_gpxRecord.Reader.FilePath) & vbCrLf & ex.Message & Environment.NewLine &
                               $"(StackTrace):" & Environment.NewLine &
@@ -541,66 +533,66 @@ Partial Public Class Form1
         'Dim AgeAsDouble As List(Of Double) = age.Select(Function(ts) ts.TotalMinutes).ToList()
 
         ' Nastavení fontu a barvy textu
-        Me.rtbOutput.SelectionStart = Me.rtbOutput.Text.Length ' Pozice na konec textu
-        Me.rtbOutput.SelectionFont = New Font("Calibri", 10) ' Nastavit font
-        Me.rtbOutput.SelectionColor = Color.Maroon ' Nastavit barvu
-        Me.rtbOutput.AppendText(vbCrLf & My.Resources.Resource1.outProcessed_period_from & _gpxFilesManager.dateFrom.ToShortDateString & My.Resources.Resource1.outDo & _gpxFilesManager.dateTo.ToShortDateString &
+        rtbOutput.SelectionStart = rtbOutput.Text.Length ' Pozice na konec textu
+        rtbOutput.SelectionFont = New Font("Calibri", 10) ' Nastavit font
+        rtbOutput.SelectionColor = Color.Maroon ' Nastavit barvu
+        rtbOutput.AppendText(vbCrLf & My.Resources.Resource1.outProcessed_period_from & _gpxFilesManager.dateFrom.ToShortDateString & My.Resources.Resource1.outDo & _gpxFilesManager.dateTo.ToShortDateString &
                 vbCrLf & My.Resources.Resource1.outAll_gpx_files_from_directory & ActiveCategoryInfo.RemoteDirectory & vbCrLf & vbCrLf)
 
         Dim manydots As String = "...................................................................."
         Dim labelLength As Integer = 40
 
-        Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
-        Me.rtbOutput.SelectionColor = Color.Maroon
-        Me.rtbOutput.AppendText((My.Resources.Resource1.outTotalNumberOfGPXFiles & manydots).Substring(0, labelLength))
+        rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
+        rtbOutput.SelectionColor = Color.Maroon
+        rtbOutput.AppendText((My.Resources.Resource1.outTotalNumberOfGPXFiles & manydots).Substring(0, labelLength))
 
-        Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
-        Me.rtbOutput.SelectionColor = Color.Firebrick
-        Me.rtbOutput.AppendText(_gpxRecords.Count & vbCrLf)
-
-
-
-        Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
-        Me.rtbOutput.SelectionColor = Color.Maroon
-        Me.rtbOutput.AppendText((My.Resources.Resource1.outTotalLength & manydots).Substring(0, labelLength))
-
-        Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
-        Me.rtbOutput.SelectionColor = Color.Firebrick
+        rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
+        rtbOutput.SelectionColor = Color.Firebrick
+        rtbOutput.AppendText(_gpxRecords.Count & vbCrLf)
 
 
-        Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
-        Me.rtbOutput.SelectionColor = Color.Firebrick
-        Dim totalDistanceKm As Double = Me.GPXFilesManager.TotalDistancesKm.Last.totalDistanceKm '_gpxFilesManager.TotalDistance
-        Me.rtbOutput.AppendText((totalDistanceKm).ToString("F1") & " km" & vbCrLf)
+
+        rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
+        rtbOutput.SelectionColor = Color.Maroon
+        rtbOutput.AppendText((My.Resources.Resource1.outTotalLength & manydots).Substring(0, labelLength))
+
+        rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
+        rtbOutput.SelectionColor = Color.Firebrick
 
 
-        Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
-        Me.rtbOutput.SelectionColor = Color.Maroon
-        Me.rtbOutput.AppendText((My.Resources.Resource1.outAverageDistance & manydots).Substring(0, labelLength))
-        Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
-        Me.rtbOutput.SelectionColor = Color.Firebrick
+        rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
+        rtbOutput.SelectionColor = Color.Firebrick
+        Dim totalDistanceKm As Double = GPXFilesManager.TotalDistancesKm.Last.totalDistanceKm '_gpxFilesManager.TotalDistance
+        rtbOutput.AppendText((totalDistanceKm).ToString("F1") & " km" & vbCrLf)
+
+
+        rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
+        rtbOutput.SelectionColor = Color.Maroon
+        rtbOutput.AppendText((My.Resources.Resource1.outAverageDistance & manydots).Substring(0, labelLength))
+        rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
+        rtbOutput.SelectionColor = Color.Firebrick
         Dim averageDistance As Double = GetAverage(Of Double)(_gpxRecords, Function(r) r.TrailStats.RunnerDistance)
-        Me.rtbOutput.AppendText((averageDistance).ToString("F0") & " m" & vbCrLf)
-        Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
-        Me.rtbOutput.SelectionColor = Color.Maroon
-        Me.rtbOutput.AppendText((My.Resources.Resource1.outAverageAge & manydots).Substring(0, labelLength))
-        Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
-        Me.rtbOutput.SelectionColor = Color.Firebrick
+        rtbOutput.AppendText((averageDistance).ToString("F0") & " m" & vbCrLf)
+        rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
+        rtbOutput.SelectionColor = Color.Maroon
+        rtbOutput.AppendText((My.Resources.Resource1.outAverageAge & manydots).Substring(0, labelLength))
+        rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
+        rtbOutput.SelectionColor = Color.Firebrick
         Dim averageTrailAge As Double = GetAverage(Of TimeSpan?)(_gpxRecords, Function(r) r.TrailStats.TrailAge)
-        Me.rtbOutput.AppendText(averageTrailAge.ToString("F2") & " h " & vbCrLf)
-        Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
-        Me.rtbOutput.SelectionColor = Color.Maroon
-        Me.rtbOutput.AppendText((My.Resources.Resource1.outAverageSpeed & manydots).Substring(0, labelLength))
-        Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
-        Me.rtbOutput.SelectionColor = Color.Firebrick
+        rtbOutput.AppendText(averageTrailAge.ToString("F2") & " h " & vbCrLf)
+        rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
+        rtbOutput.SelectionColor = Color.Maroon
+        rtbOutput.AppendText((My.Resources.Resource1.outAverageSpeed & manydots).Substring(0, labelLength))
+        rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
+        rtbOutput.SelectionColor = Color.Firebrick
         Dim averageDogSpeed As Double = GetAverage(_gpxRecords, Function(r) r.TrailStats.DogNetSpeed, ignoreZeros:=True)
-        Me.rtbOutput.AppendText(averageDogSpeed.ToString("F1") & " km/h")
+        rtbOutput.AppendText(averageDogSpeed.ToString("F1") & " km/h")
 
         ' Posunutí kurzoru na konec textu
-        Me.rtbOutput.SelectionStart = Me.rtbOutput.Text.Length
+        rtbOutput.SelectionStart = rtbOutput.Text.Length
 
         ' Skrolování na aktuální pozici kurzoru
-        Me.rtbOutput.ScrollToCaret()
+        rtbOutput.ScrollToCaret()
     End Sub
 
 
@@ -662,7 +654,7 @@ Partial Public Class Form1
                 Debug.WriteLine($"Selected file: {dialog.FileName}")
                 Dim csvFilePath As String = dialog.FileName
                 Try
-                    Me.WriteCSVfile(csvFilePath)
+                    WriteCSVfile(csvFilePath)
                 Catch ex As Exception
                     MessageBox.Show($"{My.Resources.Resource1.mBoxErrorCreatingCSV}: {csvFilePath} " & ex.Message & vbCrLf, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 End Try
@@ -706,7 +698,7 @@ Partial Public Class Form1
                         Case 2
                             rtbOutput.SaveFile(dialog.FileName, RichTextBoxStreamType.PlainText)
                         Case 3
-                            Me.WriteCSVfile(dialog.FileName)
+                            WriteCSVfile(dialog.FileName)
                     End Select
 
 
@@ -755,7 +747,7 @@ Partial Public Class Form1
 
             WriteRTBWarning($"{vbCrLf}CSV file created: {csvFilePath}.{Environment.NewLine}", Color.DarkGreen)
         Catch ex As Exception
-            Me.WriteRTBWarning($"{My.Resources.Resource1.mBoxErrorCreatingCSV}: {ex.Message}{Environment.NewLine}", Color.DarkGreen)
+            WriteRTBWarning($"{My.Resources.Resource1.mBoxErrorCreatingCSV}: {ex.Message}{Environment.NewLine}", Color.DarkGreen)
             MessageBox.Show($"Error creating CSV file: {ex.Message}")
         End Try
     End Sub
@@ -778,14 +770,14 @@ Partial Public Class Form1
 
         ' Získání dat pro graf rychlosti
 
-        chart1 = New frmChart(ActiveCategoryInfo.Name, GPXFilesManager.Speeds, Resource1.Y_AxisLabelSpeed, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelSpeed, True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveCategoryInfo.Name, GPXFilesManager.Speeds, Resource1.Y_AxisLabelSpeed, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelSpeed, True, SeriesChartType.Point, currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
 
 
         ' Získání dat pro graf stáří trasy
-        chart1 = New frmChart(ActiveCategoryInfo.Name, GPXFilesManager.Ages, Resource1.Y_AxisLabelAge, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelAge, True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveCategoryInfo.Name, GPXFilesManager.Ages, Resource1.Y_AxisLabelAge, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelAge, True, SeriesChartType.Point, currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
@@ -793,32 +785,32 @@ Partial Public Class Form1
 
 
         'Difficulty indexes
-        chart1 = New frmChart(ActiveCategoryInfo.Name, GPXFilesManager.DiffIndexes, "Trail Difficulty Index (h·km)", GPXFilesManager.dateFrom, GPXFilesManager.dateTo, "Trail Difficulty Index (h·km)", True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveCategoryInfo.Name, GPXFilesManager.DiffIndexes, "Trail Difficulty Index (h·km)", GPXFilesManager.dateFrom, GPXFilesManager.dateTo, "Trail Difficulty Index (h·km)", True, SeriesChartType.Point, currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
         'Total Difficulty indexes
 
-        chart1 = New frmChart(ActiveCategoryInfo.Name, GPXFilesManager.TotalDiffIndexes, "Total Trail Difficulty Index (h·km)", GPXFilesManager.dateFrom, GPXFilesManager.dateTo, "Total Trail Difficulty Index (h·km)", True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveCategoryInfo.Name, GPXFilesManager.TotalDiffIndexes, "Total Trail Difficulty Index (h·km)", GPXFilesManager.dateFrom, GPXFilesManager.dateTo, "Total Trail Difficulty Index (h·km)", True, SeriesChartType.Point, currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
 
         'Deviations
-        chart1 = New frmChart(ActiveCategoryInfo.Name, GPXFilesManager.Deviations, Resource1.Y_AxisLabelDeviation, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelDeviation, True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveCategoryInfo.Name, GPXFilesManager.Deviations, Resource1.Y_AxisLabelDeviation, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelDeviation, True, SeriesChartType.Point, currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
 
 
         'Distances
-        chart1 = New frmChart(ActiveCategoryInfo.Name, GPXFilesManager.DistancesKm, Resource1.Y_AxisLabelLength, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelLength, True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveCategoryInfo.Name, GPXFilesManager.DistancesKm, Resource1.Y_AxisLabelLength, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelLength, True, SeriesChartType.Point, currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
 
         'TotDistance
-        chart1 = New frmChart(ActiveCategoryInfo.Name, Me.GPXFilesManager.TotalDistancesKm, Resource1.Y_AxisLabelTotalLength, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelTotalLength, True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveCategoryInfo.Name, GPXFilesManager.TotalDistancesKm, Resource1.Y_AxisLabelTotalLength, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelTotalLength, True, SeriesChartType.Point, currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
@@ -856,7 +848,7 @@ Partial Public Class Form1
 
 
         ' Nastavení AcceptButton pro formulář, aby se při stisku Enter spustil btnReadGpxFiles_Click
-        Me.AcceptButton = Me.btnReadGpxFiles
+        AcceptButton = btnReadGpxFiles
 
     End Sub
 
@@ -881,7 +873,7 @@ Partial Public Class Form1
         currentCulture = Thread.CurrentThread.CurrentUICulture
 
         'Dim resources = New ComponentResourceManager([GetType]())
-        Dim resources = New ComponentResourceManager(Me.GetType) ' nebo jiný konkrétní formulář
+        Dim resources = New ComponentResourceManager([GetType]) ' nebo jiný konkrétní formulář
 
         resources.ApplyResources(Me, "$this")
         Dim stack As New Stack(Of Control)(Controls.Cast(Of Control)())
@@ -982,31 +974,31 @@ Partial Public Class Form1
             End If
         Next
         Dim currentCulture As String = System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName
-        Dim menuIcon As Image = Me.mnuEnglish.Image
+        Dim menuIcon As Image = mnuEnglish.Image
         Select Case currentCulture
             Case "cs-CZ", "cs"
                 menuIcon = mnuCzech.Image
             Case "en-GB", "en", "en-US"
-                menuIcon = Me.mnuEnglish.Image
+                menuIcon = mnuEnglish.Image
             Case "de-DE", "de"
-                menuIcon = Me.mnuGerman.Image
+                menuIcon = mnuGerman.Image
                 'mnuGerman.Image = resizeImage(My.Resources.De_Flag, Nothing, 18)
             Case "pl-PL", "pl"
-                menuIcon = Me.mnuPolish.Image
+                menuIcon = mnuPolish.Image
                 'mnuPolish.Image = resizeImage(My.Resources.pl_flag, Nothing, 18)
             Case "ru-RU", "ru"
-                menuIcon = Me.mnuRussian.Image
+                menuIcon = mnuRussian.Image
                 'mnuRussian.Image = resizeImage(My.Resources.ru_flag, Nothing, 18)
             Case "uk"
-                menuIcon = Me.mnuUkrainian.Image
+                menuIcon = mnuUkrainian.Image
                 'mnuUkrainian.Image = resizeImage(My.Resources.uk_flag, Nothing, 18)
             Case Else
                 ' Výchozí obrázek (např. angličtina)
-                menuIcon = Me.mnuEnglish.Image
+                menuIcon = mnuEnglish.Image
         End Select
 
         If menuIcon Is Nothing Then
-            menuIcon = Me.mnuEnglish.Image ' Zajistí, že nebude Nothing
+            menuIcon = mnuEnglish.Image ' Zajistí, že nebude Nothing
         End If
 
         mnuLanguage.Image = menuIcon
@@ -1350,12 +1342,12 @@ Partial Public Class Form1
         'SaveConfig()
         ClearDgvCompetition()
         lvGpxFiles.Items.Clear()
-        Me.btnCharts.Visible = False
-        Me.rtbOutput.Clear()
-        Me.TabControl1.SelectedIndex = 0
+        btnCharts.Visible = False
+        rtbOutput.Clear()
+        TabControl1.SelectedIndex = 0
         'Me.btnReadGpxFiles_Click(Nothing, Nothing) ' načteme gpx soubory pro nově vybranou kategorii
 
-        lblRemoteDirectory.Width = Me.Width - lblRemoteDirectory.Left - 20
+        lblRemoteDirectory.Width = Width - lblRemoteDirectory.Left - 20
         lblRemoteDirectory.Text = ShortenPathToFit(lblRemoteDirectory, $"Source GPX folder: {ActiveCategoryInfo.RemoteDirectory}")
         ToolTip1.SetToolTip(lblRemoteDirectory, ActiveCategoryInfo.RemoteDirectory)  ' tady jde celá cesta
 
@@ -1430,7 +1422,7 @@ Partial Public Class Form1
 
 
     Private Sub mnuExit_Click(sender As Object, e As EventArgs) Handles mnuExit.Click
-        Me.Close() ' Zavře aplikaci
+        Close() ' Zavře aplikaci
     End Sub
 
     Private Sub cmbTimeInterval_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbTimeInterval.SelectedIndexChanged
@@ -1601,7 +1593,7 @@ Partial Public Class Form1
             Dim waitForm As New frmPleaseWait("I'm reading GPX files, please stand by...")
             waitForm.Show()
             waitForm.Refresh()
-            Me.FillDgvCompetition()  'naplní datagridView s přehledem tras a jejich statistikami pro závody
+            FillDgvCompetition()  'naplní datagridView s přehledem tras a jejich statistikami pro závody
             waitForm.Close()
         End If
     End Sub
@@ -1671,7 +1663,7 @@ Partial Public Class Form1
     End Sub
 
     Private Sub Form1_ResizeEnd(sender As Object, e As EventArgs) Handles Me.ResizeEnd
-        My.Settings.WindowSize = Me.Size
+        My.Settings.WindowSize = Size
     End Sub
 
     Private Sub DeleteCurrentDogToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles mnuDeleteCurrentCategory.Click
@@ -1758,21 +1750,21 @@ Partial Public Class Form1
         End If
 
         ' Kontrola, že je v DisplayList něco k seřazení
-        If Me.displayList IsNot Nothing AndAlso Me.displayList.Count > 0 Then
+        If displayList IsNot Nothing AndAlso displayList.Count > 0 Then
             If sortDirection = SortOrder.Ascending Then
                 ' Vzestupné seřazení (Ascending)
-                Me.displayList = Me.displayList.OrderBy(Function(x) GetPropertyValue(x, columnName)).ToList()
+                displayList = displayList.OrderBy(Function(x) GetPropertyValue(x, columnName)).ToList()
             Else
                 ' Sestupné seřazení (Descending)
-                Me.displayList = Me.displayList.OrderByDescending(Function(x) GetPropertyValue(x, columnName)).ToList()
+                displayList = displayList.OrderByDescending(Function(x) GetPropertyValue(x, columnName)).ToList()
             End If
 
             ' Znovu přiřaď seřazený list jako zdroj dat
-            Me.dgvCompetition.DataSource = Nothing ' Odpojit starý zdroj
-            Me.bsCompetitions.DataSource = Me.displayList 'bindingSource kvůli řazení sloupců
-            Me.dgvCompetition.DataSource = Me.bsCompetitions
+            dgvCompetition.DataSource = Nothing ' Odpojit starý zdroj
+            bsCompetitions.DataSource = displayList 'bindingSource kvůli řazení sloupců
+            dgvCompetition.DataSource = bsCompetitions
             'znovu zformátovat dgvCompetition:
-            Me.FormatDgvCompetition()
+            FormatDgvCompetition()
         End If
 
         ' Volitelné: Zobrazení šipky pro indikaci seřazení
@@ -1819,7 +1811,7 @@ Partial Public Class Form1
     End Sub
 
     Private Sub btnEditPoints_Click(sender As Object, e As EventArgs) Handles btnEditPoints.Click
-        Dim EditCategoryPoints As New frmEditCategoryPoints(Me.ActiveCategoryInfo)
+        Dim EditCategoryPoints As New frmEditCategoryPoints(ActiveCategoryInfo)
         If EditCategoryPoints.ShowDialog() = DialogResult.OK Then
 
             RecalculateScoreAndSave()
@@ -1828,7 +1820,7 @@ Partial Public Class Form1
     End Sub
 
     Private Sub OpenLocalDirectoryWithGpxFilesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles mnuOpenLocalFolder.Click
-        Dim localGPXDirectory = Me.ActiveCategoryInfo.ProcessedDirectory
+        Dim localGPXDirectory = ActiveCategoryInfo.ProcessedDirectory
         'Process.Start("explorer.exe", folderPath)
         Process.Start("explorer.exe", localGPXDirectory)
     End Sub
@@ -2072,7 +2064,7 @@ Public Class TrailStatsDisplay
     ' 3. METODA PRO PŘEPOČET
 
     Public Sub CalculateTotalPoints()
-        Dim newTotal As Integer = Me.RunnerFoundPoints + Me.DogSpeedPoints + Me.DogAccuracyPoints + Me.DogReadingPoints + Me.TrailPickupPoints
+        Dim newTotal As Integer = RunnerFoundPoints + DogSpeedPoints + DogAccuracyPoints + DogReadingPoints + TrailPickupPoints
 
         ' Nastavíme novou hodnotu, ale pouze pokud se liší, abychom zamezili zbytečným notifikacím
         If _totalPoints <> newTotal Then
@@ -2113,7 +2105,7 @@ Public Class CategoryInfo
             If (String.IsNullOrWhiteSpace(_remoteDirectory)) Then
                 ' pokud není nastaveno, použije se výchozí cesta
 
-                _remoteDirectory = Path.Combine(Application.StartupPath, "Samples", Me.Id)
+                _remoteDirectory = Path.Combine(Application.StartupPath, "Samples", Id)
             End If
             Return _remoteDirectory
         End Get
