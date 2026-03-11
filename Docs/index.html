@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>K9 Mantrailing Analyzer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d0f12;
+      --surface:   #151820;
+      --border:    #252a35;
+      --accent:    #e8b84b;
+      --accent2:   #4b9fe8;
+      --text:      #e8eaf0;
+      --muted:     #6b7280;
+      --radius:    6px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 999; opacity: .5;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6rem 2rem 4rem;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 70% 40%, rgba(72,130,220,.12) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 20% 80%, rgba(232,184,75,.07) 0%, transparent 60%),
+        var(--bg);
+    }
+
+    /* animated grid */
+    .hero-bg::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 80%);
+      animation: gridPan 20s linear infinite;
+    }
+
+    @keyframes gridPan {
+      0%   { background-position: 0 0; }
+      100% { background-position: 60px 60px; }
+    }
+
+    .hero-inner {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto; width: 100%;
+    }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(232,184,75,.1);
+      border: 1px solid rgba(232,184,75,.3);
+      color: var(--accent);
+      font-family: 'DM Mono', monospace;
+      font-size: .72rem; letter-spacing: .08em;
+      padding: .35rem .8rem; border-radius: 99px;
+      margin-bottom: 2rem;
+      animation: fadeUp .6s ease both;
+    }
+
+    .badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: .4; transform: scale(.7); }
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 9vw, 7.5rem);
+      line-height: .95;
+      letter-spacing: .01em;
+      color: var(--text);
+      animation: fadeUp .7s .1s ease both;
+    }
+
+    h1 span { color: var(--accent); }
+
+    .hero-sub {
+      margin-top: 1.5rem;
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: #9ba3af;
+      max-width: 560px;
+      animation: fadeUp .7s .2s ease both;
+    }
+
+    .hero-actions {
+      display: flex; flex-wrap: wrap; gap: 1rem;
+      margin-top: 2.5rem;
+      animation: fadeUp .7s .3s ease both;
+    }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: .6rem;
+      padding: .85rem 2rem;
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500; font-size: 1rem;
+      cursor: pointer; text-decoration: none;
+      transition: transform .15s, box-shadow .15s, opacity .15s;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0d0f12;
+      box-shadow: 0 4px 24px rgba(232,184,75,.3);
+    }
+    .btn-primary:hover { box-shadow: 0 8px 32px rgba(232,184,75,.45); }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-ghost:hover { border-color: var(--muted); }
+
+    .btn svg { flex-shrink: 0; }
+
+    /* ── STATS ROW ── */
+    .stats {
+      display: flex; flex-wrap: wrap; gap: 2.5rem;
+      margin-top: 4rem;
+      padding-top: 2.5rem;
+      border-top: 1px solid var(--border);
+      animation: fadeUp .7s .4s ease both;
+    }
+
+    .stat-item { display: flex; flex-direction: column; gap: .2rem; }
+
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: .8rem;
+      color: var(--muted);
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    /* ── SECTION SHARED ── */
+    section { padding: 5rem 2rem; }
+
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: .72rem; letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      line-height: 1;
+      letter-spacing: .02em;
+      margin-bottom: 1.2rem;
+    }
+
+    .section-intro {
+      color: #9ba3af;
+      font-size: 1.05rem;
+      max-width: 580px;
+      margin-bottom: 3.5rem;
+    }
+
+    /* ── FEATURES ── */
+    .features-section { background: var(--surface); }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) + 2px);
+      overflow: hidden;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      padding: 2rem;
+      transition: background .2s;
+    }
+
+    .feature-card:hover { background: #1c2130; }
+
+    .feature-icon {
+      width: 44px; height: 44px;
+      background: rgba(232,184,75,.1);
+      border: 1px solid rgba(232,184,75,.2);
+      border-radius: var(--radius);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.2rem;
+      font-size: 1.3rem;
+    }
+
+    .feature-card h3 {
+      font-weight: 500;
+      font-size: 1rem;
+      margin-bottom: .5rem;
+    }
+
+    .feature-card p {
+      font-size: .9rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── SCREENSHOTS ── */
+    .screenshots-section { background: var(--bg); }
+
+    .screenshots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .screenshot-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--surface);
+      transition: border-color .2s, transform .2s;
+    }
+
+    .screenshot-card:hover {
+      border-color: rgba(232,184,75,.35);
+      transform: translateY(-3px);
+    }
+
+    .screenshot-card img {
+      width: 100%; display: block;
+      aspect-ratio: 16/10; object-fit: cover;
+    }
+
+    .screenshot-card .cap {
+      padding: .8rem 1rem;
+      font-size: .82rem;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how-section { background: var(--surface); }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+      counter-reset: steps;
+    }
+
+    .step {
+      position: relative;
+      padding: 1.8rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      counter-increment: steps;
+    }
+
+    .step::before {
+      content: counter(steps, decimal-leading-zero);
+      position: absolute; top: 1.2rem; right: 1.2rem;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem; line-height: 1;
+      color: rgba(232,184,75,.1);
+    }
+
+    .step h3 {
+      font-weight: 500;
+      font-size: .95rem;
+      margin-bottom: .5rem;
+      color: var(--accent);
+    }
+
+    .step p {
+      font-size: .88rem;
+      color: var(--muted);
+    }
+
+    /* ── LANGUAGES ── */
+    .lang-row {
+      display: flex; flex-wrap: wrap; gap: .75rem;
+      margin-top: 1.5rem;
+    }
+
+    .lang-tag {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .4rem .9rem;
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      font-size: .85rem;
+      color: var(--muted);
+    }
+
+    /* ── CTA ── */
+    .cta-section {
+      background: var(--bg);
+      text-align: center;
+    }
+
+    .cta-box {
+      background: linear-gradient(135deg, rgba(232,184,75,.08) 0%, rgba(75,159,232,.08) 100%);
+      border: 1px solid rgba(232,184,75,.2);
+      border-radius: calc(var(--radius) * 2);
+      padding: 4rem 2rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .cta-box h2 { margin-bottom: 1rem; }
+
+    .cta-box p {
+      color: #9ba3af;
+      margin-bottom: 2.5rem;
+      font-size: 1.05rem;
+    }
+
+    .cta-box .btn-primary {
+      font-size: 1.1rem;
+      padding: 1rem 2.5rem;
+    }
+
+    .version-note {
+      margin-top: 1.2rem;
+      font-size: .78rem;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem;
+      background: rgba(13,15,18,.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: .05em;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .nav-logo span { color: var(--accent); }
+
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+
+    .nav-links a {
+      font-size: .88rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .15s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: .8rem;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+    }
+
+    footer a { color: var(--muted); text-decoration: underline; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .stats { gap: 1.5rem; }
+      .hero { padding-top: 5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">K9 <span>Mantrailing</span> Analyzer</a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#screenshots">Screenshots</a>
+    <a href="https://github.com/mwrnckx/K9-Trails-Analyzer" target="_blank">GitHub</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-inner">
+    <div class="badge">Free &amp; Open Source · Windows · v1.0.34</div>
+    <h1>K9 <span>Mantrailing</span><br>Analyzer</h1>
+    <p class="hero-sub">
+      Objective GPS-based analysis for mantrailing and practical scent tracking teams.
+      Evaluate your dog's accuracy, speed, and your own trail-reading — then turn it into a professional overlay video.
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary"
+         href="https://github.com/mwrnckx/K9-Trails-Analyzer/releases/latest/download/K9TrailsAnalyzer.zip">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+        </svg>
+        Download free
+      </a>
+      <a class="btn btn-ghost"
+         href="https://github.com/mwrnckx/K9-Trails-Analyzer" target="_blank">
+        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.868-.013-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
+        </svg>
+        View on GitHub
+      </a>
+    </div>
+
+    <div class="stats">
+      <div class="stat-item">
+        <span class="stat-num">4</span>
+        <span class="stat-label">Scoring criteria</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">3</span>
+        <span class="stat-label">Languages</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">15+</span>
+        <span class="stat-label">Releases</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">Free</span>
+        <span class="stat-label">Always</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section" id="features">
+  <div class="container">
+    <div class="section-label">// capabilities</div>
+    <h2>Everything your team needs</h2>
+    <p class="section-intro">
+      Built specifically for mantrailing and practical scent tracking — not adapted from generic GPS tools.
+    </p>
+    <div class="features-grid">
+
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3>Accuracy Analysis</h3>
+        <p>Measures your dog's deviation from the runner's trail using weighted GPS metrics that account for scent cone dynamics — not just raw distance.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Speed &amp; Efficiency</h3>
+        <p>Calculates weighted working speed along the completed trail. Fast teams that stay accurate score well. Fast teams that drift don't.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🐕</div>
+        <h3>Handler Trail-Reading Score</h3>
+        <p>Unique checkpoint system evaluates whether you can correctly identify when your dog is on scent — the skill that separates good handlers from great ones.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🎬</div>
+        <h3>GPS Overlay Video</h3>
+        <p>Generates a professional overlay showing dog vs. runner track, wind direction, deviation, and key stats — ready to sync with your action camera footage.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🏆</div>
+        <h3>Competition Scoring</h3>
+        <p>Full double-blind scoring system designed for practical tracking competitions. Grounded in mantrailing methodology, not adapted from sport tracking formats.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Training Statistics</h3>
+        <p>Track your team's progress over time. Analyse trail length, age, speed distribution, and deviation trends across multiple training sessions.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how">
+  <div class="container">
+    <div class="section-label">// workflow</div>
+    <h2>Up and running in minutes</h2>
+    <p class="section-intro">
+      No account, no subscription, no cloud. Everything runs locally on your Windows PC.
+    </p>
+    <div class="steps">
+      <div class="step">
+        <h3>Download &amp; unzip</h3>
+        <p>Download the ZIP from Releases, unzip to any folder, run K9TrailsAnalyzer.exe. No installer needed.</p>
+      </div>
+      <div class="step">
+        <h3>Try the sample files</h3>
+        <p>Sample GPX files are included. Open them immediately to see a full analysis without needing your own training data.</p>
+      </div>
+      <div class="step">
+        <h3>Load your GPX tracks</h3>
+        <p>Import the runner's trail and the dog's GPS track. Both recorded on standard phones — no special hardware required.</p>
+      </div>
+      <div class="step">
+        <h3>Analyse &amp; export</h3>
+        <p>Review accuracy, speed and checkpoint scores. Export an overlay video to review the trail with your training group.</p>
+      </div>
+    </div>
+
+    <div style="margin-top: 3rem;">
+      <div class="section-label">// languages</div>
+      <p style="color: var(--muted); font-size: .9rem;">Available in:</p>
+      <div class="lang-row">
+        <span class="lang-tag">🇬🇧 English</span>
+        <span class="lang-tag">🇨🇿 Čeština</span>
+        <span class="lang-tag">🇩🇪 Deutsch</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCREENSHOTS -->
+<section class="screenshots-section" id="screenshots">
+  <div class="container">
+    <div class="section-label">// screenshots</div>
+    <h2>See it in action</h2>
+    <p class="section-intro">Real outputs from actual mantrailing sessions.</p>
+
+    <div class="screenshots-grid">
+      <div class="screenshot-card">
+        <img src="https://raw.githubusercontent.com/mwrnckx/K9-Trails-Analyzer/master/Docs/Screenshots/TrailsOnMap.png"
+             alt="Trails on map" loading="lazy" />
+        <div class="cap">// dog vs. runner track on map</div>
+      </div>
+      <div class="screenshot-card">
+        <img src="https://raw.githubusercontent.com/mwrnckx/K9-Trails-Analyzer/master/Docs/Screenshots/overlay.png"
+             alt="Video overlay" loading="lazy" />
+        <div class="cap">// GPS overlay for video export</div>
+      </div>
+      <div class="screenshot-card">
+        <img src="https://raw.githubusercontent.com/mwrnckx/K9-Trails-Analyzer/master/Docs/Screenshots/total.png"
+             alt="Scoring overview" loading="lazy" />
+        <div class="cap">// scoring summary</div>
+      </div>
+      <div class="screenshot-card">
+        <img src="https://raw.githubusercontent.com/mwrnckx/K9-Trails-Analyzer/master/Docs/Screenshots/Form1a.jpg"
+             alt="Main interface" loading="lazy" />
+        <div class="cap">// main analysis view</div>
+      </div>
+      <div class="screenshot-card">
+        <img src="https://raw.githubusercontent.com/mwrnckx/K9-Trails-Analyzer/master/Docs/Screenshots/en-Points.png"
+             alt="Points breakdown" loading="lazy" />
+        <div class="cap">// detailed scoring breakdown</div>
+      </div>
+      <div class="screenshot-card">
+        <img src="https://raw.githubusercontent.com/mwrnckx/K9-Trails-Analyzer/master/Docs/Screenshots/age.png"
+             alt="Trail age stats" loading="lazy" />
+        <div class="cap">// trail age distribution</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-box">
+      <div class="section-label">// get started</div>
+      <h2>Start analysing today</h2>
+      <p>Free, open source, no registration. Sample files included — see results before your next training session.</p>
+      <a class="btn btn-primary"
+         href="https://github.com/mwrnckx/K9-Trails-Analyzer/releases/latest/download/K9TrailsAnalyzer.zip">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+        </svg>
+        Download free — Windows
+      </a>
+      <div class="version-note">latest: v1.0.34 · unlicense · no installer required</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>K9 Mantrailing Analyzer · <a href="https://github.com/mwrnckx/K9-Trails-Analyzer" target="_blank">GitHub</a> · Free &amp; open source under Unlicense</p>
+</footer>
+
+</body>
+</html>

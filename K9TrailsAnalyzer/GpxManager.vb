@@ -2480,7 +2480,8 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
         ' A) Points for major objectives
         Dim POINTS_FOR_FIND As Integer = ActiveCategoryInfo.PointsForFindMax               ' Max points for successfully finding the runner.
         ' B) Checkpoint reading points (Divided by 2 as typically two checkpoints are evaluated).
-        Dim POINTS_FOR_DOG_READING_MAX_CHECKPOINT As Integer = ActiveCategoryInfo.PointsForDogReadingMax / 2
+        Dim POINTS_FOR_DOG_READING_MAX_CHECKPOINT As Integer = ActiveCategoryInfo.PointsForDogReadingMax
+        Dim MAX_GAP_PERCENT As Integer = 30 ' Maximum gap percentage for weighted scoring.
         ' C) Bonus points for each km/h of gross speed.
         Dim POINTS_PER_KMH_GROSS_SPEED As Double = ActiveCategoryInfo.PointsPerKmhGrossSpeed
         ' D) Maximum points for dog accuracy (trail following).
@@ -2571,22 +2572,51 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
 
             ' Determine the index range for the last two potential checkpoints.
             Dim lastActualCheckpointIndex As Integer = stats.CheckpointsEval.Count - 2
-            Dim startIndex As Integer = Math.Max(lastActualCheckpointIndex - 1, 0) ' Start at the second-to-last or the first point (index 0)
-            Dim endIndex As Integer = lastActualCheckpointIndex ' The last actual checkpoint index
+            'Dim startIndex As Integer = Math.Max(lastActualCheckpointIndex - 1, 0) ' Start at the second-to-last or the first point (index 0)
+            'Dim endIndex As Integer = lastActualCheckpointIndex ' The last actual checkpoint index
 
-            For i As Integer = startIndex To endIndex
+            'For i As Integer = startIndex To endIndex
+            '    Dim checkPointEval = stats.CheckpointsEval(i)
+            '    Dim Deviation As Double = checkPointEval.deviationFromTrail
+
+            '    ' Calculate a weight (0.0 to 1.0) based on deviation from the trail.
+            '    Dim weightFactor As Double = Weight(Deviation) ' Assumes Weight(double) function exists.
+
+            '    ' Score contribution for this checkpoint:
+            '    ' (Distance up to CP / Total Runner Distance) * WeightFactor * MaxPointsPerCheckpoint
+            '    dogReadingPoints += CInt((checkPointEval.distanceAlongTrail / stats.RunnerDistance) * weightFactor * POINTS_FOR_DOG_READING_MAX_CHECKPOINT)
+            'Next
+
+
+
+            ' --- STEP 4: Calculate Dog Reading Points (Final Logic - No Bonus) ---
+
+            Dim totalDogReadingScore As Double = 0
+            Dim previousDistance As Double = 0
+
+            For i As Integer = 0 To lastActualCheckpointIndex
                 Dim checkPointEval = stats.CheckpointsEval(i)
-                Dim Deviation As Double = checkPointEval.deviationFromTrail
+                Dim currentDistance As Double = checkPointEval.distanceAlongTrail
 
-                ' Calculate a weight (0.0 to 1.0) based on deviation from the trail.
-                Dim weightFactor As Double = Weight(Deviation) ' Assumes Weight(double) function exists.
+                Dim intervalDistance As Double = currentDistance - previousDistance
+                Dim intervalRatio As Double = intervalDistance / stats.RunnerDistance
 
-                ' Score contribution for this checkpoint:
-                ' (Distance up to CP / Total Runner Distance) * WeightFactor * MaxPointsPerCheckpoint
-                dogReadingPoints += CInt((checkPointEval.distanceAlongTrail / stats.RunnerDistance) * weightFactor * POINTS_FOR_DOG_READING_MAX_CHECKPOINT)
+                ' Základní body za úsek (poměr k celkové trase * 100)
+                Dim potentialPoints As Double = intervalRatio * POINTS_FOR_DOG_READING_MAX_CHECKPOINT
+                Dim actualPoints As Double = 0
+                Dim gapWeight As Double = Weight(intervalRatio, 0.5, 3.2) '  dlouhé mezery mezi checkpointy jsou penalizovány
+                Dim devWeight As Double = Weight(checkPointEval.deviationFromTrail, 20) 'pro 20 m od trasy je váha 0,5, pro větší odchylky rychle klesá
+
+                actualPoints = potentialPoints * gapWeight * devWeight
+
+                totalDogReadingScore += actualPoints
+                previousDistance = currentDistance
             Next
 
+            ' Výsledek bude vždy <= POINTS_FOR_DOG_READING_MAX_CHECKPOINT
+            dogReadingPoints = CInt(Math.Min(POINTS_FOR_DOG_READING_MAX_CHECKPOINT, totalDogReadingScore))
         End If
+
 
         ' --------------------------------------------------------------------------------
         ' --- STEP 5: Calculate TrailPickupPoints
