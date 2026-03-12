@@ -36,7 +36,7 @@ This project is designed to assist dog handlers/trainers/competition organizers 
 # Video with GPS track overlay on youtube: 
 <a href="https://youtu.be/TjPnITBn1ms"><img src="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/docs/Screenshots/videoScreenshot.webp" width="350"></a>
 # Screenshots from the video:
-<a href="https://youtu.be/TjPnITBn1ms"><img src="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/docs/Screenshots/TrailsOnMap.webp" width="350"></a>
+<a href="https://youtu.be/TjPnITBn1ms"><img src="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/docs/Screenshots/TracksOnMap.webp" width="350"></a>
 <a href="https://youtu.be/TjPnITBn1ms"><img src="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/docs/Screenshots/overlay.webp" width="350"></a>
 <a href="https://youtu.be/TjPnITBn1ms"><img src="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/docs/Screenshots/en-TrailDescription.webp" width="350"></a>
 
