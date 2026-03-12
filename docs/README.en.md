@@ -48,7 +48,7 @@ From version **1.0.26**, the application also includes a **scoring system**, sui
 
 ## 🧱 Installation
 
-1. Download the latest version from [Releases](https://github.com/mwrnckx/K9-Trails-Analyzer/releases)  
+1. Download the latest version from [Releases](https://github.com/mwrnckx/K9-Mantrailing-Analyzer/releases/latest/download/K9-Trails-Analyzer.zip)  
 2. Unzip it to any folder  
 3. Run `K9TrailsAnalyzer.exe`  
 4. A sample set of GPX files is included in the **Samples** folder and loads automatically on first launch  

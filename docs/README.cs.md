@@ -48,7 +48,7 @@ Od verze **1.0.26** je do aplikace postupně začleňován i **bodovací systém
 
 ## 🧱 Instalace
 
-1. Stáhni si aktuální verzi ze sekce [Releases](https://github.com/mwrnckx/K9-Trails-Analyzer/releases)  
+1. Stáhni si aktuální verzi ze sekce [Releases](https://github.com/mwrnckx/K9-Mantrailing-Analyzer/releases/latest/download/K9-Trails-Analyzer.zip)  
 2. Rozbal ZIP do libovolné složky  
 3. Spusť `K9TrailsAnalyzer.exe`  
 4. Pro vyzkoušení je v adresáři **Samples** několik ukázkových GPX souborů, které se automaticky načtou při prvním spuštění  

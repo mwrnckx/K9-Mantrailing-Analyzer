@@ -47,7 +47,7 @@ Seit Version **1.0.26** enthält die Anwendung zudem ein **Punktesystem**, das s
 
 ## 🧱 Installation
 
-1. Lade die aktuelle Version unter [Releases](https://github.com/mwrnckx/K9-Trails-Analyzer/releases) herunter  
+1. Lade die aktuelle Version unter [Releases](https://github.com/mwrnckx/K9-Mantrailing-Analyzer/releases/latest/download/K9-Trails-Analyzer.zip) herunter  
 2. Entpacke das ZIP-Archiv in einen beliebigen Ordner  
 3. Starte `K9TrailsAnalyzer.exe`  
 4. Im Ordner **Samples** befinden sich Beispiel-GPX-Dateien, die beim ersten Start automatisch geladen werden  
