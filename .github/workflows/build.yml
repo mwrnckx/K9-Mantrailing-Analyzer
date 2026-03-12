@@ -57,11 +57,10 @@ jobs:
 
       - name: Zip binaries into folder
         run: |
-    $dest = "K9-Mantrailing-Analyzer-Package\K9MantrailingAnalyzer"
-New-Item -ItemType Directory -Force -Path $dest
-Copy-Item -Path "K9TrailsAnalyzer\bin\Release\net8.0-windows\*" -Destination $dest -Recurse
-Compress-Archive -Path "K9-Mantrailing-Analyzer-Package\*" -DestinationPath "K9-Mantrailing-Analyzer.zip"
-
+         $dest = "K9-Mantrailing-Analyzer-Package\K9MantrailingAnalyzer"
+         New-Item -ItemType Directory -Force -Path $dest
+         Copy-Item -Path "K9TrailsAnalyzer\bin\Release\net8.0-windows\*" -Destination $dest -Recurse
+         Compress-Archive -Path "K9-Mantrailing-Analyzer-Package\*" -DestinationPath "K9-Mantrailing-Analyzer.zip"
      
       - name: Upload zipped build
         uses: softprops/action-gh-release@v1
