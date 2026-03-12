@@ -26,7 +26,7 @@ jobs:
         
       - name: Update AssemblyVersion from release tag
         run: |
-          $tag = "v1.0.${{ github.run_number }}" #"${{ github.ref_name }}"
+          $tag = "v1.1.${{ github.run_number }}" #"${{ github.ref_name }}"
           if ($tag -match "^v(\d+)\.(\d+)\.(\d+)$") {
             $version = "$($Matches[1]).$($Matches[2]).$($Matches[3]).0"
             (Get-Content K9TrailsAnalyzer\K9TrailsAnalyzer.vbproj) `
@@ -66,8 +66,8 @@ Compress-Archive -Path "K9-Mantrailing-Analyzer-Package\*" -DestinationPath "K9-
       - name: Upload zipped build
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v1.0.${{ github.run_number }}
-          files: K9-Trails-Analyzer.zip
+          tag_name: v1.1.${{ github.run_number }}
+          files: K9-Mantrailing-Analyzer.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
