@@ -29,9 +29,9 @@ jobs:
           $tag = "v1.1.${{ github.run_number }}" #"${{ github.ref_name }}"
           if ($tag -match "^v(\d+)\.(\d+)\.(\d+)$") {
             $version = "$($Matches[1]).$($Matches[2]).$($Matches[3]).0"
-            (Get-Content K9TrailsAnalyzer\K9TrailsAnalyzer.vbproj) `
+            (Get-Content K9TrailsAnalyzer\K9MantrailingAnalyzer.vbproj) `
               -replace '<AssemblyVersion>.*?</AssemblyVersion>', "<AssemblyVersion>$version</AssemblyVersion>" |
-              Set-Content K9TrailsAnalyzer\K9TrailsAnalyzer.vbproj
+              Set-Content K9TrailsAnalyzer\K9MantrailingAnalyzer.vbproj
           } else {
             Write-Error "Tag name '$tag' is not in expected format vX.Y.Z"
             exit 1
