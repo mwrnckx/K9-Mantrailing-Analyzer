@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36221.1
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11430.68 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "TrackVideoExporter", "TrackVideoExporter\TrackVideoExporter.vbproj", "{028BF736-F795-4F89-A14B-013993E3B60D}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "K9TrailsAnalyzer", "K9TrailsAnalyzer\K9TrailsAnalyzer.vbproj", "{088162B6-9D68-3AC3-D6AF-C9A39DDA14D0}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "K9MantrailingAnalyzer", "K9TrailsAnalyzer\K9MantrailingAnalyzer.vbproj", "{088162B6-9D68-3AC3-D6AF-C9A39DDA14D0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{028BF736-F795-4F89-A14B-013993E3B60D} = {028BF736-F795-4F89-A14B-013993E3B60D}
 	EndProjectSection

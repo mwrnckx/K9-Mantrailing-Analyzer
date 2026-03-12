@@ -14,7 +14,7 @@
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
     <FileVersion>0.0.0.0</FileVersion>
     <InformationalVersion>0.0.0</InformationalVersion>
-    <AssemblyName>K9TrailsAnalyzer</AssemblyName>
+    <AssemblyName>K9MantrailingAnalyzer</AssemblyName>
     <ApplicationIcon>track.ico</ApplicationIcon>
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <AppDesignerFolder>My Project</AppDesignerFolder>

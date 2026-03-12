@@ -9,15 +9,66 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* ── LIGHT MODE (default) ── */
     :root {
-      --bg:        #0d0f12;
-      --surface:   #151820;
-      --border:    #252a35;
-      --accent:    #e8b84b;
-      --accent2:   #4b9fe8;
-      --text:      #e8eaf0;
-      --muted:     #6b7280;
-      --radius:    6px;
+      --bg:            #fafaf0;
+      --surface:       #fffff0;
+      --border:        #d4a843;
+      --accent:        #b8860b;
+      --text:          #3a2e1a;
+      --muted:         #7a6a4a;
+      --salmon:        #fa8072;
+      --green:         #8fbc8f;
+      --radius:        6px;
+      --nav-bg:        rgba(250,250,240,.92);
+      --badge-bg:      rgba(184,134,11,.1);
+      --badge-border:  rgba(184,134,11,.3);
+      --hero-glow-a:   rgba(143,188,143,.18);
+      --hero-glow-b:   rgba(218,165,32,.13);
+      --grid-line:     rgba(184,134,11,.06);
+      --icon-bg:       rgba(143,188,143,.2);
+      --icon-border:   rgba(143,188,143,.5);
+      --card-hover:    #ffffe8;
+      --step-bg:       #fafaf0;
+      --step-num:      rgba(184,134,11,.15);
+      --cta-grad-a:    rgba(143,188,143,.12);
+      --cta-grad-b:    rgba(250,128,114,.08);
+      --cta-border:    rgba(184,134,11,.2);
+      --card-hover-border: rgba(250,128,114,.5);
+      --btn-primary-bg: #fa8072;
+      --btn-primary-text: #fff;
+    }
+
+    /* ── DARK MODE ── */
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg:            #0d0f12;
+        --surface:       #151820;
+        --border:        #252a35;
+        --accent:        #e8b84b;
+        --text:          #e8eaf0;
+        --muted:         #6b7280;
+        --salmon:        #e8b84b;
+        --green:         #4b9fe8;
+        --radius:        6px;
+        --nav-bg:        rgba(13,15,18,.85);
+        --badge-bg:      rgba(232,184,75,.1);
+        --badge-border:  rgba(232,184,75,.3);
+        --hero-glow-a:   rgba(72,130,220,.12);
+        --hero-glow-b:   rgba(232,184,75,.07);
+        --grid-line:     rgba(255,255,255,.025);
+        --icon-bg:       rgba(232,184,75,.1);
+        --icon-border:   rgba(232,184,75,.2);
+        --card-hover:    #1c2130;
+        --step-bg:       #151820;
+        --step-num:      rgba(232,184,75,.1);
+        --cta-grad-a:    rgba(232,184,75,.08);
+        --cta-grad-b:    rgba(75,159,232,.08);
+        --cta-border:    rgba(232,184,75,.2);
+        --card-hover-border: rgba(232,184,75,.35);
+        --btn-primary-bg: #e8b84b;
+        --btn-primary-text: #0d0f12;
+      }
     }
 
     html { scroll-behavior: smooth; }
@@ -31,7 +82,6 @@
       overflow-x: hidden;
     }
 
-    /* ── NOISE OVERLAY ── */
     body::before {
       content: '';
       position: fixed; inset: 0;
@@ -39,13 +89,10 @@
       pointer-events: none; z-index: 999; opacity: .5;
     }
 
-    /* ── HERO ── */
     .hero {
       position: relative;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      display: flex; flex-direction: column; justify-content: center;
       padding: 6rem 2rem 4rem;
       overflow: hidden;
     }
@@ -53,18 +100,17 @@
     .hero-bg {
       position: absolute; inset: 0; z-index: 0;
       background:
-        radial-gradient(ellipse 80% 60% at 70% 40%, rgba(72,130,220,.12) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 40% at 20% 80%, rgba(232,184,75,.07) 0%, transparent 60%),
+        radial-gradient(ellipse 80% 60% at 70% 40%, var(--hero-glow-a) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 20% 80%, var(--hero-glow-b) 0%, transparent 60%),
         var(--bg);
     }
 
-    /* animated grid */
     .hero-bg::after {
       content: '';
       position: absolute; inset: 0;
       background-image:
-        linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
       background-size: 60px 60px;
       mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 80%);
       animation: gridPan 20s linear infinite;
@@ -82,8 +128,8 @@
 
     .badge {
       display: inline-flex; align-items: center; gap: .5rem;
-      background: rgba(232,184,75,.1);
-      border: 1px solid rgba(232,184,75,.3);
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
       color: var(--accent);
       font-family: 'DM Mono', monospace;
       font-size: .72rem; letter-spacing: .08em;
@@ -119,7 +165,7 @@
     .hero-sub {
       margin-top: 1.5rem;
       font-size: clamp(1rem, 2vw, 1.2rem);
-      color: #9ba3af;
+      color: var(--muted);
       max-width: 560px;
       animation: fadeUp .7s .2s ease both;
     }
@@ -143,26 +189,24 @@
     .btn:hover { transform: translateY(-2px); }
 
     .btn-primary {
-      background: var(--accent);
-      color: #0d0f12;
-      box-shadow: 0 4px 24px rgba(232,184,75,.3);
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-text);
+      box-shadow: 0 4px 24px rgba(0,0,0,.2);
     }
-    .btn-primary:hover { box-shadow: 0 8px 32px rgba(232,184,75,.45); }
+    .btn-primary:hover { box-shadow: 0 8px 32px rgba(0,0,0,.3); }
 
     .btn-ghost {
       background: transparent;
       border: 1px solid var(--border);
       color: var(--text);
     }
-    .btn-ghost:hover { border-color: var(--muted); }
+    .btn-ghost:hover { border-color: var(--accent); }
 
     .btn svg { flex-shrink: 0; }
 
-    /* ── STATS ROW ── */
     .stats {
       display: flex; flex-wrap: wrap; gap: 2.5rem;
-      margin-top: 4rem;
-      padding-top: 2.5rem;
+      margin-top: 4rem; padding-top: 2.5rem;
       border-top: 1px solid var(--border);
       animation: fadeUp .7s .4s ease both;
     }
@@ -183,9 +227,7 @@
       text-transform: uppercase;
     }
 
-    /* ── SECTION SHARED ── */
     section { padding: 5rem 2rem; }
-
     .container { max-width: 1100px; margin: 0 auto; }
 
     .section-label {
@@ -199,19 +241,18 @@
     h2 {
       font-family: 'Bebas Neue', sans-serif;
       font-size: clamp(2.2rem, 5vw, 3.5rem);
-      line-height: 1;
-      letter-spacing: .02em;
+      line-height: 1; letter-spacing: .02em;
       margin-bottom: 1.2rem;
+      color: var(--text);
     }
 
     .section-intro {
-      color: #9ba3af;
+      color: var(--muted);
       font-size: 1.05rem;
       max-width: 580px;
       margin-bottom: 3.5rem;
     }
 
-    /* ── FEATURES ── */
     .features-section { background: var(--surface); }
 
     .features-grid {
@@ -230,31 +271,21 @@
       transition: background .2s;
     }
 
-    .feature-card:hover { background: #1c2130; }
+    .feature-card:hover { background: var(--card-hover); }
 
     .feature-icon {
       width: 44px; height: 44px;
-      background: rgba(232,184,75,.1);
-      border: 1px solid rgba(232,184,75,.2);
+      background: var(--icon-bg);
+      border: 1px solid var(--icon-border);
       border-radius: var(--radius);
       display: flex; align-items: center; justify-content: center;
       margin-bottom: 1.2rem;
       font-size: 1.3rem;
     }
 
-    .feature-card h3 {
-      font-weight: 500;
-      font-size: 1rem;
-      margin-bottom: .5rem;
-    }
+    .feature-card h3 { font-weight: 500; font-size: 1rem; margin-bottom: .5rem; color: var(--text); }
+    .feature-card p  { font-size: .9rem; color: var(--muted); line-height: 1.6; }
 
-    .feature-card p {
-      font-size: .9rem;
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    /* ── SCREENSHOTS ── */
     .screenshots-section { background: var(--bg); }
 
     .screenshots-grid {
@@ -272,7 +303,7 @@
     }
 
     .screenshot-card:hover {
-      border-color: rgba(232,184,75,.35);
+      border-color: var(--card-hover-border);
       transform: translateY(-3px);
     }
 
@@ -288,7 +319,6 @@
       font-family: 'DM Mono', monospace;
     }
 
-    /* ── HOW IT WORKS ── */
     .how-section { background: var(--surface); }
 
     .steps {
@@ -303,6 +333,7 @@
       padding: 1.8rem;
       border: 1px solid var(--border);
       border-radius: var(--radius);
+      background: var(--step-bg);
       counter-increment: steps;
     }
 
@@ -311,26 +342,13 @@
       position: absolute; top: 1.2rem; right: 1.2rem;
       font-family: 'Bebas Neue', sans-serif;
       font-size: 3rem; line-height: 1;
-      color: rgba(232,184,75,.1);
+      color: var(--step-num);
     }
 
-    .step h3 {
-      font-weight: 500;
-      font-size: .95rem;
-      margin-bottom: .5rem;
-      color: var(--accent);
-    }
+    .step h3 { font-weight: 500; font-size: .95rem; margin-bottom: .5rem; color: var(--accent); }
+    .step p   { font-size: .88rem; color: var(--muted); }
 
-    .step p {
-      font-size: .88rem;
-      color: var(--muted);
-    }
-
-    /* ── LANGUAGES ── */
-    .lang-row {
-      display: flex; flex-wrap: wrap; gap: .75rem;
-      margin-top: 1.5rem;
-    }
+    .lang-row { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.5rem; }
 
     .lang-tag {
       display: inline-flex; align-items: center; gap: .4rem;
@@ -341,15 +359,11 @@
       color: var(--muted);
     }
 
-    /* ── CTA ── */
-    .cta-section {
-      background: var(--bg);
-      text-align: center;
-    }
+    .cta-section { background: var(--bg); text-align: center; }
 
     .cta-box {
-      background: linear-gradient(135deg, rgba(232,184,75,.08) 0%, rgba(75,159,232,.08) 100%);
-      border: 1px solid rgba(232,184,75,.2);
+      background: linear-gradient(135deg, var(--cta-grad-a) 0%, var(--cta-grad-b) 100%);
+      border: 1px solid var(--cta-border);
       border-radius: calc(var(--radius) * 2);
       padding: 4rem 2rem;
       max-width: 700px;
@@ -357,17 +371,8 @@
     }
 
     .cta-box h2 { margin-bottom: 1rem; }
-
-    .cta-box p {
-      color: #9ba3af;
-      margin-bottom: 2.5rem;
-      font-size: 1.05rem;
-    }
-
-    .cta-box .btn-primary {
-      font-size: 1.1rem;
-      padding: 1rem 2.5rem;
-    }
+    .cta-box p  { color: var(--muted); margin-bottom: 2.5rem; font-size: 1.05rem; }
+    .cta-box .btn-primary { font-size: 1.1rem; padding: 1rem 2.5rem; }
 
     .version-note {
       margin-top: 1.2rem;
@@ -376,22 +381,19 @@
       font-family: 'DM Mono', monospace;
     }
 
-    /* ── NAV ── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
       padding: 1rem 2rem;
-      background: rgba(13,15,18,.85);
+      background: var(--nav-bg);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
     }
 
     .nav-logo {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.4rem;
-      letter-spacing: .05em;
-      color: var(--text);
-      text-decoration: none;
+      font-size: 1.4rem; letter-spacing: .05em;
+      color: var(--text); text-decoration: none;
     }
 
     .nav-logo span { color: var(--accent); }
@@ -399,15 +401,12 @@
     .nav-links { display: flex; gap: 2rem; align-items: center; }
 
     .nav-links a {
-      font-size: .88rem;
-      color: var(--muted);
-      text-decoration: none;
-      transition: color .15s;
+      font-size: .88rem; color: var(--muted);
+      text-decoration: none; transition: color .15s;
     }
 
     .nav-links a:hover { color: var(--text); }
 
-    /* ── FOOTER ── */
     footer {
       padding: 2rem;
       border-top: 1px solid var(--border);
@@ -415,27 +414,70 @@
       font-size: .8rem;
       color: var(--muted);
       font-family: 'DM Mono', monospace;
+      background: var(--surface);
     }
 
     footer a { color: var(--muted); text-decoration: underline; }
 
-    /* ── ANIMATIONS ── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(20px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── RESPONSIVE ── */
     @media (max-width: 600px) {
       .nav-links { display: none; }
       .stats { gap: 1.5rem; }
       .hero { padding-top: 5rem; }
     }
+    /* ── FORCED DARK (manual override) ── */
+    :root[data-theme="dark"] {
+      --bg:            #0d0f12;
+      --surface:       #151820;
+      --border:        #252a35;
+      --accent:        #e8b84b;
+      --text:          #e8eaf0;
+      --muted:         #6b7280;
+      --salmon:        #e8b84b;
+      --green:         #4b9fe8;
+      --nav-bg:        rgba(13,15,18,.85);
+      --badge-bg:      rgba(232,184,75,.1);
+      --badge-border:  rgba(232,184,75,.3);
+      --hero-glow-a:   rgba(72,130,220,.12);
+      --hero-glow-b:   rgba(232,184,75,.07);
+      --grid-line:     rgba(255,255,255,.025);
+      --icon-bg:       rgba(232,184,75,.1);
+      --icon-border:   rgba(232,184,75,.2);
+      --card-hover:    #1c2130;
+      --step-bg:       #151820;
+      --step-num:      rgba(232,184,75,.1);
+      --cta-grad-a:    rgba(232,184,75,.08);
+      --cta-grad-b:    rgba(75,159,232,.08);
+      --cta-border:    rgba(232,184,75,.2);
+      --card-hover-border: rgba(232,184,75,.35);
+      --btn-primary-bg: #e8b84b;
+      --btn-primary-text: #0d0f12;
+    }
+
+    /* ── THEME TOGGLE BUTTON ── */
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 99px;
+      padding: .3rem .7rem;
+      font-size: .85rem;
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
+      font-family: 'DM Sans', sans-serif;
+      line-height: 1;
+    }
+
+    .theme-toggle:hover { border-color: var(--accent); color: var(--text); }
+
   </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a class="nav-logo" href="#">K9 <span>Mantrailing</span> Analyzer</a>
   <div class="nav-links">
@@ -443,11 +485,50 @@
     <a href="#how">How it works</a>
     <a href="#screenshots">Screenshots</a>
     <a href="https://github.com/mwrnckx/K9-Mantrailing-Analyzer" target="_blank">GitHub</a>
-      <a href="https://mwrnckx.github.io/K9-Mantrailing-Analyzer/index_light.html" target="_blank">Light Mode</a>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">☀️ Light</button>
   </div>
 </nav>
 
-<!-- HERO -->
+<script>
+  const root = document.documentElement;
+
+  // Detect system preference
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+  function getEffectiveTheme() {
+    const stored = localStorage.getItem('theme');
+    if (stored) return stored;
+    return prefersDark.matches ? 'dark' : 'light';
+  }
+
+  function applyTheme(theme) {
+    if (theme === 'dark') {
+      root.setAttribute('data-theme', 'dark');
+      document.getElementById('themeToggle').textContent = '☀️ Light';
+    } else {
+      root.setAttribute('data-theme', 'light');
+      document.getElementById('themeToggle').textContent = '🌙 Dark';
+    }
+  }
+
+  function toggleTheme() {
+    const current = getEffectiveTheme();
+    const next = current === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('theme', next);
+    applyTheme(next);
+  }
+
+  // Apply on load
+  applyTheme(getEffectiveTheme());
+
+  // React to system changes (only if no manual override)
+  prefersDark.addEventListener('change', () => {
+    if (!localStorage.getItem('theme')) {
+      applyTheme(prefersDark.matches ? 'dark' : 'light');
+    }
+  });
+</script>
+
 <section class="hero">
   <div class="hero-bg"></div>
   <div class="hero-inner">
@@ -473,105 +554,42 @@
         View on GitHub
       </a>
     </div>
-
     <div class="stats">
-      <div class="stat-item">
-        <span class="stat-num">4</span>
-        <span class="stat-label">Scoring criteria</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-num">3</span>
-        <span class="stat-label">Languages</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-num">15+</span>
-        <span class="stat-label">Releases</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-num">Free</span>
-        <span class="stat-label">Always</span>
-      </div>
+      <div class="stat-item"><span class="stat-num">4+</span><span class="stat-label">Scoring criteria</span></div>
+      <div class="stat-item"><span class="stat-num">3+</span><span class="stat-label">Languages</span></div>
+      <div class="stat-item"><span class="stat-num">15+</span><span class="stat-label">Releases</span></div>
+      <div class="stat-item"><span class="stat-num">Free</span><span class="stat-label">Always</span></div>
     </div>
   </div>
 </section>
 
-<!-- FEATURES -->
 <section class="features-section" id="features">
   <div class="container">
     <div class="section-label">// capabilities</div>
     <h2>Everything your team needs</h2>
-    <p class="section-intro">
-      Built specifically for mantrailing and practical scent tracking — not adapted from generic GPS tools.
-    </p>
+    <p class="section-intro">Built specifically for mantrailing and practical scent tracking — not adapted from generic GPS tools.</p>
     <div class="features-grid">
-
-      <div class="feature-card">
-        <div class="feature-icon">🎯</div>
-        <h3>Accuracy Analysis</h3>
-        <p>Measures your dog's deviation from the runner's trail using weighted GPS metrics that account for scent cone dynamics — not just raw distance.</p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h3>Speed &amp; Efficiency</h3>
-        <p>Calculates weighted working speed along the completed trail. Fast teams that stay accurate score well. Fast teams that drift don't.</p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">🐕</div>
-        <h3>Handler Trail-Reading Score</h3>
-        <p>Unique checkpoint system evaluates whether you can correctly identify when your dog is on scent — the skill that separates good handlers from great ones.</p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">🎬</div>
-        <h3>GPS Overlay Video</h3>
-        <p>Generates a professional overlay showing dog vs. runner track, wind direction, deviation, and key stats — ready to sync with your action camera footage.</p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">🏆</div>
-        <h3>Competition Scoring</h3>
-        <p>Full double-blind scoring system designed for practical tracking competitions. Grounded in mantrailing methodology, not adapted from sport tracking formats.</p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">📊</div>
-        <h3>Training Statistics</h3>
-        <p>Track your team's progress over time. Analyse trail length, age, speed distribution, and deviation trends across multiple training sessions.</p>
-      </div>
-
+      <div class="feature-card"><div class="feature-icon">🎯</div><h3>Accuracy Analysis</h3><p>Measures your dog's deviation from the runner's trail using weighted GPS metrics that account for scent cone dynamics — not just raw distance.</p></div>
+      <div class="feature-card"><div class="feature-icon">⚡</div><h3>Speed &amp; Efficiency</h3><p>Calculates weighted working speed along the completed trail. Fast teams that stay accurate score well. Fast teams that drift don't.</p></div>
+      <div class="feature-card"><div class="feature-icon">🐕</div><h3>Handler Trail-Reading Score</h3><p>Unique checkpoint system evaluates whether you can correctly identify when your dog is on scent — the skill that separates good handlers from great ones.</p></div>
+      <div class="feature-card"><div class="feature-icon">🎬</div><h3>GPS Overlay Video</h3><p>Generates a professional overlay showing dog vs. runner track, wind direction, deviation, and key stats — ready to sync with your action camera footage.</p></div>
+      <div class="feature-card"><div class="feature-icon">🏆</div><h3>Competition Scoring</h3><p>Full double-blind scoring system designed for practical tracking competitions. Grounded in mantrailing methodology, not adapted from sport tracking formats.</p></div>
+      <div class="feature-card"><div class="feature-icon">📊</div><h3>Training Statistics</h3><p>Track your team's progress over time. Analyse trail length, age, speed distribution, and deviation trends across multiple training sessions.</p></div>
     </div>
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
 <section class="how-section" id="how">
   <div class="container">
     <div class="section-label">// workflow</div>
     <h2>Up and running in minutes</h2>
-    <p class="section-intro">
-      No account, no subscription, no cloud. Everything runs locally on your Windows PC.
-    </p>
+    <p class="section-intro">No account, no subscription, no cloud. Everything runs locally on your Windows PC.</p>
     <div class="steps">
-      <div class="step">
-        <h3>Download &amp; unzip</h3>
-        <p>Download the ZIP from Releases, unzip to any folder, run K9TrailsAnalyzer.exe. No installer needed.</p>
-      </div>
-      <div class="step">
-        <h3>Try the sample files</h3>
-        <p>Sample GPX files are included. Open them immediately to see a full analysis without needing your own training data.</p>
-      </div>
-      <div class="step">
-        <h3>Load your GPX tracks</h3>
-        <p>Import the runner's trail and the dog's GPS track. Both recorded on standard phones — no special hardware required.</p>
-      </div>
-      <div class="step">
-        <h3>Analyse &amp; export</h3>
-        <p>Review accuracy, speed and checkpoint scores. Export an overlay video to review the trail with your training group.</p>
-      </div>
+      <div class="step"><h3>Download &amp; unzip</h3><p>Download the ZIP from Releases, unzip to any folder, run K9TrailsAnalyzer.exe. No installer needed.</p></div>
+      <div class="step"><h3>Try the sample files</h3><p>Sample GPX files are included. Open them immediately to see a full analysis without needing your own training data.</p></div>
+      <div class="step"><h3>Load your GPX tracks</h3><p>Import the runner's trail and the dog's GPS track. Both recorded on standard phones — no special hardware required.</p></div>
+      <div class="step"><h3>Analyse &amp; export</h3><p>Review accuracy, speed and checkpoint scores. Export an overlay video to review the trail with your training group.</p></div>
     </div>
-
     <div style="margin-top: 3rem;">
       <div class="section-label">// languages</div>
       <p style="color: var(--muted); font-size: .9rem;">Available in:</p>
@@ -584,68 +602,37 @@
   </div>
 </section>
 
-<!-- SCREENSHOTS -->
 <section class="screenshots-section" id="screenshots">
   <div class="container">
     <div class="section-label">// screenshots</div>
     <h2>See it in action</h2>
     <p class="section-intro">Real outputs from actual mantrailing sessions.</p>
-
     <div class="screenshots-grid">
-      <div class="screenshot-card">
-        <img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/TracksOnMap.webp"
-             alt="Trails on map" loading="lazy" />
-        <div class="cap">// dog vs. runner track on map</div>
-      </div>
-      <div class="screenshot-card">
-        <img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/overlay.webp"
-             alt="Video overlay" loading="lazy" />
-        <div class="cap">// GPS overlay for video export</div>
-      </div>
-      <div class="screenshot-card">
-        <img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/total.webp"
-             alt="Scoring overview" loading="lazy" />
-        <div class="cap">// scoring summary</div>
-      </div>
-      <div class="screenshot-card">
-        <img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/Form1a.webp"
-             alt="Main interface" loading="lazy" />
-        <div class="cap">// main analysis view</div>
-      </div>
-      <div class="screenshot-card">
-        <img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/en-Points.webp"
-             alt="Points breakdown" loading="lazy" />
-        <div class="cap">// detailed team scoring breakdown</div>
-      </div>
-      <div class="screenshot-card">
-        <img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/Scoring.webp"
-             alt="Trail age stats" loading="lazy" />
-        <div class="cap">// scoring of teams in competition</div>
-      </div>
+      <div class="screenshot-card"><img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/TracksOnMap.webp" alt="Trails on map" loading="lazy"/><div class="cap">// dog vs. runner track on map</div></div>
+      <div class="screenshot-card"><img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/overlay.webp" alt="Video overlay" loading="lazy"/><div class="cap">// GPS overlay for video export</div></div>
+      <div class="screenshot-card"><img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/total.webp" alt="Scoring overview" loading="lazy"/><div class="cap">// scoring summary</div></div>
+      <div class="screenshot-card"><img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/Form1a.webp" alt="Main interface" loading="lazy"/><div class="cap">// main analysis view</div></div>
+      <div class="screenshot-card"><img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/en-Points.webp" alt="Points breakdown" loading="lazy"/><div class="cap">// detailed team scoring breakdown</div></div>
+      <div class="screenshot-card"><img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/Scoring.webp" alt="Competition scoring" loading="lazy"/><div class="cap">// scoring of teams in competition</div></div>
     </div>
   </div>
 </section>
 
-<!-- CTA -->
 <section class="cta-section">
   <div class="container">
     <div class="cta-box">
       <div class="section-label">// get started</div>
       <h2>Start analysing today</h2>
       <p>Free, open source, no registration. Sample files included — see results before your next training session.</p>
-      <a class="btn btn-primary"
-         href="https://github.com/mwrnckx/K9-Mantrailing-Analyzer/releases/latest/download/K9-Trails-Analyzer.zip">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
-        </svg>
+      <a class="btn btn-primary" href="https://github.com/mwrnckx/K9-Mantrailing-Analyzer/releases/latest/download/K9-Trails-Analyzer.zip">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
         Download free — Windows
       </a>
-      <div class="version-note">latest: v1.0.34 · unlicense · no installer required</div>
+      <div class="version-note">latest: v1.0 · unlicense · no installer required</div>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <p>K9 Mantrailing Analyzer · <a href="https://github.com/mwrnckx/K9-Mantrailing-Analyzer" target="_blank">GitHub</a> · Free &amp; open source under Unlicense</p>
 </footer>
