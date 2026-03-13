@@ -1,6 +1,6 @@
-﻿# 🐾 K9 Trails Analyzer
+﻿# 🐾 K9 Mantrailing Analyzer
 
-**K9 Trails Analyzer** je nástroj určený pro psovody a trenéry zabývající se **mantrailingem** nebo **praktickým stopováním**.  
+**K9 Mantrailing Analyzer** je nástroj určený pro psovody a trenéry zabývající se **mantrailingem** nebo **praktickým stopováním**.  
 Vznikl z potřeby **objektivně vyhodnocovat tréninky** a **lépe chápat chování psa při práci na stopě**.  
 Aplikace umožňuje **načítat a analyzovat GPX záznamy** z tréninků, měřit vzdálenosti, rychlost, stáří stopy i přesnost práce psa.  
 
@@ -48,9 +48,9 @@ Od verze **1.0.26** je do aplikace postupně začleňován i **bodovací systém
 
 ## 🧱 Instalace
 
-1. Stáhni si aktuální verzi ze sekce [Releases](https://github.com/mwrnckx/K9-Mantrailing-Analyzer/releases/latest/download/K9-Trails-Analyzer.zip)  
+1. Stáhni si aktuální verzi ze sekce [Releases](https://github.com/mwrnckx/K9-Mantrailing-Analyzer/releases/latest/download/K9-Mantrailing-Analyzer.zip)  
 2. Rozbal ZIP do libovolné složky  
-3. Spusť `K9TrailsAnalyzer.exe`  
+3. Spusť `K9MantrailingAnalyzer.exe`  
 4. Pro vyzkoušení je v adresáři **Samples** několik ukázkových GPX souborů, které se automaticky načtou při prvním spuštění  
    Cílovou složku lze kdykoli změnit v menu **Soubor**
 
@@ -68,7 +68,7 @@ Od verze **1.0.26** je do aplikace postupně začleňován i **bodovací systém
 
 Toto řešení obsahuje dva projekty:
 
-- **K9-Trails-Analyzer** – hlavní aplikace (Windows Forms)  
+- **K9-Mantrailing-Analyzer** – hlavní aplikace (Windows Forms)  
   Slouží k načítání a analýze GPX dat.
 
 - **[TrackVideoExporter](TrackVideoExporter.md)** – knihovna tříd pro generování overlay videí  

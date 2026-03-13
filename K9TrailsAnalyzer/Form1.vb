@@ -1832,6 +1832,43 @@ Partial Public Class Form1
             rtbWarnings.Visible = False
         End If
     End Sub
+
+
+    Private Sub mnuCompetitionRulespdf_Click(sender As Object, e As EventArgs) Handles mnuCompetitionRulespdf.Click, mnuWettkampfregelnpdf.Click, mnuPravidlazavodupdf.Click
+        ' Název souboru (uprav podle skutečného názvu)
+        Dim fileName As String = "Competition_Rules.pdf"
+        Select Case sender.Name
+            Case mnuWettkampfregelnpdf.Name
+                fileName = "Wettkampfregeln.pdf"
+            Case mnuPravidlazavodupdf.Name
+                fileName = "Pravidla_zavodu.pdf"
+        End Select
+
+
+        ' Sestavení cesty k souboru v adresáři aplikace
+        Dim filePath As String = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", fileName)
+
+        Try
+            ' Kontrola, zda soubor existuje
+            If File.Exists(filePath) Then
+                Dim psi As New ProcessStartInfo()
+
+                With psi
+                    .FileName = filePath
+                    .UseShellExecute = True ' Klíčové pro otevření v defaultní aplikaci (Edge, Acrobat, atd.)
+                End With
+
+                Process.Start(psi)
+            Else
+                MessageBox.Show("The rules file was not found at the path: " & filePath,
+                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End If
+
+        Catch ex As Exception
+            MessageBox.Show("Unable to open PDF: " & ex.Message,
+                        "System error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        End Try
+    End Sub
 End Class
 
 ''' <summary>

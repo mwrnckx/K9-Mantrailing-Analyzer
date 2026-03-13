@@ -501,8 +501,85 @@
     }
 
     .theme-toggle:hover { border-color: var(--accent); color: var(--text); }
+    
+    /* Styl pro kurzor, aby uživatel věděl, že může kliknout */
+.clickable-screenshot {
+  cursor: zoom-in;
+  transition: opacity 0.3s;
+}
+
+.clickable-screenshot:hover {
+  opacity: 0.9;
+}
+
+/* Skrytý lightbox */
+.lightbox {
+  display: none; 
+  position: fixed;
+  z-index: 9999;
+  padding-top: 50px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.9); /* Černé pozadí s průhledností */
+  cursor: zoom-out;
+}
+
+/* Obrázek uvnitř lightboxu */
+.lightbox-content {
+  margin: auto;
+  display: block;
+  max-width: 90%;
+  max-height: 85vh;
+  object-fit: contain;
+  border: 2px solid #fff; /* Volitelné: bílý rámeček */
+}
+
+/* Titulek pod obrázkem */
+#lightbox-caption {
+  margin: auto;
+  display: block;
+  width: 80%;
+  text-align: center;
+  color: #ccc;
+  padding: 15px 0;
+  font-family: monospace;
+}
+
+/* Zavírací tlačítko */
+.close-lightbox {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #f1f1f1;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+}
 
   </style>
+  <script defer>
+    document.addEventListener('DOMContentLoaded', () => {
+  const lightbox = document.getElementById('image-lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  const captionText = document.getElementById('lightbox-caption');
+  const screenshots = document.querySelectorAll('.clickable-screenshot');
+
+  screenshots.forEach(img => {
+    img.onclick = function() {
+      lightbox.style.display = "block";
+      lightboxImg.src = this.src;
+      captionText.innerHTML = this.alt;
+    }
+  });
+
+  // Zavření pomocí klávesy ESC
+  document.addEventListener('keydown', (e) => {
+    if (e.key === "Escape") lightbox.style.display = "none";
+  });
+});
+  </script>
 </head>
 <body>
 
@@ -569,7 +646,7 @@
       </p>
       <div class="hero-actions">
         <a class="btn btn-primary"
-           href="https://github.com/mwrnckx/K9-Mantrailing-Analyzer/releases/latest/download/K9-Trails-Analyzer.zip">
+           href="https://github.com/mwrnckx/K9-Mantrailing-Analyzer/releases/latest/download/K9-Mantrailing-Analyzer.zip">
           <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
           </svg>
@@ -623,7 +700,7 @@
     <h2>Up and running in minutes</h2>
     <p class="section-intro">No account, no subscription, no cloud. Everything runs locally on your Windows PC.</p>
     <div class="steps">
-      <div class="step"><h3>Download &amp; unzip</h3><p>Download the ZIP from Releases, unzip to any folder, run K9TrailsAnalyzer.exe. No installer needed.</p></div>
+      <div class="step"><h3>Download &amp; unzip</h3><p>Download the ZIP from Releases, unzip to any folder, run K9MantrailingAnalyzer.exe. No installer needed.</p></div>
       <div class="step"><h3>Try the sample files</h3><p>Sample GPX files are included. Open them immediately to see a full analysis without needing your own training data.</p></div>
       <div class="step"><h3>Load your GPX tracks</h3><p>Import the runner's trail and the dog's GPS track. Both recorded on standard phones — no special hardware required.</p></div>
       <div class="step"><h3>Analyse &amp; export</h3><p>Review accuracy, speed and checkpoint scores. Export an overlay video to review the trail with your training group.</p></div>
@@ -645,14 +722,39 @@
     <div class="section-label">// screenshots</div>
     <h2>See it in action</h2>
     <p class="section-intro">Real outputs from actual mantrailing sessions.</p>
+    
     <div class="screenshots-grid">
-      <div class="screenshot-card"><img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/TracksOnMap.webp" alt="Trails on map" loading="lazy"/><div class="cap">// dog vs. runner track on map</div></div>
-      <div class="screenshot-card"><img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/overlay.webp" alt="Video overlay" loading="lazy"/><div class="cap">// GPS overlay for video export</div></div>
-      <div class="screenshot-card"><img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/total.webp" alt="Scoring overview" loading="lazy"/><div class="cap">// scoring summary</div></div>
-      <div class="screenshot-card"><img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/Form1a.webp" alt="Main interface" loading="lazy"/><div class="cap">// main analysis view</div></div>
-      <div class="screenshot-card"><img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/en-Points.webp" alt="Points breakdown" loading="lazy"/><div class="cap">// detailed team scoring breakdown</div></div>
-      <div class="screenshot-card"><img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/Scoring.webp" alt="Competition scoring" loading="lazy"/><div class="cap">// scoring of teams in competition</div></div>
+      <div class="screenshot-card">
+        <img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/TracksOnMap.webp" alt="Trails on map" loading="lazy" class="clickable-screenshot"/>
+        <div class="cap">// dog vs. runner track on map</div>
+      </div>
+      <div class="screenshot-card">
+        <img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/overlay.webp" alt="Video overlay" loading="lazy" class="clickable-screenshot"/>
+        <div class="cap">// GPS overlay for video export</div>
+      </div>
+      <div class="screenshot-card">
+        <img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/total.webp" alt="Scoring overview" loading="lazy" class="clickable-screenshot"/>
+        <div class="cap">// scoring summary</div>
+      </div>
+      <div class="screenshot-card">
+        <img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/Form1a.webp" alt="Main interface" loading="lazy" class="clickable-screenshot"/>
+        <div class="cap">// main analysis view</div>
+      </div>
+      <div class="screenshot-card">
+        <img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/en-Points.webp" alt="Points breakdown" loading="lazy" class="clickable-screenshot"/>
+        <div class="cap">// detailed team scoring breakdown</div>
+      </div>
+      <div class="screenshot-card">
+        <img src="https://raw.githubusercontent.com/mwrnckx/K9-Mantrailing-Analyzer/master/docs/Screenshots/Scoring.webp" alt="Competition scoring" loading="lazy" class="clickable-screenshot"/>
+        <div class="cap">// scoring of teams in competition</div>
+      </div>
     </div>
+  </div>
+
+  <div id="image-lightbox" class="lightbox" onclick="this.style.display='none'">
+    <span class="close-lightbox">&times;</span>
+    <img class="lightbox-content" id="lightbox-img">
+    <div id="lightbox-caption"></div>
   </div>
 </section>
 
@@ -662,7 +764,7 @@
       <div class="section-label">// get started</div>
       <h2>Start analysing today</h2>
       <p>Free, open source, no registration. Sample files included — see results before your next training session.</p>
-      <a class="btn btn-primary" href="https://github.com/mwrnckx/K9-Mantrailing-Analyzer/releases/latest/download/K9-Trails-Analyzer.zip">
+      <a class="btn btn-primary" href="https://github.com/mwrnckx/K9-Mantrailing-Analyzer/releases/latest/download/K9-Mantrailing-Analyzer.zip">
         <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
         Download free — Windows
       </a>

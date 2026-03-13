@@ -21,9 +21,31 @@
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Resources\Competition_Rules.pdf" />
+    <None Remove="Resources\Pravidla_hodnoceni_zavodu.pdf" />
+    <None Remove="Resources\Pravidla_zavodu.pdf" />
+    <None Remove="Resources\Wettkampfregeln.pdf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\Pravidla_zavodu.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
   <!-- *** ODSTRANĚNO: Blok <Compile Remove> - způsoboval problémy s Designer.vb soubory *** -->
 
   <ItemGroup>
+    <Content Include="Resources\Competition_Rules.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Pravidla_hodnoceni_zavodu.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Wettkampfregeln.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="track.ico" />
   </ItemGroup>
 
@@ -212,6 +234,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\images\uk-flag.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Mantrailing_Competition_Rules.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Mantrailing_Wettkampfregeln.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Pravidla_hodnoceni_mantrailingovych_zavodu.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <!-- Zde pokračují tvé definice pro GPX soubory -->

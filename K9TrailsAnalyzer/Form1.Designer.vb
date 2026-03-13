@@ -28,8 +28,8 @@ Partial Class Form1
     Private Sub InitializeComponent()
         components = New Container()
         Dim resources As ComponentResourceManager = New ComponentResourceManager(GetType(Form1))
-        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
         ToolTip1 = New ToolTip(components)
         btnCreateVideos = New Button()
         lblRemoteDirectory = New Label()
@@ -52,6 +52,10 @@ Partial Class Form1
         mnuDeleteCurrentCategory = New ToolStripMenuItem()
         mnuHelp = New ToolStripMenuItem()
         mnuAbout = New ToolStripMenuItem()
+        mnuCompetitionRules = New ToolStripMenuItem()
+        mnuCompetitionRulespdf = New ToolStripMenuItem()
+        mnuWettkampfregelnpdf = New ToolStripMenuItem()
+        mnuPravidlazavodupdf = New ToolStripMenuItem()
         mnuCheckForUpdates1 = New ToolStripMenuItem()
         ToolStripSeparator1 = New ToolStripSeparator()
         mnuSetFFmpegPath = New ToolStripMenuItem()
@@ -226,7 +230,7 @@ Partial Class Form1
         ' 
         ' mnuHelp
         ' 
-        mnuHelp.DropDownItems.AddRange(New ToolStripItem() {mnuAbout, mnuCheckForUpdates1, ToolStripSeparator1, mnuSetFFmpegPath, ToolStripSeparator2, mnuFactoryReset})
+        mnuHelp.DropDownItems.AddRange(New ToolStripItem() {mnuAbout, mnuCompetitionRules, mnuCheckForUpdates1, ToolStripSeparator1, mnuSetFFmpegPath, ToolStripSeparator2, mnuFactoryReset})
         mnuHelp.Name = "mnuHelp"
         resources.ApplyResources(mnuHelp, "mnuHelp")
         ' 
@@ -234,6 +238,27 @@ Partial Class Form1
         ' 
         mnuAbout.Name = "mnuAbout"
         resources.ApplyResources(mnuAbout, "mnuAbout")
+        ' 
+        ' mnuCompetitionRules
+        ' 
+        mnuCompetitionRules.DropDownItems.AddRange(New ToolStripItem() {mnuCompetitionRulespdf, mnuWettkampfregelnpdf, mnuPravidlazavodupdf})
+        mnuCompetitionRules.Name = "mnuCompetitionRules"
+        resources.ApplyResources(mnuCompetitionRules, "mnuCompetitionRules")
+        ' 
+        ' mnuCompetitionRulespdf
+        ' 
+        mnuCompetitionRulespdf.Name = "mnuCompetitionRulespdf"
+        resources.ApplyResources(mnuCompetitionRulespdf, "mnuCompetitionRulespdf")
+        ' 
+        ' mnuWettkampfregelnpdf
+        ' 
+        mnuWettkampfregelnpdf.Name = "mnuWettkampfregelnpdf"
+        resources.ApplyResources(mnuWettkampfregelnpdf, "mnuWettkampfregelnpdf")
+        ' 
+        ' mnuPravidlazavodupdf
+        ' 
+        mnuPravidlazavodupdf.Name = "mnuPravidlazavodupdf"
+        resources.ApplyResources(mnuPravidlazavodupdf, "mnuPravidlazavodupdf")
         ' 
         ' mnuCheckForUpdates1
         ' 
@@ -460,23 +485,23 @@ Partial Class Form1
         dgvCompetition.AllowUserToDeleteRows = False
         dgvCompetition.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
         dgvCompetition.BackgroundColor = Color.Salmon
-        DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter
-        DataGridViewCellStyle1.BackColor = Color.Salmon
-        DataGridViewCellStyle1.Font = New Font("Cascadia Code", 12.0F)
-        DataGridViewCellStyle1.ForeColor = Color.Maroon
-        DataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight
-        DataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText
-        DataGridViewCellStyle1.WrapMode = DataGridViewTriState.True
-        dgvCompetition.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
+        DataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter
+        DataGridViewCellStyle3.BackColor = Color.Salmon
+        DataGridViewCellStyle3.Font = New Font("Cascadia Code", 12.0F)
+        DataGridViewCellStyle3.ForeColor = Color.Maroon
+        DataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight
+        DataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText
+        DataGridViewCellStyle3.WrapMode = DataGridViewTriState.True
+        dgvCompetition.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle3
         dgvCompetition.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight
-        DataGridViewCellStyle2.BackColor = Color.LightYellow
-        DataGridViewCellStyle2.Font = New Font("Cascadia Code", 12.0F)
-        DataGridViewCellStyle2.ForeColor = Color.Maroon
-        DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
-        DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
-        DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
-        dgvCompetition.DefaultCellStyle = DataGridViewCellStyle2
+        DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleRight
+        DataGridViewCellStyle4.BackColor = Color.LightYellow
+        DataGridViewCellStyle4.Font = New Font("Cascadia Code", 12.0F)
+        DataGridViewCellStyle4.ForeColor = Color.Maroon
+        DataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight
+        DataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText
+        DataGridViewCellStyle4.WrapMode = DataGridViewTriState.False
+        dgvCompetition.DefaultCellStyle = DataGridViewCellStyle4
         dgvCompetition.EnableHeadersVisualStyles = False
         resources.ApplyResources(dgvCompetition, "dgvCompetition")
         dgvCompetition.Name = "dgvCompetition"
@@ -583,7 +608,7 @@ Partial Class Form1
         'mnuTrimGPSNoise.Checked = My.Settings.TrimGPSnoise
 
         CreateGpxFileManager()
-        Me.cmbTimeInterval.SelectedIndex = 1 'last 30 days
+        Me.cmbTimeInterval.SelectedIndex = 2 '2=  365 days; 1= last 30 days
 
         lblRemoteDirectory.Width = Me.Width - lblRemoteDirectory.Left - 20
         lblRemoteDirectory.Text = ShortenPathToFit(lblRemoteDirectory, $"Source GPX folder: {ActiveCategoryInfo.RemoteDirectory}")
@@ -694,6 +719,10 @@ Partial Class Form1
     Friend WithEvents pnlCategory As Panel
     Friend WithEvents cbActiveCategory As ComboBox
     Friend WithEvents lblRemoteDirectory As Label
+    Friend WithEvents mnuCompetitionRules As ToolStripMenuItem
+    Friend WithEvents mnuCompetitionRulespdf As ToolStripMenuItem
+    Friend WithEvents mnuWettkampfregelnpdf As ToolStripMenuItem
+    Friend WithEvents mnuPravidlazavodupdf As ToolStripMenuItem
 
 
 End Class

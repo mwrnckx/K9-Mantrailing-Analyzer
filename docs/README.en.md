@@ -1,6 +1,6 @@
-# 🐾 K9 Trails Analyzer
+# 🐾 K9 Mantrailing Analyzer
 
-**K9 Trails Analyzer** is a tool designed for dog handlers and trainers involved in **mantrailing** or **practical tracking**.  
+**K9 Mantrailing Analyzer** is a tool designed for dog handlers and trainers involved in **mantrailing** or **practical tracking**.  
 It was created to **objectively evaluate training sessions** and **better understand the dog’s behaviour on the trail**.  
 The application allows you to **load and analyse GPX recordings** from training sessions, measuring distances, speed, trail age and the dog’s tracking accuracy.  
 
@@ -48,9 +48,9 @@ From version **1.0.26**, the application also includes a **scoring system**, sui
 
 ## 🧱 Installation
 
-1. Download the latest version from [Releases](https://github.com/mwrnckx/K9-Mantrailing-Analyzer/releases/latest/download/K9-Trails-Analyzer.zip)  
+1. Download the latest version from [Releases](https://github.com/mwrnckx/K9-Mantrailing-Analyzer/releases/latest/download/K9-Mantrailing-Analyzer.zip)  
 2. Unzip it to any folder  
-3. Run `K9TrailsAnalyzer.exe`  
+3. Run `K9MantrailingAnalyzer.exe`  
 4. A sample set of GPX files is included in the **Samples** folder and loads automatically on first launch  
    The target folder can be changed anytime from the **File** menu.
 
@@ -68,7 +68,7 @@ From version **1.0.26**, the application also includes a **scoring system**, sui
 
 This solution contains two projects:
 
-- **K9-Trails-Analyzer** – the main Windows Forms application  
+- **K9-Mantrailing-Analyzer** – the main Windows Forms application  
   Used for reading and analysing GPX data.
 
 - **[TrackVideoExporter](TrackVideoExporter.md)** – a class library for generating overlay videos  

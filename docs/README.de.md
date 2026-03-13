@@ -1,6 +1,6 @@
-﻿# 🐾 K9 Trails Analyzer
+﻿# 🐾 K9 Mantrailing Analyzer
 
-**K9 Trails Analyzer** ist ein Werkzeug für Hundeführer und Trainer, die sich mit **Mantrailing** oder **praktischer Fährtenarbeit** beschäftigen.  
+**K9 Mantrailing Analyzer** ist ein Werkzeug für Hundeführer und Trainer, die sich mit **Mantrailing** oder **praktischer Fährtenarbeit** beschäftigen.  
 Es wurde entwickelt, um **Trainingseinheiten objektiv auszuwerten** und **das Verhalten des Hundes auf der Spur besser zu verstehen**.  
 Die Anwendung ermöglicht das **Laden und Analysieren von GPX-Aufzeichnungen** aus Trainings, einschließlich Messung von Distanzen, Geschwindigkeit, Spuralter und Genauigkeit der Arbeit des Hundes.  
 
@@ -47,9 +47,9 @@ Seit Version **1.0.26** enthält die Anwendung zudem ein **Punktesystem**, das s
 
 ## 🧱 Installation
 
-1. Lade die aktuelle Version unter [Releases](https://github.com/mwrnckx/K9-Mantrailing-Analyzer/releases/latest/download/K9-Trails-Analyzer.zip) herunter  
+1. Lade die aktuelle Version unter [Releases](https://github.com/mwrnckx/K9-Mantrailing-Analyzer/releases/latest/download/K9-Mantrailing-Analyzer.zip) herunter  
 2. Entpacke das ZIP-Archiv in einen beliebigen Ordner  
-3. Starte `K9TrailsAnalyzer.exe`  
+3. Starte `K9MantrailingAnalyzer.exe`  
 4. Im Ordner **Samples** befinden sich Beispiel-GPX-Dateien, die beim ersten Start automatisch geladen werden  
    Der Zielordner kann jederzeit im Menü **Datei** geändert werden.
 
@@ -67,7 +67,7 @@ Seit Version **1.0.26** enthält die Anwendung zudem ein **Punktesystem**, das s
 
 Das Lösungsprojekt enthält zwei Teilprojekte:
 
-- **K9-Trails-Analyzer** – Hauptanwendung (Windows Forms)  
+- **K9-Mantrailing-Analyzer** – Hauptanwendung (Windows Forms)  
   Zum Laden und Analysieren von GPX-Daten.
 
 - **[TrackVideoExporter](TrackVideoExporter.md)** – Klassenbibliothek zur Erstellung von Overlay-Videos  
