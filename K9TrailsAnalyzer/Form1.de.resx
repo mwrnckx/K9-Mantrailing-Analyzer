@@ -117,14 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="txtWarnings.Text" xml:space="preserve">
-    <value>Fehler und Protokolle:</value>
+  <data name="btnCreateVideos.Text" xml:space="preserve">
+    <value>Videos erstellen</value>
   </data>
-  <data name="btnChartDistances.Text" xml:space="preserve">
-    <value>Diagramme anzeigen</value>
-  </data>
-  <data name="mnuFile.Text" xml:space="preserve">
-    <value>Datei</value>
+  <data name="btnCreateVideos.ToolTip" xml:space="preserve">
+    <value>Erstellen Sie Videos aus ausgewählten Dateien</value>
   </data>
   <data name="mnuPrependDateToFileName.Text" xml:space="preserve">
     <value>Datum dem gpx-Dateinamen voranstellen</value>
@@ -132,20 +129,191 @@
   <data name="mnuTrimGPSNoise.Text" xml:space="preserve">
     <value>GPS-Rauschen am Anfang und Ende der Strecke entfernen</value>
   </data>
-  <data name="mnuSettings.Text" xml:space="preserve">
-    <value>GPX-Verarbeitung</value>
+  <data name="mnuProcessProcessed.Text" xml:space="preserve">
+    <value>Prozess bereits verarbeitete Dateien verarbeiten</value>
+  </data>
+  <data name="mnuProcessProcessed.ToolTipText" xml:space="preserve">
+    <value>Prozessdateien, die bereits verarbeitet wurden</value>
+  </data>
+  <data name="mnuGPXprocessing.Text" xml:space="preserve">
+    <value>Gpx-Verarbeitung</value>
+  </data>
+  <data name="mnuSelectADirectoryToSaveVideo.Text" xml:space="preserve">
+    <value>Wählen Sie ein Verzeichnis, um Overlay -Video zu speichern</value>
+  </data>
+  <data name="mnuMergingTracks.Text" xml:space="preserve">
+    <value>Match -Läufer und Hundespuren</value>
+  </data>
+  <data name="mnuExportAs.Text" xml:space="preserve">
+    <value>Exportieren als (RTF. TXT, CSV)</value>
+  </data>
+  <data name="mnuExit.Text" xml:space="preserve">
+    <value>Ende</value>
+  </data>
+  <data name="mnuFile.Text" xml:space="preserve">
+    <value>Datei</value>
+  </data>
+  <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
+    <value>Ändern Sie das Verzeichnis mit GPX -Dateien</value>
+  </data>
+  <data name="mnuSelect_directory_gpx_files.ToolTipText" xml:space="preserve">
+    <value>Ändern Sie das Verzeichnis, in dem sich die GPX -Dateien des aktuellen Hundes befinden</value>
+  </data>
+  <data name="mnuOpenLocalFolder.Text" xml:space="preserve">
+    <value>Öffnen Sie den lokalen GPX-Ordner</value>
+  </data>
+  <data name="mnuOpenLocalFolder.ToolTipText" xml:space="preserve">
+    <value>Öffnet den lokalen Ordner im Explorer</value>
+  </data>
+  <data name="mnuRenameCurrentCategory.Text" xml:space="preserve">
+    <value>Kategorienname bearbeiten</value>
+  </data>
+  <data name="mnuAddNewCategory.Text" xml:space="preserve">
+    <value>Fügen Sie eine andere Kategorie hinzu</value>
+  </data>
+  <data name="mnuDeleteCurrentCategory.Text" xml:space="preserve">
+    <value>Aktuelle Kategorie löschen</value>
+  </data>
+  <data name="mnuCategory.Text" xml:space="preserve">
+    <value>Kategorieeinstellungen</value>
+  </data>
+  <data name="mnuCompetitionRules.Text" xml:space="preserve">
+    <value>Wettkampfregeln</value>
+  </data>
+  <data name="mnuCheckForUpdates1.Text" xml:space="preserve">
+    <value>Überprüfen Sie nach Updates</value>
+  </data>
+  <data name="mnuSetFFmpegPath.Text" xml:space="preserve">
+    <value>Setzen Sie den FFMPEG -Pfad</value>
+  </data>
+  <data name="mnuFactoryReset.Text" xml:space="preserve">
+    <value>Werksreset</value>
+  </data>
+  <data name="mnuHelp.Text" xml:space="preserve">
+    <value>Helfen</value>
+  </data>
+  <data name="mnuCzech.Text" xml:space="preserve">
+    <value>Česky</value>
+  </data>
+  <data name="mnuPolish.Text" xml:space="preserve">
+    <value>Polski</value>
+  </data>
+  <data name="mnuRussian.Text" xml:space="preserve">
+    <value>Русский</value>
   </data>
   <data name="mnuLanguage.Text" xml:space="preserve">
     <value>Sprache</value>
   </data>
+  <data name="MenuStrip1.Text" xml:space="preserve">
+    <value>MenuSrip1</value>
+  </data>
+  <data name="cmbTimeInterval.Items" xml:space="preserve">
+    <value>Letzten 7 Tage</value>
+  </data>
+  <data name="cmbTimeInterval.Items1" xml:space="preserve">
+    <value>Letzte 30 Tage</value>
+  </data>
+  <data name="cmbTimeInterval.Items2" xml:space="preserve">
+    <value>Letzte 365 Tage</value>
+  </data>
+  <data name="cmbTimeInterval.Items3" xml:space="preserve">
+    <value>Laufendes Jahr</value>
+  </data>
+  <data name="cmbTimeInterval.Items4" xml:space="preserve">
+    <value>Letztes Jahr</value>
+  </data>
+  <data name="cmbTimeInterval.Items5" xml:space="preserve">
+    <value>Benutzerdefinierter Bereich</value>
+  </data>
   <data name="gbPeriod.Text" xml:space="preserve">
     <value>Zeitraumauswahl</value>
   </data>
-  <data name="lblScentarticle.Text" xml:space="preserve">
-    <value>Geruchsartikel</value>
+  <data name="btnCharts.Text" xml:space="preserve">
+    <value>Diagramme anzeigen</value>
+  </data>
+  <data name="btnReadGpxFiles.Text" xml:space="preserve">
+    <value>Laden Sie Daten aus GPX -Dateien im ausgewählten Ordner</value>
+  </data>
+  <data name="TabStats.Text" xml:space="preserve">
+    <value>Überblick</value>
+  </data>
+  <data name="clmFileName.Text" xml:space="preserve">
+    <value>Datei</value>
+  </data>
+  <data name="clmDate.Text" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="clmLength.Text" xml:space="preserve">
+    <value>Länge</value>
+  </data>
+  <data name="clmAge.Text" xml:space="preserve">
+    <value>Alter</value>
+  </data>
+  <data name="clmTrkCount.Text" xml:space="preserve">
+    <value>Anzahl der Tracks</value>
+  </data>
+  <data name="TabVideoExport.Text" xml:space="preserve">
+    <value>🎬 Videoexport</value>
+  </data>
+  <data name="TabCompetition.Text" xml:space="preserve">
+    <value>Wertung</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Mantrailing: Statistik und Analyse von GPX-Dateien</value>
+  </data>
+  <data name="StatusLabel1.Text" xml:space="preserve">
+    <value>Toolstrip</value>
+  </data>
+  <data name="StatusLabel1.ToolTipText" xml:space="preserve">
+    <value>Verzeichnisse können im Menü "Datei" festgelegt werden</value>
+  </data>
+  <data name="StatusStrip1.ToolTip" xml:space="preserve">
+    <value>Verzeichnisse können im Menü "Datei" festgelegt werden</value>
+  </data>
+  <data name="mnuSettings.Text" xml:space="preserve">
+    <value>GPX-Verarbeitung</value>
+  </data>
+  <data name="HelpToolStripMenuItem.Text" xml:space="preserve">
+    <value>Helfen</value>
+  </data>
+  <data name="mnuPointForFindText.Text" xml:space="preserve">
+    <value>Max. Punkte zum Finden</value>
+  </data>
+  <data name="mnuPointsForSpeedText.Text" xml:space="preserve">
+    <value>Punkte für km/h</value>
+  </data>
+  <data name="mnuPointInCompetition.Text" xml:space="preserve">
+    <value>Setze Punkte im Test</value>
+  </data>
+  <data name="ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+  <data name="mnuPointsForAccuracyText.Text" xml:space="preserve">
+    <value>Max. Punkte für Genauigkeit</value>
+  </data>
+  <data name="mnuPointsForFind.ToolTipText" xml:space="preserve">
+    <value>Geben Sie die Anzahl der Punkte zum Finden der Riemenscheibe ein.</value>
+  </data>
+  <data name="mnuPointsForSpeed.ToolTipText" xml:space="preserve">
+    <value>Geben Sie die Anzahl der Punkte für die Geschwindigkeit ein (Punkte für 1 km/h)</value>
+  </data>
+  <data name="mnuPointsForAccuracy.ToolTipText" xml:space="preserve">
+    <value>Geben Sie die maximale Punktzahl für die Genauigkeit ein.</value>
+  </data>
+  <data name="mnuPointsForHandler.ToolTipText" xml:space="preserve">
+    <value>Geben Sie die maximale Punktzahl für die Fähigkeit des Hundeführers an, den Hund zu lesen.</value>
+  </data>
+  <data name="mnuPointsForHandlerText.Text" xml:space="preserve">
+    <value>Max. Punkte für Hundelesung</value>
+  </data>
+  <data name="txtWarnings.Text" xml:space="preserve">
+    <value>Fehler und Protokolle:</value>
+  </data>
+  <data name="btnChartDistances.Text" xml:space="preserve">
+    <value>Diagramme anzeigen</value>
+  </data>
+  <data name="lblScentarticle.Text" xml:space="preserve">
+    <value>Geruchsartikel</value>
   </data>
   <data name="rbTotDistance.Text" xml:space="preserve">
     <value>Fluffed in der gewählten Periode</value>
@@ -186,32 +354,8 @@
   <data name="lblEndDate.Text" xml:space="preserve">
     <value>Bis:</value>
   </data>
-  <data name="StatusLabel1.ToolTipText" xml:space="preserve">
-    <value>Verzeichnisse können im Menü "Datei" festgelegt werden</value>
-  </data>
-  <data name="mnuExportAs.Text" xml:space="preserve">
-    <value>Exportieren als (RTF. TXT, CSV)</value>
-  </data>
-  <data name="mnuSelectADirectoryToSaveVideo.Text" xml:space="preserve">
-    <value>Wählen Sie ein Verzeichnis, um Overlay -Video zu speichern</value>
-  </data>
-  <data name="mnuMergingTracks.Text" xml:space="preserve">
-    <value>Match -Läufer und Hundespuren</value>
-  </data>
-  <data name="mnuProcessProcessed.Text" xml:space="preserve">
-    <value>Prozess bereits verarbeitete Dateien verarbeiten</value>
-  </data>
-  <data name="mnuProcessProcessed.ToolTipText" xml:space="preserve">
-    <value>Prozessdateien, die bereits verarbeitet wurden</value>
-  </data>
-  <data name="StatusStrip1.ToolTip" xml:space="preserve">
-    <value>Verzeichnisse können im Menü "Datei" festgelegt werden</value>
-  </data>
   <data name="mnuDogName.Text" xml:space="preserve">
     <value>Hundenname</value>
-  </data>
-  <data name="btnCharts.Text" xml:space="preserve">
-    <value>Diagramme anzeigen</value>
   </data>
   <data name="mnuAskForVideo.Text" xml:space="preserve">
     <value>Erstellen Sie ein Overlay -Video</value>
@@ -219,160 +363,19 @@
   <data name="FactoryResetToolStripMenuItem.Text" xml:space="preserve">
     <value>Fabrikreset</value>
   </data>
-  <data name="btnReadGpxFiles.Text" xml:space="preserve">
-    <value>Laden Sie Daten aus GPX -Dateien im ausgewählten Ordner</value>
-  </data>
   <data name="txtDirectory.ToolTip" xml:space="preserve">
     <value>Verzeichnis, in dem sich GPX -Dateien befinden</value>
   </data>
   <data name="txtOutput.Text" xml:space="preserve">
     <value>Dieses Programm wird verwendet, um Ihre Datensätze aus der Tracking -Anwendung wie einem Geo -Tracker zu verarbeiten.</value>
   </data>
-  <data name="cmbTimeInterval.Items" xml:space="preserve">
-    <value>Letzten 7 Tage</value>
-  </data>
-  <data name="cmbTimeInterval.Items1" xml:space="preserve">
-    <value>Letzte 30 Tage</value>
-  </data>
-  <data name="cmbTimeInterval.Items2" xml:space="preserve">
-    <value>Letzte 365 Tage</value>
-  </data>
-  <data name="cmbTimeInterval.Items4" xml:space="preserve">
-    <value>Letztes Jahr</value>
-  </data>
-  <data name="cmbTimeInterval.Items3" xml:space="preserve">
-    <value>Laufendes Jahr</value>
-  </data>
-  <data name="cmbTimeInterval.Items5" xml:space="preserve">
-    <value>Benutzerdefinierter Bereich</value>
-  </data>
   <data name="StatusStrip1.Text" xml:space="preserve">
     <value>StatusStrip1</value>
-  </data>
-  <data name="StatusLabel1.Text" xml:space="preserve">
-    <value>Toolstrip</value>
-  </data>
-  <data name="MenuStrip1.Text" xml:space="preserve">
-    <value>MenuSrip1</value>
-  </data>
-  <data name="clmDate.Text" xml:space="preserve">
-    <value>Datum</value>
-  </data>
-  <data name="clmLength.Text" xml:space="preserve">
-    <value>Länge</value>
-  </data>
-  <data name="clmTrkCount.Text" xml:space="preserve">
-    <value>Anzahl der Tracks</value>
-  </data>
-  <data name="mnuSetFFmpegPath.Text" xml:space="preserve">
-    <value>Setzen Sie den FFMPEG -Pfad</value>
-  </data>
-  <data name="mnuRussian.Text" xml:space="preserve">
-    <value>Русский</value>
-  </data>
-  <data name="mnuPolish.Text" xml:space="preserve">
-    <value>Polski</value>
-  </data>
-  <data name="mnuCzech.Text" xml:space="preserve">
-    <value>Česky</value>
-  </data>
-  <data name="clmAge.Text" xml:space="preserve">
-    <value>Alter</value>
-  </data>
-  <data name="btnCreateVideos.Text" xml:space="preserve">
-    <value>Videos erstellen</value>
-  </data>
-  <data name="btnCreateVideos.ToolTip" xml:space="preserve">
-    <value>Erstellen Sie Videos aus ausgewählten Dateien</value>
-  </data>
-  <data name="clmFileName.Text" xml:space="preserve">
-    <value>Datei</value>
-  </data>
-  <data name="TabVideoExport.Text" xml:space="preserve">
-    <value>🎬 Videoexport</value>
-  </data>
-  <data name="mnuExit.Text" xml:space="preserve">
-    <value>Ende</value>
   </data>
   <data name="SToolStripMenuItem.Text" xml:space="preserve">
     <value>Einstellungen</value>
   </data>
-  <data name="mnuCheckForUpdates1.Text" xml:space="preserve">
-    <value>Überprüfen Sie nach Updates</value>
-  </data>
-  <data name="HelpToolStripMenuItem.Text" xml:space="preserve">
-    <value>Helfen</value>
-  </data>
   <data name="DeleteCurrentDogToolStripMenuItem.Text" xml:space="preserve">
     <value>Aktuellen Hund löschen</value>
-  </data>
-  <data name="mnuSelect_directory_gpx_files.ToolTipText" xml:space="preserve">
-    <value>Ändern Sie das Verzeichnis, in dem sich die GPX -Dateien des aktuellen Hundes befinden</value>
-  </data>
-  <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
-    <value>Ändern Sie das Verzeichnis mit GPX -Dateien</value>
-  </data>
-  <data name="mnuAddNewCategory.Text" xml:space="preserve">
-    <value>Fügen Sie eine andere Kategorie hinzu</value>
-  </data>
-  <data name="mnuDeleteCurrentCategory.Text" xml:space="preserve">
-    <value>Aktuelle Kategorie löschen</value>
-  </data>
-  <data name="mnuRenameCurrentCategory.Text" xml:space="preserve">
-    <value>Kategorienname bearbeiten</value>
-  </data>
-  <data name="mnuPointsForAccuracyText.Text" xml:space="preserve">
-    <value>Max. Punkte für Genauigkeit</value>
-  </data>
-  <data name="mnuPointForFindText.Text" xml:space="preserve">
-    <value>Max. Punkte zum Finden</value>
-  </data>
-  <data name="mnuPointsForSpeedText.Text" xml:space="preserve">
-    <value>Punkte für km/h</value>
-  </data>
-  <data name="mnuPointInCompetition.Text" xml:space="preserve">
-    <value>Setze Punkte im Test</value>
-  </data>
-  <data name="ToolStripMenuItem.Text" xml:space="preserve">
-    <value>Einstellungen</value>
-  </data>
-  <data name="mnuPointsForHandler.ToolTipText" xml:space="preserve">
-    <value>Geben Sie die maximale Punktzahl für die Fähigkeit des Hundeführers an, den Hund zu lesen.</value>
-  </data>
-  <data name="mnuPointsForAccuracy.ToolTipText" xml:space="preserve">
-    <value>Geben Sie die maximale Punktzahl für die Genauigkeit ein.</value>
-  </data>
-  <data name="mnuPointsForSpeed.ToolTipText" xml:space="preserve">
-    <value>Geben Sie die Anzahl der Punkte für die Geschwindigkeit ein (Punkte für 1 km/h)</value>
-  </data>
-  <data name="mnuPointsForFind.ToolTipText" xml:space="preserve">
-    <value>Geben Sie die Anzahl der Punkte zum Finden der Riemenscheibe ein.</value>
-  </data>
-  <data name="TabStats.Text" xml:space="preserve">
-    <value>Überblick</value>
-  </data>
-  <data name="TabCompetition.Text" xml:space="preserve">
-    <value>Wertung</value>
-  </data>
-  <data name="mnuGPXprocessing.Text" xml:space="preserve">
-    <value>Gpx-Verarbeitung</value>
-  </data>
-  <data name="mnuHelp.Text" xml:space="preserve">
-    <value>Helfen</value>
-  </data>
-  <data name="mnuFactoryReset.Text" xml:space="preserve">
-    <value>Werksreset</value>
-  </data>
-  <data name="mnuPointsForHandlerText.Text" xml:space="preserve">
-    <value>Max. Punkte für Hundelesung</value>
-  </data>
-  <data name="mnuCategory.Text" xml:space="preserve">
-    <value>Kategorieeinstellungen</value>
-  </data>
-  <data name="mnuOpenLocalFolder.Text" xml:space="preserve">
-    <value>Öffnen Sie den lokalen GPX-Ordner</value>
-  </data>
-  <data name="mnuOpenLocalFolder.ToolTipText" xml:space="preserve">
-    <value>Öffnet den lokalen Ordner im Explorer</value>
   </data>
 </root>
