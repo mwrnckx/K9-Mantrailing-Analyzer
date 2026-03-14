@@ -2091,64 +2091,262 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
     ''' - weightedDeviation: The sum of (deviation from runner's track * segment time) in [m*s]. A measure of the dog's average deviation weighted by time, indicating tracing accuracy during movement.
     ''' - MinDistanceToRunnerEnd: The minimum distance (in meters) the dog came to the very last point of the runner's track (the goal/end point).
     ''' </returns>
+    '    Private Function AnalyzeDogMovement(dogGeoPoints As List(Of TrackGeoPoint), dogXY As List(Of (X As Double, Y As Double)), runnerXY As List(Of (X As Double, Y As Double)), runnerGeoPoints As List(Of TrackGeoPoint)) _
+    'As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double, distance As Double(), weightedTime As TimeSpan, averageDeviation As Double, maxDeviationGeoPoints As TrackAsGeoPoints, minDistanceToRunnerEnd As Double, TrailPickupFactor As Double)
+    '        Dim conv As New TrackConverter()
+    '        ' --- Setting constants ---
+    '        Const MOVING_SPEED_THRESHOLD_MS As Double = 0.277 ' 1.0 km/h
+    '        Const STOPPED_SPEED_THRESHOLD_MS As Double = 0.1 ' 0.36 km/h
+    '        ' --- Initialization of accumulation variables ---
+    '        Dim movingTime As TimeSpan = TimeSpan.Zero
+    '        Dim stoppedTime As TimeSpan = TimeSpan.Zero
+    '        Dim weightedTime As TimeSpan = TimeSpan.Zero ' Původní init
+    '        Dim totalTime As TimeSpan = TimeSpan.Zero
+    '        Dim weightedDistance As Double = 0.0
+    '        Dim Distance(dogGeoPoints.Count) As Double 'nezapočítává přeskočené úseky trasy kladeče
+    '        Dim averageDeviation As Double  ' average by time 
+    '        Dim maxDeviation As Double
+    '        Dim maxDeviationGeoPoints As TrackAsGeoPoints
+    '        Dim maxDevDogIndex, maxDevRunnerIndex As Integer
+    '        Dim deviationXTime As Double = 0.0 '[metr krát sekunda]
+    '        Dim minDeviationFromRunnerEnd As Double = Double.MaxValue
+
+    '        ' --- Initialization of state variables for the loop ---
+    '        Dim currentState As MovementState = MovementState.Stopped ' Default state
+    '        Dim lastCreditedRunnerSegmentIndex As Integer = -1
+    '        Dim currentRunnerSearchIndex As Integer = 0 ' Search optimization
+    '        ' Get the end point of the cluster path to calculate the minimum distance
+    '        Dim runnerEndPoint As (X As Double, Y As Double)? = If(runnerXY.Count > 0, runnerXY.Last(), Nothing)
+    '        Dim nearistDogPointIndex As Integer
+    '        Dim nearistDogPointXY As (X As Double, Y As Double)
+    '        'pick-up (start) evaluation variables
+    '        Dim TrailPickupFactor As Double = 0.0
+    '        Dim earlyWeightedDistance As Double = 0.0
+    '        Dim earlyDogDistance As Double = 0.0
+    '        Dim earlyTime As TimeSpan = TimeSpan.Zero
+    '        Const EARLY_LIMIT_TIME = 60 '60 s ČAS na vyhledání nášlapu, pak plus 1 s na každý m prvního úseku
+    '        Const ERLY_LIMIT_DISTANCE As Double = 60.0 ' m pro hodnocení startu se počítá čas za jak dlouho urazí tuto vzdálenost 
+    '        'Dim earlyLimitTime As TimeSpan = TimeSpan.FromMinutes(3)
+    '        Dim earlyEnded As Boolean = False
+
+    '        ' --- Main loop for analyzing dog track segments ---
+
+    '        For i As Integer = 0 To dogGeoPoints.Count - 2
+    '            Dim point1 As TrackGeoPoint = dogGeoPoints(i)
+    '            Dim point2 As TrackGeoPoint = dogGeoPoints(i + 1)
+
+    '            ' Transfer the current point of the dog to XY
+    '            Dim timeDiff As TimeSpan = point2.Time - point1.Time
+    '            ' Skip invalid segments (no time or negative time)
+    '            If timeDiff.TotalSeconds <= 0 Then Continue For
+    '            Dim dogDistance As Double = Math.Sqrt((dogXY(i).X - dogXY(i + 1).X) ^ 2 + (dogXY(i).Y - dogXY(i + 1).Y) ^ 2) 'conv.HaversineDistance(point1.Location.Lat, point1.Location.Lon, point2.Location.Lat, point2.Location.Lon, "m")
+    '            Dim speedMs As Double = dogDistance / timeDiff.TotalSeconds
+    '            Dim distanceIncrement As Double = 0 'přírustek distance bez váhy
+    '            ' --- 1. State machine logic (Hysteresis) ---
+    '            If i = 0 Then
+    '                ' For the first segment, determine the initial state
+    '                currentState = If(speedMs > MOVING_SPEED_THRESHOLD_MS, MovementState.Moving, MovementState.Stopped)
+    '                Distance(i) = 0
+    '            Else
+    '                ' For other segments, we change the state only when the CURRENT boundary is crossed
+    '                If currentState = MovementState.Moving AndAlso speedMs < STOPPED_SPEED_THRESHOLD_MS Then
+    '                    currentState = MovementState.Stopped
+    '                ElseIf currentState = MovementState.Stopped AndAlso speedMs > MOVING_SPEED_THRESHOLD_MS Then
+    '                    currentState = MovementState.Moving
+    '                End If
+    '            End If
+
+    '            ' *** Proměnné pro váženou analýzu deklarujeme mimo stavový blok, aby byly dostupné ***
+    '            Dim deviation As Double = 0.0
+    '            Dim weight As Double = 0.0
+    '            Dim projection As (ClosestSegmentIndex As Integer, Deviation As Double) = Nothing
+
+    '            ' *** Tracking analysis (provádí se PRO VŠECHNY SEGMENTY) ***
+    '            If runnerXY.Count > 1 Then
+
+    '                ' Find the nearest point on the path of the runner (přesunuto z bloku Moving)
+    '                projection = FindClosestProjectionOnTrack(dogXY(i + 1), runnerXY, currentRunnerSearchIndex)
+    '                deviation = projection.Deviation
+    '                If maxDeviation < deviation Then
+    '                    maxDeviation = deviation
+    '                    maxDevDogIndex = i + 1
+    '                    maxDevRunnerIndex = projection.ClosestSegmentIndex + 1
+    '                End If
+    '                ' Calculate the weight by deviation (přesunuto z bloku Moving)
+    '                weight = GPXRecord.Weight(deviation)
+
+    '                currentRunnerSearchIndex = projection.ClosestSegmentIndex ' Update the start for the next search
+    '                'na startu se nastaví index kladečova segmentu:
+    '                If lastCreditedRunnerSegmentIndex < 0 Then
+    '                    lastCreditedRunnerSegmentIndex = projection.ClosestSegmentIndex
+    '                    Distance(0) = Me.GetSegmentLength(runnerXY, projection.ClosestSegmentIndex)
+    '                    weightedDistance = Distance(0) * weight
+    '                End If
+
+
+
+    '                ' *** NOVÉ: Započtení váženého času (provedeno BEZ OHLEDU na stav pohybu) ***
+    '                If weight > 0 Then
+    '                    ' timeDiff.TotalSeconds * _weight dá čas v sekundách, převedeme na TimeSpan
+    '                    weightedTime = weightedTime.Add(timeDiff * weight)
+    '                End If
+    '                ' Add the time-weighted deviation (přesunuto sem z Tracking analysis bloku)
+    '                deviationXTime += deviation * timeDiff.TotalSeconds
+
+    '            End If
+
+    '            ' --- 3. Accumulation of statistics by state (Původní blok) ---
+    '            If currentState = MovementState.Moving Then
+    '                movingTime = movingTime.Add(timeDiff)
+
+    '                ' --- 4. Weighted Metrics (provádí se POUZE když se pes pohybuje a máme trasu kladeče) ---
+    '                If runnerXY.Count > 1 Then
+
+    '                    ' Add the weighted distance along the path of the runner (původní kód)
+    '                    If weight > 0 AndAlso projection.ClosestSegmentIndex > lastCreditedRunnerSegmentIndex Then
+    '                        'Dim segmentJump = projection.ClosestSegmentIndex - lastCreditedRunnerSegmentIndex
+
+
+
+    '                        Dim accumulatedDistance As Double = 0.0
+
+    '                        ' Spočítáme délku segmentů, které byly přeskočeny, bez posledního segmentu
+
+    '                        For k As Integer = lastCreditedRunnerSegmentIndex + 1 To projection.ClosestSegmentIndex - 1
+    '                            accumulatedDistance += Me.GetSegmentLength(runnerXY, k)
+    '                        Next
+
+    '                        Dim finalSegmentLength As Double = Me.GetSegmentLength(runnerXY, projection.ClosestSegmentIndex)
+    '                        '--- Aplikace váhy na přeskočenou vzdálenost, přeskočená vzdálenost se nebere v plné délce! ---
+    '                        Dim accumulatedDistanceWeighted As Double = GPXRecord.Weight(accumulatedDistance, 30, 4) * accumulatedDistance
+    '                        distanceIncrement = (accumulatedDistanceWeighted + finalSegmentLength)
+    '                        weightedDistance += distanceIncrement * weight
+
+
+    '                        ' ---  Early phase accumulation (Pick-up analysis) ---
+    '                        If Not earlyEnded Then
+    '                            earlyDogDistance = weightedDistance
+    '                            ' --- kontrola  limitu ---
+    '                            If earlyDogDistance >= ERLY_LIMIT_DISTANCE Then
+    '                                earlyEnded = True
+    '                            End If
+    '                        End If
+
+
+    '                        lastCreditedRunnerSegmentIndex = projection.ClosestSegmentIndex
+    '                    End If
+    '                End If
+    '            Else ' currentState = MovementState.Stopped
+    '                stoppedTime = stoppedTime.Add(timeDiff)
+
+    '            End If
+    '            Distance(i + 1) = Distance(i) + distanceIncrement
+    '            If Not earlyEnded Then
+    '                earlyTime = earlyTime.Add(timeDiff) 'do času na startu načítáme i stání
+    '            End If
+
+    '        Next i 'cyklus přes segmenty trasy psa
+
+
+    '        If runnerXY.Count > 1 Then
+    '            ' Final calculation of average deviation weighted by time
+    '            averageDeviation = deviationXTime / (movingTime + stoppedTime).TotalSeconds
+    '            ' Final calculation of early pick-up factor:
+    '            Dim time_oneHalf As Double = EARLY_LIMIT_TIME + ERLY_LIMIT_DISTANCE  '60 s na vyhledání nášlapu, pak plus 1 s na každý metr prvního úseku
+
+    '            If earlyEnded Then
+    '                TrailPickupFactor = Weight(earlyTime.TotalSeconds, time_oneHalf, 4) 'v čase time_oneHalf  má váha hodnotu O,5
+    '            Else 'když ani do konce limitu nenajde trail
+    '                TrailPickupFactor = 0
+    '            End If
+
+    '            ' Prepare the maximum deviation points (just for picture):
+    '            Dim maxDeviationPointList As New List(Of TrackGeoPoint)
+    '            maxDeviationPointList.Add(dogGeoPoints(maxDevDogIndex)) 'Nejprve bod psa pak runner, neměnit pořadí!
+    '            maxDeviationPointList.Add(runnerGeoPoints(maxDevRunnerIndex))
+    '            maxDeviationGeoPoints = New TrackAsGeoPoints(TrackType.Unknown, maxDeviationPointList)
+
+    '            ' Update the minimum distance to the end of the runner's path
+    '            Dim index As Integer = 0
+    '            For Each dogPointXY In dogXY
+    '                Dim distToEnd As Double = Math.Sqrt((dogPointXY.X - runnerEndPoint.Value.X) ^ 2 + (dogPointXY.Y - runnerEndPoint.Value.Y) ^ 2)
+    '                If distToEnd < minDeviationFromRunnerEnd Then
+    '                    minDeviationFromRunnerEnd = distToEnd
+    '                    nearistDogPointIndex = index
+    '                    nearistDogPointXY = dogPointXY
+    '                End If
+    '                index += 1
+    '            Next dogPointXY
+    '        End If
+
+
+
+    '        ' --- Returning results ---
+    '        Return (movingTime, stoppedTime, weightedDistance, Distance, weightedTime, averageDeviation, maxDeviationGeoPoints, minDeviationFromRunnerEnd, TrailPickupFactor)
+
+    '    End Function
+
     Private Function AnalyzeDogMovement(dogGeoPoints As List(Of TrackGeoPoint), dogXY As List(Of (X As Double, Y As Double)), runnerXY As List(Of (X As Double, Y As Double)), runnerGeoPoints As List(Of TrackGeoPoint)) _
 As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double, distance As Double(), weightedTime As TimeSpan, averageDeviation As Double, maxDeviationGeoPoints As TrackAsGeoPoints, minDistanceToRunnerEnd As Double, TrailPickupFactor As Double)
         Dim conv As New TrackConverter()
         ' --- Setting constants ---
         Const MOVING_SPEED_THRESHOLD_MS As Double = 0.277 ' 1.0 km/h
         Const STOPPED_SPEED_THRESHOLD_MS As Double = 0.1 ' 0.36 km/h
+
+        ' *** NOVÁ PROMĚNNÁ: Práh odchylky pro aktivaci startu ***
+        Const PICKUP_ACTIVATION_THRESHOLD_M As Double = 5.0
+
         ' --- Initialization of accumulation variables ---
         Dim movingTime As TimeSpan = TimeSpan.Zero
         Dim stoppedTime As TimeSpan = TimeSpan.Zero
-        Dim weightedTime As TimeSpan = TimeSpan.Zero ' Původní init
+        Dim weightedTime As TimeSpan = TimeSpan.Zero
         Dim totalTime As TimeSpan = TimeSpan.Zero
         Dim weightedDistance As Double = 0.0
-        Dim Distance(dogGeoPoints.Count) As Double 'nezapočítává přeskočené úseky trasy kladeče
-        Dim averageDeviation As Double  ' average by time 
+        Dim Distance(dogGeoPoints.Count) As Double
+        Dim averageDeviation As Double
         Dim maxDeviation As Double
         Dim maxDeviationGeoPoints As TrackAsGeoPoints
         Dim maxDevDogIndex, maxDevRunnerIndex As Integer
-        Dim deviationXTime As Double = 0.0 '[metr krát sekunda]
+        Dim deviationXTime As Double = 0.0
         Dim minDeviationFromRunnerEnd As Double = Double.MaxValue
 
         ' --- Initialization of state variables for the loop ---
-        Dim currentState As MovementState = MovementState.Stopped ' Default state
+        Dim currentState As MovementState = MovementState.Stopped
         Dim lastCreditedRunnerSegmentIndex As Integer = -1
-        Dim currentRunnerSearchIndex As Integer = 0 ' Search optimization
-        ' Get the end point of the cluster path to calculate the minimum distance
+        Dim currentRunnerSearchIndex As Integer = 0
         Dim runnerEndPoint As (X As Double, Y As Double)? = If(runnerXY.Count > 0, runnerXY.Last(), Nothing)
+
+        ' *** VRÁCENÉ DEKLARACE, KTERÉ JSEM PŘEDTÍM SMAZAL ***
         Dim nearistDogPointIndex As Integer
         Dim nearistDogPointXY As (X As Double, Y As Double)
-        'pick-up (start) evaluation variables
+
+        ' Pick-up (start) evaluation variables
         Dim TrailPickupFactor As Double = 0.0
-        Dim earlyWeightedDistance As Double = 0.0
         Dim earlyDogDistance As Double = 0.0
         Dim earlyTime As TimeSpan = TimeSpan.Zero
-        Const EARLY_LIMIT_TIME = 60 '60 s ČAS na vyhledání nášlapu, pak plus 1 s na každý m prvního úseku
-        Const ERLY_LIMIT_DISTANCE As Double = 60.0 ' m pro hodnocení startu se počítá čas za jak dlouho urazí tuto vzdálenost 
-        'Dim earlyLimitTime As TimeSpan = TimeSpan.FromMinutes(3)
+        Const EARLY_LIMIT_TIME = 60
+        Const ERLY_LIMIT_DISTANCE As Double = 60.0
         Dim earlyEnded As Boolean = False
 
-        ' --- Main loop for analyzing dog track segments ---
+        ' *** NOVÉ PROMĚNNÉ PRO LOGIKU AKTIVACE ***
+        Dim pickupStarted As Boolean = False
+        Dim weightedDistanceAtStart As Double = 0.0
 
+        ' --- Main loop for analyzing dog track segments ---
         For i As Integer = 0 To dogGeoPoints.Count - 2
             Dim point1 As TrackGeoPoint = dogGeoPoints(i)
             Dim point2 As TrackGeoPoint = dogGeoPoints(i + 1)
 
-            ' Transfer the current point of the dog to XY
             Dim timeDiff As TimeSpan = point2.Time - point1.Time
-            ' Skip invalid segments (no time or negative time)
             If timeDiff.TotalSeconds <= 0 Then Continue For
-            Dim dogDistance As Double = Math.Sqrt((dogXY(i).X - dogXY(i + 1).X) ^ 2 + (dogXY(i).Y - dogXY(i + 1).Y) ^ 2) 'conv.HaversineDistance(point1.Location.Lat, point1.Location.Lon, point2.Location.Lat, point2.Location.Lon, "m")
+            Dim dogDistance As Double = Math.Sqrt((dogXY(i).X - dogXY(i + 1).X) ^ 2 + (dogXY(i).Y - dogXY(i + 1).Y) ^ 2)
             Dim speedMs As Double = dogDistance / timeDiff.TotalSeconds
-            Dim distanceIncrement As Double = 0 'přírustek distance bez váhy
-            ' --- 1. State machine logic (Hysteresis) ---
+            Dim distanceIncrement As Double = 0
+
             If i = 0 Then
-                ' For the first segment, determine the initial state
                 currentState = If(speedMs > MOVING_SPEED_THRESHOLD_MS, MovementState.Moving, MovementState.Stopped)
                 Distance(i) = 0
             Else
-                ' For other segments, we change the state only when the CURRENT boundary is crossed
                 If currentState = MovementState.Moving AndAlso speedMs < STOPPED_SPEED_THRESHOLD_MS Then
                     currentState = MovementState.Stopped
                 ElseIf currentState = MovementState.Stopped AndAlso speedMs > MOVING_SPEED_THRESHOLD_MS Then
@@ -2156,117 +2354,92 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
                 End If
             End If
 
-            ' *** Proměnné pro váženou analýzu deklarujeme mimo stavový blok, aby byly dostupné ***
             Dim deviation As Double = 0.0
             Dim weight As Double = 0.0
             Dim projection As (ClosestSegmentIndex As Integer, Deviation As Double) = Nothing
 
-            ' *** Tracking analysis (provádí se PRO VŠECHNY SEGMENTY) ***
             If runnerXY.Count > 1 Then
-
-                ' Find the nearest point on the path of the runner (přesunuto z bloku Moving)
                 projection = FindClosestProjectionOnTrack(dogXY(i + 1), runnerXY, currentRunnerSearchIndex)
                 deviation = projection.Deviation
+
+                ' --- LOGIKA AKTIVACE STARTU ---
+                If Not pickupStarted AndAlso deviation <= PICKUP_ACTIVATION_THRESHOLD_M Then
+                    pickupStarted = True
+                    weightedDistanceAtStart = weightedDistance
+                End If
+
                 If maxDeviation < deviation Then
                     maxDeviation = deviation
                     maxDevDogIndex = i + 1
                     maxDevRunnerIndex = projection.ClosestSegmentIndex + 1
                 End If
-                ' Calculate the weight by deviation (přesunuto z bloku Moving)
                 weight = GPXRecord.Weight(deviation)
 
-                currentRunnerSearchIndex = projection.ClosestSegmentIndex ' Update the start for the next search
-                'na startu se nastaví index kladečova segmentu:
+                currentRunnerSearchIndex = projection.ClosestSegmentIndex
                 If lastCreditedRunnerSegmentIndex < 0 Then
                     lastCreditedRunnerSegmentIndex = projection.ClosestSegmentIndex
                     Distance(0) = Me.GetSegmentLength(runnerXY, projection.ClosestSegmentIndex)
                     weightedDistance = Distance(0) * weight
                 End If
 
-
-
-                ' *** NOVÉ: Započtení váženého času (provedeno BEZ OHLEDU na stav pohybu) ***
                 If weight > 0 Then
-                    ' timeDiff.TotalSeconds * _weight dá čas v sekundách, převedeme na TimeSpan
                     weightedTime = weightedTime.Add(timeDiff * weight)
                 End If
-                ' Add the time-weighted deviation (přesunuto sem z Tracking analysis bloku)
                 deviationXTime += deviation * timeDiff.TotalSeconds
-
             End If
 
-            ' --- 3. Accumulation of statistics by state (Původní blok) ---
             If currentState = MovementState.Moving Then
                 movingTime = movingTime.Add(timeDiff)
 
-                ' --- 4. Weighted Metrics (provádí se POUZE když se pes pohybuje a máme trasu kladeče) ---
                 If runnerXY.Count > 1 Then
-
-                    ' Add the weighted distance along the path of the runner (původní kód)
                     If weight > 0 AndAlso projection.ClosestSegmentIndex > lastCreditedRunnerSegmentIndex Then
-                        'Dim segmentJump = projection.ClosestSegmentIndex - lastCreditedRunnerSegmentIndex
-
-
-
                         Dim accumulatedDistance As Double = 0.0
-
-                        ' Spočítáme délku segmentů, které byly přeskočeny, bez posledního segmentu
-
                         For k As Integer = lastCreditedRunnerSegmentIndex + 1 To projection.ClosestSegmentIndex - 1
                             accumulatedDistance += Me.GetSegmentLength(runnerXY, k)
                         Next
 
                         Dim finalSegmentLength As Double = Me.GetSegmentLength(runnerXY, projection.ClosestSegmentIndex)
-                        '--- Aplikace váhy na přeskočenou vzdálenost, přeskočená vzdálenost se nebere v plné délce! ---
                         Dim accumulatedDistanceWeighted As Double = GPXRecord.Weight(accumulatedDistance, 30, 4) * accumulatedDistance
                         distanceIncrement = (accumulatedDistanceWeighted + finalSegmentLength)
                         weightedDistance += distanceIncrement * weight
 
-
-                        ' ---  Early phase accumulation (Pick-up analysis) ---
-                        If Not earlyEnded Then
-                            earlyDogDistance = weightedDistance
-                            ' --- kontrola  limitu ---
+                        ' --- Early phase accumulation ---
+                        If pickupStarted AndAlso Not earlyEnded Then
+                            earlyDogDistance = weightedDistance - weightedDistanceAtStart
                             If earlyDogDistance >= ERLY_LIMIT_DISTANCE Then
                                 earlyEnded = True
                             End If
                         End If
 
-
                         lastCreditedRunnerSegmentIndex = projection.ClosestSegmentIndex
                     End If
                 End If
-            Else ' currentState = MovementState.Stopped
+            Else
                 stoppedTime = stoppedTime.Add(timeDiff)
-
             End If
+
             Distance(i + 1) = Distance(i) + distanceIncrement
-            If Not earlyEnded Then
-                earlyTime = earlyTime.Add(timeDiff) 'do času na startu načítáme i stání
+
+            If pickupStarted AndAlso Not earlyEnded Then
+                earlyTime = earlyTime.Add(timeDiff)
             End If
-
-        Next i 'cyklus přes segmenty trasy psa
-
+        Next i
 
         If runnerXY.Count > 1 Then
-            ' Final calculation of average deviation weighted by time
             averageDeviation = deviationXTime / (movingTime + stoppedTime).TotalSeconds
-            ' Final calculation of early pick-up factor:
-            Dim time_oneHalf As Double = EARLY_LIMIT_TIME + ERLY_LIMIT_DISTANCE  '60 s na vyhledání nášlapu, pak plus 1 s na každý metr prvního úseku
+            Dim time_oneHalf As Double = EARLY_LIMIT_TIME + ERLY_LIMIT_DISTANCE
 
             If earlyEnded Then
-                TrailPickupFactor = Weight(earlyTime.TotalSeconds, time_oneHalf, 4) 'v čase time_oneHalf  má váha hodnotu O,5
-            Else 'když ani do konce limitu nenajde trail
+                TrailPickupFactor = Weight(earlyTime.TotalSeconds, time_oneHalf, 4)
+            Else
                 TrailPickupFactor = 0
             End If
 
-            ' Prepare the maximum deviation points (just for picture):
             Dim maxDeviationPointList As New List(Of TrackGeoPoint)
-            maxDeviationPointList.Add(dogGeoPoints(maxDevDogIndex)) 'Nejprve bod psa pak runner, neměnit pořadí!
+            maxDeviationPointList.Add(dogGeoPoints(maxDevDogIndex))
             maxDeviationPointList.Add(runnerGeoPoints(maxDevRunnerIndex))
             maxDeviationGeoPoints = New TrackAsGeoPoints(TrackType.Unknown, maxDeviationPointList)
 
-            ' Update the minimum distance to the end of the runner's path
             Dim index As Integer = 0
             For Each dogPointXY In dogXY
                 Dim distToEnd As Double = Math.Sqrt((dogPointXY.X - runnerEndPoint.Value.X) ^ 2 + (dogPointXY.Y - runnerEndPoint.Value.Y) ^ 2)
@@ -2279,11 +2452,7 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
             Next dogPointXY
         End If
 
-
-
-        ' --- Returning results ---
         Return (movingTime, stoppedTime, weightedDistance, Distance, weightedTime, averageDeviation, maxDeviationGeoPoints, minDeviationFromRunnerEnd, TrailPickupFactor)
-
     End Function
 
     ' 1. Funkce pro výpočet délky segmentu (pro zjednodušení)
