@@ -1,6 +1,7 @@
 ﻿
 Imports System.DirectoryServices.ActiveDirectory
 Imports System.Drawing
+Imports System.Drawing.Drawing2D
 Imports System.Drawing.Imaging
 Imports System.Drawing.Text
 Imports System.Globalization
@@ -951,20 +952,46 @@ Public Class PngRenderer
     ''' <param name="outlineColor">The color of the text outline.</param>
     ''' <param name="pos">The position to draw the text.</param>
     ''' <param name="outlineSize">The size of the outline in pixels.</param>
+    'Private Sub DrawTextWithOutline(g As Graphics, text As String, font As Font, mainColor As Color, outlineColor As Color, pos As PointF, outlineSize As Integer)
+    '    Using mainBrush As New SolidBrush(mainColor)
+    '        Using outlineBrush As New SolidBrush(outlineColor)
+    '            ' Kresli obrys – cyklem dokola podle outlineSize
+    '            For dx As Integer = -outlineSize To outlineSize
+    '                For dy As Integer = -outlineSize To outlineSize
+    '                    ' Kreslit jen body okolo, ne střed (jinak by byl outline moc silný)
+    '                    If dx <> 0 OrElse dy <> 0 Then
+    '                        g.DrawString(text, font, outlineBrush, pos.X + dx, pos.Y + dy)
+    '                    End If
+    '                Next
+    '            Next
+    '            ' Nakonec hlavní text přesně na pozici
+    '            g.DrawString(text, font, mainBrush, pos)
+    '        End Using
+    '    End Using
+    'End Sub
+
+
     Private Sub DrawTextWithOutline(g As Graphics, text As String, font As Font, mainColor As Color, outlineColor As Color, pos As PointF, outlineSize As Integer)
-        Using mainBrush As New SolidBrush(mainColor)
-            Using outlineBrush As New SolidBrush(outlineColor)
-                ' Kresli obrys – cyklem dokola podle outlineSize
-                For dx As Integer = -outlineSize To outlineSize
-                    For dy As Integer = -outlineSize To outlineSize
-                        ' Kreslit jen body okolo, ne střed (jinak by byl outline moc silný)
-                        If dx <> 0 OrElse dy <> 0 Then
-                            g.DrawString(text, font, outlineBrush, pos.X + dx, pos.Y + dy)
-                        End If
-                    Next
-                Next
-                ' Nakonec hlavní text přesně na pozici
-                g.DrawString(text, font, mainBrush, pos)
+        ' 1. Nastavení kvality - TADY BYLA CHYBA (nyní opraveno na .Text.TextRenderingHint)
+        g.SmoothingMode = SmoothingMode.AntiAlias
+        g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit ' Vyhlazování pro text
+
+        Using path As New GraphicsPath()
+            ' Přidání textu do cesty (path)
+            ' emSize je velikost v pixelech (přepočet z bodů fontu)
+            Dim emSize As Single = g.DpiY * font.Size / 72
+            path.AddString(text, font.FontFamily, CInt(font.Style), emSize, pos, StringFormat.GenericDefault)
+
+            ' 2. Vykreslení obrysu (Outline) - kreslíme ho jako první "pod" text
+            Using outlinePen As New Pen(outlineColor, outlineSize)
+                ' Round zajistí, že rohy písmen nebudou mít divné špičky
+                outlinePen.LineJoin = LineJoin.Round
+                g.DrawPath(outlinePen, path)
+            End Using
+
+            ' 3. Výplň vnitřku (Main color)
+            Using mainBrush As New SolidBrush(mainColor)
+                g.FillPath(mainBrush, path)
             End Using
         End Using
     End Sub
