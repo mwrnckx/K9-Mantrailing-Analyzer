@@ -1794,7 +1794,7 @@ Partial Public Class Form1
         waitForm.Refresh()
 
         For Each _gpxRecord In GPXFilesManager.GpxRecords
-            Dim isTrackStatsCalculated = _gpxRecord.CalculateTrackStats(_gpxRecord.Tracks, _gpxRecord.WptNodes, _gpxRecord.TrailStats)
+            Dim isTrackStatsCalculated = _gpxRecord.CalculateTrackStats(_gpxRecord.TrailStats)
             If isTrackStatsCalculated Then
                 _gpxRecord.WriteTrailStatsToXml(_gpxRecord.TrailStats)
                 _gpxRecord.IsSaved = False

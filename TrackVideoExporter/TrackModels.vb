@@ -266,7 +266,8 @@ Public Enum TrackType
     RunnerTrail
     DogTrack
     CrossTrail
-    Article 'scent article or checkPoint
+    Article 'scent article or checkPoint 
+    StartPoint
 End Enum
 
 

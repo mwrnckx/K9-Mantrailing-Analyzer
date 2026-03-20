@@ -395,7 +395,7 @@ Public Class PngRenderer
                     Dim contrastColor As Color = GetContrastColor(track.Color)
 
                     'Dim textPos As New PointF(imgWidth - textSize.Width, 0)'alternativně vpravo nahoře
-                    DrawTextWithOutline(g, popis, font, track.Color, contrastColor, textPos, 2)
+                    DrawTextWithOutline(g, popis, font, track.Color, contrastColor, textPos, 3)
                 End If
             Next
         End Using
@@ -972,7 +972,7 @@ Public Class PngRenderer
 
 
     Private Sub DrawTextWithOutline(g As Graphics, text As String, font As Font, mainColor As Color, outlineColor As Color, pos As PointF, outlineSize As Integer)
-        ' 1. Nastavení kvality - TADY BYLA CHYBA (nyní opraveno na .Text.TextRenderingHint)
+        ' 1. Nastavení kvality 
         g.SmoothingMode = SmoothingMode.AntiAlias
         g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit ' Vyhlazování pro text
 
@@ -986,6 +986,8 @@ Public Class PngRenderer
             Using outlinePen As New Pen(outlineColor, outlineSize)
                 ' Round zajistí, že rohy písmen nebudou mít divné špičky
                 outlinePen.LineJoin = LineJoin.Round
+                outlinePen.StartCap = LineCap.Round
+                outlinePen.EndCap = LineCap.Round
                 g.DrawPath(outlinePen, path)
             End Using
 
