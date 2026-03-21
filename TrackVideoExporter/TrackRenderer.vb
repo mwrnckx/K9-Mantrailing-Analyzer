@@ -188,6 +188,7 @@ Public Class PngRenderer
                 ' popis, poslední bod atd.
                 'Dim time As String = track.TrackPointsF.Last.Time.ToString("HH:mm")
                 Dim p As PointF = TrackPoints.Last  ' poslední bod, posunutý o offset
+
                 g.FillEllipse(New SolidBrush(track.Color), p.X - radius / 2, p.Y - radius / 2, radius, radius)
 
                 Dim description As String = track.Label
@@ -234,7 +235,6 @@ Public Class PngRenderer
             End If
 
             If waypointsAsPointsF IsNot Nothing AndAlso waypointsAsPointsF.TrackPointsF.Count > 0 Then
-                Dim brush As SolidBrush = New SolidBrush(waypointsAsPointsF.Color) ' plná barva pro statické stopy
 
                 ' 1. Seřadíme původní body (TrackPointsF) podle Time vzestupně (od nejstaršího k nejmladšímu)
                 Dim sortedTrackPoints = waypointsAsPointsF.TrackPointsF.OrderBy(Function(tp) tp.Time)
@@ -245,12 +245,12 @@ Public Class PngRenderer
                 For Each wpt In sortedTrackPoints
                     ' Pro přístup k souřadnicím použijte Location
                     Dim location As PointF = wpt.Location
+                    Dim _Color As Color = If(wpt.Name = "First Contact", Color.Magenta, waypointsAsPointsF.Color) ' First Contact Point je červeně
+                    Dim contrastColor As Color = GetContrastColor(_Color)
+
+                    Dim brush As SolidBrush = New SolidBrush(_Color) ' plná barva pro statické stopy
 
 
-                    'Dim TrackPoints As List(Of PointF) = waypointsAsPointsF.TrackPointsF.Select(Function(tp) tp.Location).ToList()
-                    'For Each wpt In TrackPoints
-                    'Dim time As String = waypointsAsPointsF.TrackPointsF.Last.Time.ToString("HH:mm")
-                    Dim contrastColor As Color = GetContrastColor(waypointsAsPointsF.Color)
                     g.FillEllipse(brush, location.X - radius / 2, location.Y - radius / 2, radius, radius)
                     Dim description As String = wpt.Name ' $"checkpoint {i}" 'waypointsAsPointsF.Label
                     Dim textSize = g.MeasureString(description, font)
@@ -263,7 +263,7 @@ Public Class PngRenderer
                         textoffsetX = -textSize.Width - radius
                     End If
                     Dim textPos As New PointF(location.X + textoffsetX, location.Y - textSize.Height / 2)
-                    If Not waypointsAsPointsF.IsMoving Then DrawTextWithOutline(g, description, font, waypointsAsPointsF.Color, contrastColor, textPos, 2)
+                    If Not waypointsAsPointsF.IsMoving Then DrawTextWithOutline(g, description, font, _Color, contrastColor, textPos, 2)
                 Next
             End If
         End Using
@@ -323,13 +323,15 @@ Public Class PngRenderer
 
 
             If waypointsAsPointsF IsNot Nothing AndAlso waypointsAsPointsF.TrackPointsF.Count > 0 Then
-                Dim brush As SolidBrush = New SolidBrush(waypointsAsPointsF.Color) ' plná barva pro statické stopy
                 Dim i As Integer = 1
                 For Each wpt In waypointsAsPointsF.TrackPointsF
                     Dim location As PointF = wpt.Location
 
-                    'Dim time As String = waypointsAsPointsF.TrackPointsF.Last.Time.ToString("HH:mm")
-                    Dim contrastColor As Color = GetContrastColor(waypointsAsPointsF.Color)
+                    Dim _Color As Color = If(wpt.Name = "First Contact", Color.Magenta, waypointsAsPointsF.Color) ' First Contact Point je červeně
+                    Dim contrastColor As Color = GetContrastColor(_Color)
+
+                    Dim brush As SolidBrush = New SolidBrush(_Color) ' plná barva pro statické stopy
+
                     g.FillEllipse(brush, location.X - radius / 2, location.Y - radius / 2, radius, radius)
                     Dim popis As String = wpt.Name '$"{waypointsAsPointsF.Label} {i}"
                     Dim textSize = g.MeasureString(popis, font)
@@ -342,7 +344,7 @@ Public Class PngRenderer
                         textoffsetX = -textSize.Width - radius
                     End If
                     Dim textPos As New PointF(location.X + textoffsetX, location.Y - textSize.Height / 2)
-                    If Not waypointsAsPointsF.IsMoving Then DrawTextWithOutline(g, popis, font, waypointsAsPointsF.Color, contrastColor, textPos, 2)
+                    If Not waypointsAsPointsF.IsMoving Then DrawTextWithOutline(g, popis, font, _Color, contrastColor, textPos, 2)
                 Next
             End If
         End Using

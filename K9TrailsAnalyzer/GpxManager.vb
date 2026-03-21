@@ -642,12 +642,12 @@ Public Class GPXRecord
     Public Property ActiveCategoryInfo As CategoryInfo
 
     Dim _wptNodes As TrackAsTrkPts
-    Private _pickupPoint As TrackGeoPoint = Nothing
+    Private _First_Contact As TrackGeoPoint = Nothing
 
 
     Public ReadOnly Property WptNodes As TrackAsTrkPts
         Get
-            If _wptNodes IsNot Nothing AndAlso _pickupPoint Is Nothing Then Return _wptNodes
+            If _wptNodes IsNot Nothing AndAlso _First_Contact Is Nothing Then Return _wptNodes
             If Me.Reader Is Nothing Then
                 Throw New InvalidOperationException("Reader nebyl nastaven.")
             End If
@@ -657,24 +657,24 @@ Public Class GPXRecord
             For i = combinedNodes.Count - 1 To 0 Step -1 'projdeme list pozpátku, protože budeme odstraňovat uzly
                 ' Najdi uzel <name> uvnitř <wpt> s použitím namespace
                 Dim nameNode As XmlNode = TrackConverter.SelectSingleChildNode("name", combinedNodes(i))
-                If nameNode IsNot Nothing AndAlso nameNode.InnerText = "PICK-UP" Then
+                If nameNode IsNot Nothing AndAlso nameNode.InnerText = "First Contact" Then
                     ' Tady můžeš nastavit název pro UI
                     combinedNodes.Remove(combinedNodes(i))
                 End If
             Next
 
             ' --- TADY PŘIDÁME TEN VIRTUÁLNÍ START ---
-            If _pickupPoint IsNot Nothing Then
+            If _First_Contact IsNot Nothing Then
                 ' Vytvoříme uzel v paměti, ale nepoužijeme AppendChild do dokumentu, 
                 ' pokud ho tam fakt nechceš. Jen ho vytvoříme přes Reader.
                 Dim startNode As XmlElement = Me.Reader.CreateElement("wpt")
-                startNode.SetAttribute("lat", _pickupPoint.Location.Lat.ToString(System.Globalization.CultureInfo.InvariantCulture))
-                startNode.SetAttribute("lon", _pickupPoint.Location.Lon.ToString(System.Globalization.CultureInfo.InvariantCulture))
+                startNode.SetAttribute("lat", _First_Contact.Location.Lat.ToString(System.Globalization.CultureInfo.InvariantCulture))
+                startNode.SetAttribute("lon", _First_Contact.Location.Lon.ToString(System.Globalization.CultureInfo.InvariantCulture))
 
                 ' Přidáme čas, aby fungovalo řazení
                 ' Nejdříve převedeme na UniversalTime a pak teprve formátujeme
-                TrackConverter.CreateAndAddElement(startNode, "time", _pickupPoint.Time.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ"), False)
-                TrackConverter.CreateAndAddElement(startNode, "name", "PICK-UP", False) ' Identifikátor
+                TrackConverter.CreateAndAddElement(startNode, "time", _First_Contact.Time.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ"), False)
+                TrackConverter.CreateAndAddElement(startNode, "name", "First Contact", False) ' Identifikátor
 
                 combinedNodes.Add(startNode)
             End If
@@ -701,9 +701,9 @@ Public Class GPXRecord
             For Each wptNode In sortedWptNodeList
                 ' Najdi uzel <name> uvnitř <wpt> s použitím namespace
                 Dim nameNode As XmlNode = TrackConverter.SelectSingleChildNode("name", wptNode)
-                If nameNode IsNot Nothing AndAlso nameNode.InnerText = "PICK-UP" Then
+                If nameNode IsNot Nothing AndAlso nameNode.InnerText = "First Contact" Then
                     ' Tady můžeš nastavit název pro UI
-                    nameNode.InnerText = "PICK-UP"
+                    nameNode.InnerText = "First Contact"
                 Else
 
                     Dim newNamei As String = $"{newName} {i}"
@@ -2157,7 +2157,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             fullDogXY.Add((X, Y))
         Next
 
-        ' --- LOGIKA VYHLEDÁNÍ STARTU (PICK-UP) ---
+        ' --- LOGIKA VYHLEDÁNÍ STARTU (First Contact) ---
         Dim dogStartIndex As Integer = 0
         Dim runnerStartIndex As Integer = 0
 
@@ -2168,7 +2168,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
                 If projection.DeviationMeters <= PICKUP_ACTIVATION_THRESHOLD_M Then
                     dogStartIndex = i
                     runnerStartIndex = projection.ClosestSegmentIndex
-                    _pickupPoint = dogGeoPoints(i)
+                    _First_Contact = dogGeoPoints(i)
                     Exit For
                 End If
             Next
@@ -2988,7 +2988,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
             Dim totalDogReadingScore As Double = 0
             Dim previousDistance As Double = 0
-            ' Checkpoint(0) is the pick-up point (the start), so we start from 1 to include it in the evaluation.
+            ' Checkpoint(0) is the First Contact point (the start), so we start from 1 to include it in the evaluation.
             For i As Integer = 1 To lastActualCheckpointIndex
                 Dim checkPointEval = stats.CheckpointsEval(i)
                 Dim currentDistance As Double = checkPointEval.distanceAlongTrail

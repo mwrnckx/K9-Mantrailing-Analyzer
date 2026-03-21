@@ -543,7 +543,6 @@ Public Class TrailReport
         Me.TitleText = title
         Dim result As New List(Of StyledText) From {
           Me.Title,
-            Me.LevelOfBlindingStyledText,
           Me.PerformancePoints
         }
         Return result
