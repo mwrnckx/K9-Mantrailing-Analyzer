@@ -125,42 +125,125 @@ Namespace TrackVideoExporter
         End Function
 
 
+        'Public Function FilterTrackAsGeoPoints(rawPoints As TrackAsGeoPoints, maxSpeedKmh As Double) As TrackAsGeoPoints
+        '    Dim filtered As New TrackAsGeoPoints(rawPoints.TrackType, New List(Of TrackGeoPoint))
+        '    If rawPoints.TrackGeoPoints.Count = 0 Then Return filtered
+
+
+        '    filtered.TrackGeoPoints.Add(rawPoints.TrackGeoPoints(0))
+        '    Dim lastValidPoint = rawPoints.TrackGeoPoints(1)
+        '    filtered.TrackGeoPoints.Add(lastValidPoint)
+        '    For i As Integer = 2 To rawPoints.TrackGeoPoints.Count - 1 ' začíná až od druhého bodu - první bývá mimo nebo je ručně upraven!
+        '        Dim current = rawPoints.TrackGeoPoints(i)
+
+        '        ' 1. Výpočet času v hodinách
+        '        Dim timeDiffHours As Double = (current.Time - lastValidPoint.Time).TotalSeconds / 3600.0
+
+        '        ' 2. Výpočet vzdálenosti (zjednodušeně v metrech, ideálně Haversine)
+
+        '        Dim distKm As Double = TrackConverter.HaversineDistance(lastValidPoint.Location.Lat, lastValidPoint.Location.Lon, current.Location.Lat, current.Location.Lon, "km") ' Tvoje funkce na km
+
+        '        ' 3. Výpočet rychlosti
+        '        Dim speed As Double = If(timeDiffHours > 0, distKm / timeDiffHours, 0)
+
+        '        ' LOGIKA FILTRU:
+        '        ' - Bod nesmí být příliš blízko (drift na místě)
+        '        ' - Bod nesmí vyžadovat nadpozemskou rychlost (odskok)
+        '        If distKm > 0.002 Then ' Minimálně 2 metry posun (filtrace stání na místě)
+        '            If speed <= maxSpeedKmh Then
+        '                filtered.TrackGeoPoints.Add(current)
+        '                lastValidPoint = current ' Bod je v pořádku, stává se referencí
+        '            Else
+        '                ' Bod je "odskok" - ignorujeme ho a čekáme na další, 
+        '                ' který bude porovnán opět s lastValidPoint
+        '            End If
+        '        End If
+        '    Next
+
+        '    Return filtered
+        'End Function
+
         Public Function FilterTrackAsGeoPoints(rawPoints As TrackAsGeoPoints, maxSpeedKmh As Double) As TrackAsGeoPoints
-            Dim filtered As New TrackAsGeoPoints(rawPoints.TrackType, New List(Of TrackGeoPoint))
-            If rawPoints.TrackGeoPoints.Count = 0 Then Return filtered
+            ' 1. KROK: Tvůj rychlostní a distanční filtr (Sanitace dat)
+            Dim cleanedPoints As New List(Of TrackGeoPoint)
+            If rawPoints.TrackGeoPoints.Count = 0 Then Return New TrackAsGeoPoints(rawPoints.TrackType, cleanedPoints)
 
+            ' Přidáme první bod
 
-            filtered.TrackGeoPoints.Add(rawPoints.TrackGeoPoints(0))
+            cleanedPoints.Add(rawPoints.TrackGeoPoints(0))
             Dim lastValidPoint = rawPoints.TrackGeoPoints(1)
-            filtered.TrackGeoPoints.Add(lastValidPoint)
-            For i As Integer = 2 To rawPoints.TrackGeoPoints.Count - 1 ' začíná až od druhého bodu - první bývá mimo nebo je ručně upraven!
+            cleanedPoints.Add(lastValidPoint)
+
+            ' Projdeme zbytek a vyhážeme "teleportace"
+            For i As Integer = 1 To rawPoints.TrackGeoPoints.Count - 1
                 Dim current = rawPoints.TrackGeoPoints(i)
-
-                ' 1. Výpočet času v hodinách
                 Dim timeDiffHours As Double = (current.Time - lastValidPoint.Time).TotalSeconds / 3600.0
-
-                ' 2. Výpočet vzdálenosti (zjednodušeně v metrech, ideálně Haversine)
-
-                Dim distKm As Double = TrackConverter.HaversineDistance(lastValidPoint.Location.Lat, lastValidPoint.Location.Lon, current.Location.Lat, current.Location.Lon, "km") ' Tvoje funkce na km
-
-                ' 3. Výpočet rychlosti
+                Dim distKm As Double = TrackConverter.HaversineDistance(lastValidPoint.Location.Lat, lastValidPoint.Location.Lon, current.Location.Lat, current.Location.Lon, "km")
                 Dim speed As Double = If(timeDiffHours > 0, distKm / timeDiffHours, 0)
 
-                ' LOGIKA FILTRU:
-                ' - Bod nesmí být příliš blízko (drift na místě)
-                ' - Bod nesmí vyžadovat nadpozemskou rychlost (odskok)
-                If distKm > 0.002 Then ' Minimálně 2 metry posun (filtrace stání na místě)
+                ' Filtrujeme jen nesmysly (např. víc než 40 km/h) a příliš krátké pohyby (drift)
+                If distKm > 0.001 Then ' 1 metr práh (pro psy stačí méně než 2m)
                     If speed <= maxSpeedKmh Then
-                        filtered.TrackGeoPoints.Add(current)
-                        lastValidPoint = current ' Bod je v pořádku, stává se referencí
-                    Else
-                        ' Bod je "odskok" - ignorujeme ho a čekáme na další, 
-                        ' který bude porovnán opět s lastValidPoint
+                        cleanedPoints.Add(current)
+                        lastValidPoint = current
                     End If
                 End If
             Next
 
-            Return filtered
+            ' 2. KROK: Douglas-Peucker (Simplifikace pro zachování lomů a odstranění šumu)
+            ' Tolerance v metrech (např. 0.002 km = 2 metry). 
+            ' Čím větší číslo, tím "rovnější" čáry, ale lomy zůstanou.
+            Dim finalPoints = DouglasPeucker(cleanedPoints, 0.002)
+
+            Return New TrackAsGeoPoints(rawPoints.TrackType, finalPoints)
+        End Function
+
+        ' Pomocná funkce pro Douglas-Peucker algoritmus
+        Private Function DouglasPeucker(points As List(Of TrackGeoPoint), epsilon As Double) As List(Of TrackGeoPoint)
+            If points.Count < 3 Then Return points
+
+            Dim maxDist As Double = 0
+            Dim index As Integer = 0
+            Dim lastIdx As Integer = points.Count - 1
+
+            ' Najdeme bod s největší odchylkou od spojnice prvního a posledního bodu
+            For i As Integer = 1 To lastIdx - 1
+                Dim dist As Double = PerpendicularDistance(points(i), points(0), points(lastIdx))
+                If dist > maxDist Then
+                    maxDist = dist
+                    index = i
+                End If
+            Next
+
+            Dim result As New List(Of TrackGeoPoint)
+
+            ' Pokud je odchylka větší než epsilon, bod si zaslouží zůstat a dělíme trasu na dvě části
+            If maxDist > epsilon Then
+                Dim leftRecursive = DouglasPeucker(points.GetRange(0, index + 1), epsilon)
+                Dim rightRecursive = DouglasPeucker(points.GetRange(index, points.Count - index), epsilon)
+
+                result.AddRange(leftRecursive)
+                result.RemoveAt(result.Count - 1) ' Odstraníme duplicitu na spoji
+                result.AddRange(rightRecursive)
+            Else
+                ' Žádný bod nevybočuje dostatečně, stačí nám jen začátek a konec úseku
+                result.Add(points(0))
+                result.Add(points(lastIdx))
+            End If
+
+            Return result
+        End Function
+
+        ' Výpočet kolmé vzdálenosti bodu od úsečky (zjednodušeně pro malé vzdálenosti)
+        Private Function PerpendicularDistance(p As TrackGeoPoint, lineStart As TrackGeoPoint, lineEnd As TrackGeoPoint) As Double
+            ' Použijeme Haversine pro převod na km, aby epsilon odpovídalo metrům
+            Dim l2 As Double = TrackConverter.HaversineDistance(lineStart.Location.Lat, lineStart.Location.Lon, lineEnd.Location.Lat, lineEnd.Location.Lon, "km")
+            If l2 = 0 Then Return TrackConverter.HaversineDistance(p.Location.Lat, p.Location.Lon, lineStart.Location.Lat, lineStart.Location.Lon, "km")
+
+            ' Standardní vzorec pro vzdálenost bodu od přímky v rovině (pro GPS na malé ploše stačí)
+            ' Pro kynologii na ploše pár set metrů je tato aproximace naprosto v pořádku
+            Return Math.Abs((lineEnd.Location.Lat - lineStart.Location.Lat) * (lineStart.Location.Lon - p.Location.Lon) - (lineStart.Location.Lat - p.Location.Lat) * (lineEnd.Location.Lon - lineStart.Location.Lon)) /
+           Math.Sqrt(Math.Pow(lineEnd.Location.Lat - lineStart.Location.Lat, 2) + Math.Pow(lineEnd.Location.Lon - lineStart.Location.Lon, 2)) * 111.32 ' Převod stupňů na km cca
         End Function
 
         ''' <summary>
