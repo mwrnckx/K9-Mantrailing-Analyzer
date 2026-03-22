@@ -137,8 +137,8 @@ Public Class PngRenderer
         Me.windSpeed = windSpeed
         Me.trackBounds = bgTiles.bgmap.GetBounds(GraphicsUnit.Pixel) 'přepočítá obdélník na souřadnice v pixelech
         diagonal = Math.Sqrt(Me.trackBounds.Width ^ 2 + Me.trackBounds.Height ^ 2)
-        Me.radius = 0.02 * diagonal ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
-        Me.penWidth = 0.005 * diagonal ' šířka pera pro kreslení čar, 1% šířky obrázku
+        Me.radius = 0.015 * diagonal ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
+        Me.penWidth = 0.003 * diagonal ' šířka pera pro kreslení čar, 1% šířky obrázku
         Me.emSize = 0.012 * diagonal '
         Me.font = New Font("Cascadia Code", emSize, FontStyle.Bold)
         '' Načti font z disku nebo z resource streamu
@@ -174,6 +174,7 @@ Public Class PngRenderer
         Dim backgroundMap = New Bitmap(backgroundTiles.bgmap)
 
         Using g As Graphics = Graphics.FromImage(backgroundMap)
+            g.SmoothingMode = SmoothingMode.AntiAlias
             'first the direction of the wind:
             If windDirection IsNot Nothing And windDirection >= 0 And windDirection <= 360 Then
                 Dim position As New PointF(backgroundTiles.bgmap.Width, 0) ' pravý horní roh růžice
@@ -183,7 +184,16 @@ Public Class PngRenderer
             End If
             For Each track In tracksAsPointsF
                 Dim TrackPoints As List(Of PointF) = track.TrackPointsF.Select(Function(tp) tp.Location).ToList()
-                g.DrawLines(New Pen(track.Color, penWidth), TrackPoints.ToArray)
+                ' 2. Vytvoř pero a nastav mu kulaté spoje a zakončení
+                Using myPen As New Pen(track.Color, penWidth)
+                    myPen.LineJoin = Drawing2D.LineJoin.Round  ' Tohle uřízne ty dlouhé hroty/bodliny
+                    myPen.StartCap = Drawing2D.LineCap.Round  ' Zakulatí začátek čáry
+                    myPen.EndCap = Drawing2D.LineCap.Round    ' Zakulatí konec čáry
+
+                    ' 3. Vykresli (ideálně už ty profiltrované) body
+                    g.DrawLines(myPen, TrackPoints.ToArray())
+                End Using
+
 
                 ' popis, poslední bod atd.
                 'Dim time As String = track.TrackPointsF.Last.Time.ToString("HH:mm")
@@ -286,7 +296,7 @@ Public Class PngRenderer
         Dim staticBmp As New Bitmap(backgroundTiles.bgmap.Width, backgroundTiles.bgmap.Height, PixelFormat.Format32bppArgb)
         Using g As Graphics = Graphics.FromImage(staticBmp)
             g.Clear(Color.Transparent)
-
+            g.SmoothingMode = SmoothingMode.AntiAlias
             For Each track As TrackAsPointsF In tracksAsPointsF
                 If track.TrackPointsF.Count = 0 Then Continue For
                 Dim brush As SolidBrush
@@ -298,7 +308,16 @@ Public Class PngRenderer
                 End If
 
                 Dim TrackPoints As List(Of PointF) = track.TrackPointsF.Select(Function(tp) tp.Location).ToList()
-                g.DrawLines(New Pen(brush, penWidth), TrackPoints.ToArray)
+                ' 2. Vytvoř pero a nastav mu kulaté spoje a zakončení
+                Using myPen As New Pen(brush, penWidth)
+                    myPen.LineJoin = Drawing2D.LineJoin.Round  ' Tohle uřízne ty dlouhé hroty/bodliny
+                    myPen.StartCap = Drawing2D.LineCap.Round  ' Zakulatí začátek čáry
+                    myPen.EndCap = Drawing2D.LineCap.Round    ' Zakulatí konec čáry
+
+                    ' 3. Vykresli (ideálně už ty profiltrované) body
+                    g.DrawLines(myPen, TrackPoints.ToArray())
+                End Using
+
                 ' popis, poslední bod atd.
                 Dim time As String = track.TrackPointsF.Last.Time.ToString("HH:mm")
                 Dim contrastColor As Color = GetContrastColor(track.Color)
@@ -367,7 +386,7 @@ Public Class PngRenderer
         Dim bmp As New Bitmap(staticBackground.Width, staticBackground.Height, PixelFormat.Format32bppArgb)
         Using g As Graphics = Graphics.FromImage(bmp)
             g.Clear(Color.Transparent)
-
+            g.SmoothingMode = SmoothingMode.AntiAlias
             ' Přidej předpřipravený statický podklad
             g.DrawImage(staticBackground, Point.Empty)
 
@@ -378,7 +397,18 @@ Public Class PngRenderer
                     Dim p As PointF = InterpolatedDogPosition(track, frameTime)
                     _dogTrail.Add(p)
 
-                    If _dogTrail.Count > 1 Then g.DrawLines(New Pen(track.Color, penWidth), _dogTrail.ToArray)
+                    If _dogTrail.Count > 1 Then
+                        ' 2. Vytvoř pero a nastav mu kulaté spoje a zakončení
+                        Using myPen As New Pen(track.Color, penWidth)
+                            myPen.LineJoin = Drawing2D.LineJoin.Round  ' Tohle uřízne ty dlouhé hroty/bodliny
+                            myPen.StartCap = Drawing2D.LineCap.Round  ' Zakulatí začátek čáry
+                            myPen.EndCap = Drawing2D.LineCap.Round    ' Zakulatí konec čáry
+
+                            ' 3. Vykresli (ideálně už ty profiltrované) body
+                            g.DrawLines(myPen, _dogTrail.ToArray)
+                        End Using
+
+                    End If
                     g.FillEllipse(Brushes.Red, p.X - radius / 2, p.Y - radius / 2, radius, radius)
                     ' popis, poslední bod atd.
 

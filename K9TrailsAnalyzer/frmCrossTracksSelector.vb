@@ -36,9 +36,9 @@ Public Class frmCrossTrailSelector
         dgvTracks.Rows.Clear()
 
         For i = 0 To trkList.Count - 1
-            Dim conv As New TrackConverter
-            Dim name As String = conv.SelectSingleChildNode("name", trkList(i).TrkNode)?.InnerText
-            Dim desc As String = conv.SelectSingleChildNode("desc", trkList(i).TrkNode)?.InnerText
+            'Dim conv As New TrackConverter
+            Dim name As String = TrackConverter.SelectSingleChildNode("name", trkList(i).TrkNode)?.InnerText
+            Dim desc As String = TrackConverter.SelectSingleChildNode("desc", trkList(i).TrkNode)?.InnerText
             Dim start As String = $"{trkList(i).StartTrackGeoPoint.Time.ToLocalTime}"
             Dim type As TrackType = trkList(i).TrackType
             ' předvol výchozí typ trasy podle původního typu

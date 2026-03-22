@@ -281,7 +281,7 @@
     <value>Cascadia Code, 10pt</value>
   </data>
   <data name="mnuFile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>52, 22</value>
+    <value>52, 33</value>
   </data>
   <data name="mnuFile.Text" xml:space="preserve">
     <value>File</value>
@@ -326,7 +326,7 @@
     <value>Cascadia Code, 10pt</value>
   </data>
   <data name="mnuCategory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>156, 22</value>
+    <value>156, 33</value>
   </data>
   <data name="mnuCategory.Text" xml:space="preserve">
     <value>Category Settings</value>
@@ -386,7 +386,7 @@
     <value>Factory reset</value>
   </data>
   <data name="mnuHelp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>52, 22</value>
+    <value>52, 33</value>
   </data>
   <data name="mnuHelp.Text" xml:space="preserve">
     <value>Help</value>
@@ -431,7 +431,7 @@
     <value>Cascadia Code, 10pt</value>
   </data>
   <data name="mnuLanguage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>84, 22</value>
+    <value>84, 33</value>
   </data>
   <data name="mnuLanguage.Text" xml:space="preserve">
     <value>Language</value>
@@ -443,7 +443,7 @@
     <value>5, 1, 0, 1</value>
   </data>
   <data name="MenuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>984, 24</value>
+    <value>984, 35</value>
   </data>
   <data name="MenuStrip1.TabIndex" type="System.Int32, mscorlib">
     <value>27</value>
@@ -509,7 +509,7 @@
     <value>4, 4, 4, 4</value>
   </data>
   <data name="rtbOutput.Size" type="System.Drawing.Size, System.Drawing">
-    <value>676, 363</value>
+    <value>676, 352</value>
   </data>
   <data name="rtbOutput.TabIndex" type="System.Int32, mscorlib">
     <value>34</value>
@@ -752,7 +752,7 @@
     <value>3, 2, 3, 2</value>
   </data>
   <data name="TabStats.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 472</value>
+    <value>976, 461</value>
   </data>
   <data name="TabStats.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -812,7 +812,7 @@
     <value>3, 2, 3, 2</value>
   </data>
   <data name="lvGpxFiles.Size" type="System.Drawing.Size, System.Drawing">
-    <value>970, 468</value>
+    <value>970, 457</value>
   </data>
   <data name="lvGpxFiles.TabIndex" type="System.Int32, mscorlib">
     <value>33</value>
@@ -839,7 +839,7 @@
     <value>3, 2, 3, 2</value>
   </data>
   <data name="TabVideoExport.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 472</value>
+    <value>976, 461</value>
   </data>
   <data name="TabVideoExport.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -944,7 +944,7 @@
     <value>0, 0</value>
   </data>
   <data name="pnlForDgv.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 472</value>
+    <value>976, 461</value>
   </data>
   <data name="pnlForDgv.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -965,7 +965,7 @@
     <value>4, 30</value>
   </data>
   <data name="TabCompetition.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 472</value>
+    <value>976, 461</value>
   </data>
   <data name="TabCompetition.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -989,13 +989,13 @@
     <value>Fill</value>
   </data>
   <data name="TabControl1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 83</value>
+    <value>0, 94</value>
   </data>
   <data name="TabControl1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 2, 3, 2</value>
   </data>
   <data name="TabControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>984, 506</value>
+    <value>984, 495</value>
   </data>
   <data name="TabControl1.TabIndex" type="System.Int32, mscorlib">
     <value>32</value>
@@ -1046,7 +1046,7 @@
     <value>Top</value>
   </data>
   <data name="pnlCategory.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 24</value>
+    <value>0, 35</value>
   </data>
   <data name="pnlCategory.Size" type="System.Drawing.Size, System.Drawing">
     <value>984, 59</value>

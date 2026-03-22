@@ -15,7 +15,7 @@
     <FileVersion>0.0.0.0</FileVersion>
     <InformationalVersion>0.0.0</InformationalVersion>
     <AssemblyName>K9MantrailingAnalyzer</AssemblyName>
-    <ApplicationIcon>track.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\images\icon.ico</ApplicationIcon>
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <AppDesignerFolder>My Project</AppDesignerFolder>
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
@@ -42,7 +42,7 @@
     <Content Include="Resources\Wettkampfregeln.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="track.ico">
+    <Content Include="Resources\images\icon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

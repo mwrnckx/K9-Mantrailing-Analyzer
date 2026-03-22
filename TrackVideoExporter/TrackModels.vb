@@ -163,9 +163,9 @@ Public Class TrackAsTrkNode 'track as trkNode
     Public ReadOnly Property StartTrackGeoPoint As TrackGeoPoint
         Get
             Dim conv As New TrackConverter
-            Dim trkSeg As XmlNode = conv.SelectSingleChildNode("trkseg", TrkNode)
+            Dim trkSeg As XmlNode = TrackConverter.SelectSingleChildNode("trkseg", TrkNode)
             If trkSeg Is Nothing Then Return Nothing
-            Dim firstTrkPt As XmlNode = conv.SelectSingleChildNode("trkpt", trkSeg)
+            Dim firstTrkPt As XmlNode = TrackConverter.SelectSingleChildNode("trkpt", trkSeg)
             If firstTrkPt Is Nothing Then Return Nothing
             Dim lat, lon As Double
             Try
@@ -174,17 +174,17 @@ Public Class TrackAsTrkNode 'track as trkNode
             Catch ex As Exception
                 Return Nothing
             End Try
-            Dim timenode = conv.SelectSingleChildNode("time", firstTrkPt)
+            Dim timenode = TrackConverter.SelectSingleChildNode("time", firstTrkPt)
             Dim time As DateTime = DateTime.MinValue
             If timenode IsNot Nothing Then
                 time = DateTime.Parse(timenode.InnerText, Nothing, Globalization.DateTimeStyles.AssumeUniversal)
             Else
-                Dim trkname As String = conv.SelectSingleChildNode("name", TrkNode).InnerText.Trim()
+                Dim trkname As String = TrackConverter.SelectSingleChildNode("name", TrkNode).InnerText.Trim()
                 Dim userInput = conv.PromptForStartTime(trkname, "start")
                 If userInput.HasValue Then
                     Dim localtime = userInput.Value
                     time = localtime.ToUniversalTime()
-                    conv.CreateAndAddElement(firstTrkPt, "time", time.ToString("yyyy-MM-ddTHH:mm:ssZ"), False)
+                    TrackConverter.CreateAndAddElement(firstTrkPt, "time", time.ToString("yyyy-MM-ddTHH:mm:ssZ"), False)
                 Else
                     ' Nezadáno nebo zrušeno
                     MessageBox.Show("The time has not been completed. The track will be skipped..", "Upozornění", MessageBoxButtons.OK, MessageBoxIcon.Information)
@@ -215,17 +215,17 @@ Public Class TrackAsTrkNode 'track as trkNode
                 Return Nothing
             End Try
 
-            Dim timenode = conv.SelectSingleChildNode("time", lastTrkPt)
+            Dim timenode = TrackConverter.SelectSingleChildNode("time", lastTrkPt)
             Dim time As DateTime = DateTime.MinValue
             If timenode IsNot Nothing Then
                 time = DateTime.Parse(timenode.InnerText, Nothing, Globalization.DateTimeStyles.AssumeUniversal)
             Else
-                Dim trkname As String = conv.SelectSingleChildNode("name", TrkNode).InnerText.Trim()
+                Dim trkname As String = TrackConverter.SelectSingleChildNode("name", TrkNode).InnerText.Trim()
                 Dim userInput = conv.PromptForStartTime(trkname, "end")
                 If userInput.HasValue Then
                     Dim localtime = userInput.Value
                     time = localtime.ToUniversalTime()
-                    conv.CreateAndAddElement(lastTrkPt, "time", time.ToString("yyyy-MM-ddTHH:mm:ssZ"), False)
+                    TrackConverter.CreateAndAddElement(lastTrkPt, "time", time.ToString("yyyy-MM-ddTHH:mm:ssZ"), False)
                 Else
                     ' Nezadáno nebo zrušeno
                     MessageBox.Show("The time has not been completed. The track will be skipped..", "Upozornění", MessageBoxButtons.OK, MessageBoxIcon.Information)
@@ -267,7 +267,6 @@ Public Enum TrackType
     DogTrack
     CrossTrail
     Article 'scent article or checkPoint 
-    StartPoint
 End Enum
 
 

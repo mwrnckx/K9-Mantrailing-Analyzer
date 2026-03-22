@@ -665,8 +665,7 @@ Public Class GPXRecord
 
             ' --- TADY PŘIDÁME TEN VIRTUÁLNÍ START ---
             If _First_Contact IsNot Nothing Then
-                ' Vytvoříme uzel v paměti, ale nepoužijeme AppendChild do dokumentu, 
-                ' pokud ho tam fakt nechceš. Jen ho vytvoříme přes Reader.
+                ' Vytvoříme uzel 
                 Dim startNode As XmlElement = Me.Reader.CreateElement("wpt")
                 startNode.SetAttribute("lat", _First_Contact.Location.Lat.ToString(System.Globalization.CultureInfo.InvariantCulture))
                 startNode.SetAttribute("lon", _First_Contact.Location.Lon.ToString(System.Globalization.CultureInfo.InvariantCulture))
@@ -1973,7 +1972,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
         ' --- KROK 2: Analýza pohybu a sledování stopy ---
         Dim AnalysisOfMovement = AnalyzeDogMovement(preparedData.DogGeoPoints, preparedData.dogXY, preparedData.RunnerXY, preparedData.RunnerGeoPoints)
-        Dim AnalysisOfCheckPoints As List(Of CheckpointData) '(distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double)) = Nothing
+        Dim AnalysisOfCheckPoints As New List(Of CheckpointData) '(distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double)) = Nothing
         Dim maxDistance As Double = 0.0
         ' --- KROK 3: Vyhodnocení checkpointů ---
         'GrossSpeed: The biggest scoring benefit is a checkpoint where the dog is as far away as possible while staying as close to the route as possible.
@@ -2028,92 +2027,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
     End Function
 
-    'Private Function PrepareTrackData(dogTrkNode As XmlNode, runnerTrkNode As XmlNode) _
-    'As (DogGeoPoints As List(Of TrackGeoPoint), dogXY As List(Of (X As Double, Y As Double)), RunnerGeoPoints As List(Of TrackGeoPoint), RunnerXY As List(Of (X As Double, Y As Double)), Lat0 As Double, Lon0 As Double, RunnerTotalDistance As Double, dogTotalDistance As Double)
 
-    '    ' all the code  applies:
-    '    ' 1. Convert XmlNode to List(Of TrackGeoPoint) for both the dog and the runner.
-    '    ' 2. Selecting a reference point (lat0, lon0).
-    '    ' 3. Converting the runner's track from Lat/Lon to XY.
-    '    ' 4. Calculate the total length of the track of the runner (totalRunnerDistanceKm).
-    '    Dim conv As New TrackConverter()
-    '    Dim dogTrkAsGeoPoints As TrackAsGeoPoints
-    '    Dim dogGeoPoints As List(Of TrackGeoPoint) = Nothing
-    '    If dogTrkNode IsNot Nothing Then
-    '        dogTrkAsGeoPoints = conv.ConvertTrackTrkPtsToGeoPoints(conv.ConvertTrackAsTrkNodeToTrkPts(New TrackAsTrkNode(dogTrkNode, trackType:=TrackType.DogTrack)))
-    '        dogGeoPoints = dogTrkAsGeoPoints.TrackGeoPoints 'trasa psa/psovoda
-    '    End If
-    '    Dim runnerTrkAsGeoPoints As TrackAsGeoPoints
-    '    Dim runnerGeoPoints As List(Of TrackGeoPoint) = Nothing
-    '    ' Transfer the runner to XY
-    '    Dim runnerXY As New List(Of (X As Double, Y As Double))
-    '    Dim dogXY As New List(Of (X As Double, Y As Double))
-    '    Dim lat0 As Double
-    '    Dim lon0 As Double
-
-    '    Dim runnerTotalDistance As Double = 0.0F 'celková dráha kladeče (aka runner) počítána ze záznamu jeho trasy (runnerGeoPoints)
-    '    Dim dogTotalDistance As Double = 0.0F 'celková dráha psa počítána ze záznamu jeho trasy (dogGeoPoints)
-
-    '    If runnerTrkNode IsNot Nothing Then
-    '        runnerTrkAsGeoPoints = conv.ConvertTrackTrkPtsToGeoPoints(conv.ConvertTrackAsTrkNodeToTrkPts(New TrackAsTrkNode(runnerTrkNode, trackType:=TrackType.Unknown)))
-    '        runnerGeoPoints = runnerTrkAsGeoPoints.TrackGeoPoints
-    '        If runnerGeoPoints.Count > 0 Then
-    '            ' We will convert the runner to XY
-    '            lat0 = runnerGeoPoints(0).Location.Lat
-    '            lon0 = runnerGeoPoints(0).Location.Lon
-    '            For i As Integer = 0 To runnerGeoPoints.Count - 2
-    '                Dim point1 As TrackGeoPoint = runnerGeoPoints(i) 'první bod segmentu trasy psa/psovoda
-    '                Dim point2 As TrackGeoPoint = runnerGeoPoints(i + 1) 'druhý bod segmentu trasy psa/psovoda
-
-    '                Dim lat As Double = point1.Location.Lat
-    '                Dim lon As Double = point1.Location.Lon
-    '                Dim X, Y As Double
-    '                conv.LatLonToXY(lat, lon, lat0, lon0, X, Y)
-    '                runnerXY.Add((X, Y))
-    '                Dim distance As Double = conv.HaversineDistance(point1.Location.Lat, point1.Location.Lon, point2.Location.Lat, point2.Location.Lon, "m")
-    '                runnerTotalDistance += distance  'tohle je situace, když čas chybí, nutno započítat!
-    '            Next
-    '            'add the last point of the runner (final runners position):
-    '            Dim lastLat As Double = runnerGeoPoints.Last.Location.Lat
-    '            Dim lastLon As Double = runnerGeoPoints.Last.Location.Lon
-    '            Dim lastX, lastY As Double
-    '            conv.LatLonToXY(lastLat, lastLon, lat0, lon0, lastX, lastY)
-    '            runnerXY.Add((lastX, lastY))
-    '        End If
-    '    ElseIf dogGeoPoints IsNot Nothing AndAlso dogGeoPoints.Count > 0 Then
-    '        ' Backup solution if we don't have a runner's track, we will use the dog's first point as a reference
-    '        lat0 = dogGeoPoints(0).Location.Lat
-    '        lon0 = dogGeoPoints(0).Location.Lon
-    '    Else
-    '        ' A case where even the dog has no points, this is where the feature should probably end
-    '        Return (Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing)
-    '    End If
-
-    '    If dogGeoPoints IsNot Nothing AndAlso dogGeoPoints.Count > 0 Then
-    '        ' We will convert the dog to XY
-    '        For i As Integer = 0 To dogGeoPoints.Count - 2
-    '            Dim point1 As TrackGeoPoint = dogGeoPoints(i) 'první bod segmentu trasy psa/psovoda
-    '            Dim point2 As TrackGeoPoint = dogGeoPoints(i + 1) 'druhý bod segmentu trasy psa/psovoda
-
-    '            Dim lat As Double = point1.Location.Lat
-    '            Dim lon As Double = point1.Location.Lon
-    '            Dim X, Y As Double
-    '            conv.LatLonToXY(lat, lon, lat0, lon0, X, Y)
-    '            dogXY.Add((X, Y))
-    '            Dim distance As Double = conv.HaversineDistance(point1.Location.Lat, point1.Location.Lon, point2.Location.Lat, point2.Location.Lon, "m")
-    '            dogTotalDistance += distance 'tohle je situace, když čas chybí, nutno započítat!
-    '        Next
-    '        'add the last point of the dog (final dogs position):
-    '        Dim lastLat As Double = dogGeoPoints.Last.Location.Lat
-    '        Dim lastLon As Double = dogGeoPoints.Last.Location.Lon
-    '        Dim lastX, lastY As Double
-    '        conv.LatLonToXY(lastLat, lastLon, lat0, lon0, lastX, lastY)
-    '        dogXY.Add((lastX, lastY))
-    '    End If
-
-    '    ' The function returns all prepared data structures at once
-    '    Return (dogGeoPoints, dogXY, runnerGeoPoints, runnerXY, lat0, lon0, runnerTotalDistance, dogTotalDistance)
-    'End Function
     Private Function PrepareTrackData(dogTrkNode As XmlNode, runnerTrkNode As XmlNode) _
     As (DogGeoPoints As List(Of TrackGeoPoint), dogXY As List(Of (X As Double, Y As Double)), RunnerGeoPoints As List(Of TrackGeoPoint), RunnerXY As List(Of (X As Double, Y As Double)), Lat0 As Double, Lon0 As Double, RunnerTotalDistance As Double, dogTotalDistance As Double)
 
@@ -2191,13 +2105,13 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         Dim runnerTotalDistance As Double = 0
         If finalRunnerGeoPoints IsNot Nothing Then
             For i As Integer = 0 To finalRunnerGeoPoints.Count - 2
-                runnerTotalDistance += conv.HaversineDistance(finalRunnerGeoPoints(i).Location.Lat, finalRunnerGeoPoints(i).Location.Lon, finalRunnerGeoPoints(i + 1).Location.Lat, finalRunnerGeoPoints(i + 1).Location.Lon, "m")
+                runnerTotalDistance += TrackConverter.HaversineDistance(finalRunnerGeoPoints(i).Location.Lat, finalRunnerGeoPoints(i).Location.Lon, finalRunnerGeoPoints(i + 1).Location.Lat, finalRunnerGeoPoints(i + 1).Location.Lon, "m")
             Next
         End If
 
         Dim dogTotalDist As Double = 0
         For i As Integer = 0 To finalDogGeoPoints.Count - 2
-            dogTotalDist += conv.HaversineDistance(finalDogGeoPoints(i).Location.Lat, finalDogGeoPoints(i).Location.Lon, finalDogGeoPoints(i + 1).Location.Lat, finalDogGeoPoints(i + 1).Location.Lon, "m")
+            dogTotalDist += TrackConverter.HaversineDistance(finalDogGeoPoints(i).Location.Lat, finalDogGeoPoints(i).Location.Lon, finalDogGeoPoints(i + 1).Location.Lat, finalDogGeoPoints(i + 1).Location.Lon, "m")
         Next
 
         Return (finalDogGeoPoints, finalDogXY, finalRunnerGeoPoints, finalRunnerXY, lat0, lon0, runnerTotalDistance, dogTotalDist)
@@ -3155,7 +3069,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         Dim centroidLat, centroidLon As Double
 
         Dim isCluster As Boolean = True
-        Dim conv As New TrackConverter
+        'Dim conv As New TrackConverter
         For i As Integer = 0 To points.Count - 1
             'Dim lat = Double.Parse(points(i).Attributes("lat").Value, CultureInfo.InvariantCulture)
             'Dim lon = Double.Parse(points(i).Attributes("lon").Value, CultureInfo.InvariantCulture)
@@ -3173,7 +3087,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
                 Continue For
             End If
             ' Výpočet vzdálenosti od centroidu
-            Dim currentDistance = conv.HaversineDistance(centroidLat, centroidLon, lat, lon, "m")
+            Dim currentDistance = TrackConverter.HaversineDistance(centroidLat, centroidLon, lat, lon, "m")
             Debug.WriteLine($"   {i}  {centroidLat} {centroidLon} {lat} {lon} {currentDistance}")
 
             ' Rozhodnutí o ukončení clusteru 

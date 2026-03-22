@@ -1,6 +1,7 @@
 ﻿
 Imports System.Drawing
 Imports System.IO
+Imports System.Windows.Forms
 
 Namespace TrackVideoExporter
 
@@ -97,9 +98,17 @@ Namespace TrackVideoExporter
                 converter.minLat, converter.maxLat,
                 converter.minLon, converter.maxLon, zoom)
 
+            'vyhlazení GPS šumu!!!
+            Dim filteredTracksAsGeopoints As New List(Of TrackAsGeoPoints)
+            For Each Track In _tracksAsGeoPoints
+                Dim filteredTrack As TrackAsGeoPoints
+                filteredTrack = FilterTrackAsGeoPoints(Track, 6) ' Filtr pro maximální rychlost 6 km/h
+                filteredTracksAsGeopoints.Add(filteredTrack)
+            Next
+
             Dim _TracksAsPointsF As List(Of TrackAsPointsF) =
                 converter.ConvertTracksGeoPointsToPointsF(
-                    _tracksAsGeoPoints, backgroundTiles.minTileX, backgroundTiles.minTileY, zoom)
+                     filteredTracksAsGeopoints, backgroundTiles.minTileX, backgroundTiles.minTileY, zoom)
             Dim wayPointsAsPointsF As TrackAsPointsF =
                 converter.ConvertTrackGeoPointsToPointsF(
                     waypointsAsGeoPoints, backgroundTiles.minTileX, backgroundTiles.minTileY, zoom)
@@ -113,6 +122,45 @@ Namespace TrackVideoExporter
             End If
             Return Await CreateVideoFromPointsF(_TracksAsPointsF, maxDeviationPointsAsPointsF, wayPointsAsPointsF, maxDeviationMetres)
 
+        End Function
+
+
+        Public Function FilterTrackAsGeoPoints(rawPoints As TrackAsGeoPoints, maxSpeedKmh As Double) As TrackAsGeoPoints
+            Dim filtered As New TrackAsGeoPoints(rawPoints.TrackType, New List(Of TrackGeoPoint))
+            If rawPoints.TrackGeoPoints.Count = 0 Then Return filtered
+
+
+            filtered.TrackGeoPoints.Add(rawPoints.TrackGeoPoints(0))
+            Dim lastValidPoint = rawPoints.TrackGeoPoints(1)
+            filtered.TrackGeoPoints.Add(lastValidPoint)
+            For i As Integer = 2 To rawPoints.TrackGeoPoints.Count - 1 ' začíná až od druhého bodu - první bývá mimo nebo je ručně upraven!
+                Dim current = rawPoints.TrackGeoPoints(i)
+
+                ' 1. Výpočet času v hodinách
+                Dim timeDiffHours As Double = (current.Time - lastValidPoint.Time).TotalSeconds / 3600.0
+
+                ' 2. Výpočet vzdálenosti (zjednodušeně v metrech, ideálně Haversine)
+
+                Dim distKm As Double = TrackConverter.HaversineDistance(lastValidPoint.Location.Lat, lastValidPoint.Location.Lon, current.Location.Lat, current.Location.Lon, "km") ' Tvoje funkce na km
+
+                ' 3. Výpočet rychlosti
+                Dim speed As Double = If(timeDiffHours > 0, distKm / timeDiffHours, 0)
+
+                ' LOGIKA FILTRU:
+                ' - Bod nesmí být příliš blízko (drift na místě)
+                ' - Bod nesmí vyžadovat nadpozemskou rychlost (odskok)
+                If distKm > 0.002 Then ' Minimálně 2 metry posun (filtrace stání na místě)
+                    If speed <= maxSpeedKmh Then
+                        filtered.TrackGeoPoints.Add(current)
+                        lastValidPoint = current ' Bod je v pořádku, stává se referencí
+                    Else
+                        ' Bod je "odskok" - ignorujeme ho a čekáme na další, 
+                        ' který bude porovnán opět s lastValidPoint
+                    End If
+                End If
+            Next
+
+            Return filtered
         End Function
 
         ''' <summary>
