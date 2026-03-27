@@ -7,15 +7,21 @@ Public Class FfmpegVideoEncoder
 
     Public Event WarningOccurred(message As String, _color As Color)
 
-    Public Function EncodeFromPngs(FfmpegPath As String, outputDir As DirectoryInfo, outputFile As String, frameinterval As Double) As Task(Of Boolean)
+    Public Function EncodeFromPngs(FfmpegPath As String, outputDir As DirectoryInfo, outputFile As String) As Task(Of Boolean)
         Dim psi As New ProcessStartInfo()
         psi.FileName = FfmpegPath
         Dim pngDir = outputDir.CreateSubdirectory("png")
         Dim inputPattern = System.IO.Path.Combine(pngDir.FullName, "frame_%04d.png")
 
         'vytvoříme video z obrázků s framerate = 1
-        'psi.Arguments = $"-y -framerate 1 -i ""{inputPattern}"" -c:v prores_ks -pix_fmt yuva444p10le ""{outputFile}.mov"""
-        psi.Arguments = $"-y -framerate 1 -i ""{inputPattern}"" -c:v libvpx -pix_fmt yuva420p -auto-alt-ref 0 -crf 25 -b:v 0 ""{outputFile}.webm"""
+        'psi.Arguments = $psi.Arguments = $"-y -framerate 1 -i ""{inputPattern}"" -c:v libvpx-vp9 -pix_fmt yuva420p -lossless 1 ""{outputFile}.webm"""
+        ' Vylepšená verze tvého původního příkazu
+        psi.Arguments = $"-y -framerate 1 -i ""{inputPattern}"" " &
+                $"-c:v libvpx -pix_fmt yuva420p " &
+                $"-crf 12 -b:v 0 -deadline realtime -cpu-used 4 " &
+                $"-metadata:s:v:0 alpha_mode=1 -auto-alt-ref 0 ""{outputFile}.webm"""
+        'psi.Arguments = $"-y -framerate 1 -i ""{inputPattern}"" -c:v libvpx -pix_fmt yuva420p -metadata:s:v:0 alpha_mode=1 -auto-alt-ref 0 ""{outputFile}.webm"""
+        'psi.Arguments = $"-y -framerate 1 -i ""{inputPattern}"" -c:v libvpx -pix_fmt yuva420p -auto-alt-ref 0 -crf 25 -b:v 0 ""{outputFile}.webm"""
         psi.UseShellExecute = False
         psi.RedirectStandardOutput = False
         psi.RedirectStandardError = False

@@ -124,20 +124,11 @@ End Class
 ''' </summary>
 Public Class TrackAsTrkPts 'track as trackPoints
     Inherits TrackAs
-    ''' <summary>
-    ''' Initializes a new instance of the TrackAsTrkPts class.
-    ''' </summary>
-    ''' <param name="trackType">The type of the track.</param>
-    ''' <param name="trackPoints">A list of XML nodes representing track points in the GPX file.</param>
     Public Sub New(trackType As TrackType, trackPoints As XmlNodeList)
         MyBase.New(trackType)
         Me.TrackPoints = trackPoints
     End Sub
-    ''' <summary>
-    ''' List of XML nodes representing track points in the GPX file.
-    ''' </summary>
-    ''' <remarks>Each node corresponds to a trkpt element in the GPX file.</remarks>
-    ''' <returns>XmlNodeList containing track points.</returns>
+
     Public Property TrackPoints As XmlNodeList
 End Class
 
@@ -553,31 +544,32 @@ End Class
 ''' structure for returning calculation results.
 ''' </summary>
 Public Class TrailStats
-    Public Property DogDistance As Double ' Distance actually traveled by the dog (measured from the dog's route)
-    Public Property RunnerDistance As Double ' Distance actually traveled by the runner (measured from the runner's route)
-    Public Property WeightedDistanceAlongTrail As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
-    Public Property WeightedDistanceAlongTrailPerCent As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
-    Public Property WeightedTimePerCent As Double ' Total time of the dog  weighted by deviation divided by total time
+    Public Property MaxDistanceAlongTrail As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
+    Public Property MaxDistanceAlongTrailWeighted As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
+    Public Property MaxDistanceAlongTrailWeightedPerCent As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
     Public Property TrailAge As TimeSpan ' age of the trail 
     Public Property DogTotalTime As TimeSpan ' total time of the dog's route
-    Public Property DogMovingTime As TimeSpan ' net time the dog moved
-    Public Property DogStoppedTime As TimeSpan ' the time the handler stood the dog also stood or performed a perimeter (looking for a trail)
-    Public Property DogNetSpeed As Double ' net speed (moving time only), calculated from the length of the dog's route
     Public Property DogGrossSpeed As Double 'gross speed calculated from the last checkpoint or the dog's last point if the dog is close to the track
-    Public Property AverDeviation As Double ' average deviation of the entire dog's route from the runner's track
+    Public Property AverDeviation As Double ' average deviation in metres of the entire dog's route from the runner's track
+    Public Property AverWeightOfDeviation As Double 'average weight of deviation in <0,1> of the entire dog's route from the runner's track
     Public Property MaxDeviationGeoPoints As TrackAsGeoPoints ' maximum deviation of the entire dog's route from the runner's track
     Public Property PointsInMTCompetition As ScoringData '(RunnerFoundPoints As Integer, DogSpeedPoints As Integer, DogAccuracyPoints As Integer, DogReadingPoints As Integer, dogName As String, handlerName As String) ' number of points in MT Competition according to the rules
     Public Property CheckpointsEval As List(Of CheckpointData) '(distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double)) ' evaluation of checkpoints: distance from start along the runner's route and distance from the route in meters
-    Public Property MaxTeamDistance As Double ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
+    Public Property DogTotalDistance As Double ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
+    Public Property RunnerTotalDistance As Double ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
+
     Public Property RunnerFound As Boolean ' whether dog found the runner or not
     Public Property TrailPickupFactorPerCent As Double 'whether dog found trail quickly
+    'Public Property PurifiedTrackData As (PurifiedDogGeoPoints As List(Of TrackGeoPoint), PurifiedRunnerGeoPoints As List(Of TrackGeoPoint), Lat0 As Double, Lon0 As Double, RunnerTotalDistance As Double, dogTotalDistance As Double, dogTotalTime As TimeSpan, RunnerFound As Boolean)
+
 End Class
 
 ' Struktura pro data checkpointu
 Public Structure CheckpointData
-    Public distanceAlongTrail As Double
+    Public distanceAlongTrailWeighted As Double
     Public deviationFromTrail As Double
     Public dogGrossSpeedkmh As Double
+    Public distanceAlongTrail As Double
 End Structure
 
 Public Class ScoringData

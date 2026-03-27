@@ -118,6 +118,7 @@ Public Class PngRenderer
     Private windSpeed As Double?
     Private trackBounds As RectangleF
     Private myWindArrow As Bitmap
+    Private videoSize As Size
     'Private emojiFonts As New PrivateFontCollection() 'hezčí emojis
     'Private emojiFont As Font
     Dim diagonal As Single
@@ -132,23 +133,16 @@ Public Class PngRenderer
     ''' <param name="windDirection">The direction of the wind in degrees (0-360), or null if not available.</param>
     ''' <param name="windSpeed">The speed of the wind in m/s, or null if not available.</param>
     ''' <param name="bgTiles">A tuple containing the background bitmap and its minimum tile X and Y coordinates.</param>
-    Public Sub New(windDirection As Double?, windSpeed As Double?, bgTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single))
+    Public Sub New(windDirection As Double?, windSpeed As Double?, bgTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single), VideoSize As Size)
         Me.windDirection = windDirection
         Me.windSpeed = windSpeed
+        Me.videoSize = VideoSize
         Me.trackBounds = bgTiles.bgmap.GetBounds(GraphicsUnit.Pixel) 'přepočítá obdélník na souřadnice v pixelech
-        diagonal = Math.Sqrt(Me.trackBounds.Width ^ 2 + Me.trackBounds.Height ^ 2)
+        diagonal = Math.Sqrt(Me.videoSize.Width ^ 2 + Me.videoSize.Height ^ 2)
         Me.radius = 0.015 * diagonal ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
-        Me.penWidth = 0.003 * diagonal ' šířka pera pro kreslení čar, 1% šířky obrázku
-        Me.emSize = 0.012 * diagonal '
+        Me.penWidth = 0.008 * diagonal ' šířka pera pro kreslení čar, 1% šířky obrázku
+        Me.emSize = 0.015 * diagonal '
         Me.font = New Font("Cascadia Code", emSize, FontStyle.Bold)
-        '' Načti font z disku nebo z resource streamu
-        'hezčí emoji, ale nefunguje to....
-        'Dim emojiFontPath As String = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources\fonts\Twemoji.Mozilla.ttf")
-        'emojiFonts.AddFontFile(emojiFontPath)
-
-        '' Vytvoř instanci Fontu z privátní kolekce
-        'Dim emojiFontFamily = emojiFonts.Families(0)
-        'Me.emojiFont = New Font(emojiFontFamily, 14, FontStyle.Regular)
     End Sub
 
 
@@ -183,16 +177,34 @@ Public Class PngRenderer
                 'DrawWindArrow(g, TrackPoints(0), arrowlength, windDirection, windSpeed)
             End If
             For Each track In tracksAsPointsF
-                Dim TrackPoints As List(Of PointF) = track.TrackPointsF.Select(Function(tp) tp.Location).ToList()
                 ' 2. Vytvoř pero a nastav mu kulaté spoje a zakončení
-                Using myPen As New Pen(track.Color, penWidth)
-                    myPen.LineJoin = Drawing2D.LineJoin.Round  ' Tohle uřízne ty dlouhé hroty/bodliny
-                    myPen.StartCap = Drawing2D.LineCap.Round  ' Zakulatí začátek čáry
-                    myPen.EndCap = Drawing2D.LineCap.Round    ' Zakulatí konec čáry
+                Dim alpha As Integer = 255
+                Dim drawColor As Color = Color.FromArgb(alpha, track.Color)
+                Dim TrackPoints As List(Of PointF) = track.TrackPointsF.Select(Function(tp) tp.Location).ToList()
 
-                    ' 3. Vykresli (ideálně už ty profiltrované) body
-                    g.DrawLines(myPen, TrackPoints.ToArray())
-                End Using
+                ' Ověření, že máme dost bodů pro vykreslení čáry
+                If TrackPoints.Count > 1 Then
+                    ' --- 1. KROK: HALO (OBRYS) ---
+                    ' Pro obrys zvolíme černou barvu s nižší průhledností než má hlavní čára
+                    Dim haloAlpha As Integer = 140
+                    Dim haloColor As Color = Color.FromArgb(haloAlpha, Color.Black)
+
+                    ' Halo pero musí být o něco tlustší (cca 1.4x až 1.6x)
+                    Using haloPen As New Pen(haloColor, penWidth * 1.5)
+                        haloPen.LineJoin = LineJoin.Round
+                        haloPen.StartCap = LineCap.Round
+                        haloPen.EndCap = LineCap.Round
+                        g.DrawLines(haloPen, TrackPoints.ToArray())
+                    End Using
+
+                    ' --- 2. KROK: HLAVNÍ ČÁRA ---
+                    Using myPen As New Pen(drawColor, penWidth)
+                        myPen.LineJoin = LineJoin.Round
+                        myPen.StartCap = LineCap.Round
+                        myPen.EndCap = LineCap.Round
+                        g.DrawLines(myPen, TrackPoints.ToArray())
+                    End Using
+                End If
 
 
                 ' popis, poslední bod atd.
@@ -299,31 +311,42 @@ Public Class PngRenderer
             g.SmoothingMode = SmoothingMode.AntiAlias
             For Each track As TrackAsPointsF In tracksAsPointsF
                 If track.TrackPointsF.Count = 0 Then Continue For
-                Dim brush As SolidBrush
-                If track.IsMoving Then
-                    Dim semiTransparentColor As Color = Color.FromArgb(100, track.Color) ' 128 = 50% průhlednost
-                    brush = New SolidBrush(semiTransparentColor)
-                Else
-                    brush = New SolidBrush(track.Color) ' plná barva pro statické stopy
-                End If
-
+                Dim alpha As Integer = If(track.IsMoving, 100, 255)
+                Dim drawColor As Color = Color.FromArgb(alpha, track.Color)
                 Dim TrackPoints As List(Of PointF) = track.TrackPointsF.Select(Function(tp) tp.Location).ToList()
-                ' 2. Vytvoř pero a nastav mu kulaté spoje a zakončení
-                Using myPen As New Pen(brush, penWidth)
-                    myPen.LineJoin = Drawing2D.LineJoin.Round  ' Tohle uřízne ty dlouhé hroty/bodliny
-                    myPen.StartCap = Drawing2D.LineCap.Round  ' Zakulatí začátek čáry
-                    myPen.EndCap = Drawing2D.LineCap.Round    ' Zakulatí konec čáry
 
-                    ' 3. Vykresli (ideálně už ty profiltrované) body
-                    g.DrawLines(myPen, TrackPoints.ToArray())
-                End Using
+                ' Ověření, že máme dost bodů pro vykreslení čáry
+                If TrackPoints.Count > 1 Then
+                    ' --- 1. KROK: HALO (OBRYS) ---
+                    ' Pro obrys zvolíme černou barvu s nižší průhledností než má hlavní čára
+                    Dim haloAlpha As Integer = If(track.IsMoving, 60, 140)
+                    Dim haloColor As Color = Color.FromArgb(haloAlpha, Color.Black)
+
+                    ' Halo pero musí být o něco tlustší (cca 1.4x až 1.6x)
+                    Using haloPen As New Pen(haloColor, penWidth * 1.5)
+                        haloPen.LineJoin = LineJoin.Round
+                        haloPen.StartCap = LineCap.Round
+                        haloPen.EndCap = LineCap.Round
+                        g.DrawLines(haloPen, TrackPoints.ToArray())
+                    End Using
+
+                    ' --- 2. KROK: HLAVNÍ ČÁRA ---
+                    Using myPen As New Pen(drawColor, penWidth)
+                        myPen.LineJoin = LineJoin.Round
+                        myPen.StartCap = LineCap.Round
+                        myPen.EndCap = LineCap.Round
+                        g.DrawLines(myPen, TrackPoints.ToArray())
+                    End Using
+                End If
 
                 ' popis, poslední bod atd.
                 Dim time As String = track.TrackPointsF.Last.Time.ToString("HH:mm")
                 Dim contrastColor As Color = GetContrastColor(track.Color)
                 Dim p As PointF = TrackPoints.Last  ' poslední bod, posunutý o offset
-                g.FillEllipse(brush, p.X - radius / 2, p.Y - radius / 2, radius, radius)
-
+                'g.FillEllipse(brush, p.X - radius / 2, p.Y - radius / 2, radius, radius)
+                Using tempBrush As New SolidBrush(drawColor)
+                    g.FillEllipse(tempBrush, p.X - radius / 2, p.Y - radius / 2, radius, radius)
+                End Using
                 Dim popis As String = track.Label & " " & time
                 Dim textSize = g.MeasureString(popis, font)
                 Dim textoffsetX As Single
@@ -336,10 +359,7 @@ Public Class PngRenderer
                 End If
                 Dim textPos As New PointF(p.X + textoffsetX, p.Y - textSize.Height / 2)
                 If Not track.IsMoving Then DrawTextWithOutline(g, popis, font, track.Color, contrastColor, textPos, 2)
-
             Next
-
-
 
             If waypointsAsPointsF IsNot Nothing AndAlso waypointsAsPointsF.TrackPointsF.Count > 0 Then
                 Dim i As Integer = 1
@@ -404,7 +424,7 @@ Public Class PngRenderer
                             myPen.StartCap = Drawing2D.LineCap.Round  ' Zakulatí začátek čáry
                             myPen.EndCap = Drawing2D.LineCap.Round    ' Zakulatí konec čáry
 
-                            ' 3. Vykresli (ideálně už ty profiltrované) body
+                            ' 3. Vykresli od začátku až do pozice psa
                             g.DrawLines(myPen, _dogTrail.ToArray)
                         End Using
 
@@ -974,33 +994,6 @@ Public Class PngRenderer
         Return TrackPoints.Last()
     End Function
 
-    ''' <summary>
-    ''' Draws a text string with an outline.
-    ''' </summary>
-    ''' <param name="g">The Graphics object to draw on.</param>
-    ''' <param name="text">The text string to draw.</param>
-    ''' <param name="font">The font to use for the text.</param>
-    ''' <param name="mainColor">The main color of the text.</param>
-    ''' <param name="outlineColor">The color of the text outline.</param>
-    ''' <param name="pos">The position to draw the text.</param>
-    ''' <param name="outlineSize">The size of the outline in pixels.</param>
-    'Private Sub DrawTextWithOutline(g As Graphics, text As String, font As Font, mainColor As Color, outlineColor As Color, pos As PointF, outlineSize As Integer)
-    '    Using mainBrush As New SolidBrush(mainColor)
-    '        Using outlineBrush As New SolidBrush(outlineColor)
-    '            ' Kresli obrys – cyklem dokola podle outlineSize
-    '            For dx As Integer = -outlineSize To outlineSize
-    '                For dy As Integer = -outlineSize To outlineSize
-    '                    ' Kreslit jen body okolo, ne střed (jinak by byl outline moc silný)
-    '                    If dx <> 0 OrElse dy <> 0 Then
-    '                        g.DrawString(text, font, outlineBrush, pos.X + dx, pos.Y + dy)
-    '                    End If
-    '                Next
-    '            Next
-    '            ' Nakonec hlavní text přesně na pozici
-    '            g.DrawString(text, font, mainBrush, pos)
-    '        End Using
-    '    End Using
-    'End Sub
 
 
     Private Sub DrawTextWithOutline(g As Graphics, text As String, font As Font, mainColor As Color, outlineColor As Color, pos As PointF, outlineSize As Integer)
