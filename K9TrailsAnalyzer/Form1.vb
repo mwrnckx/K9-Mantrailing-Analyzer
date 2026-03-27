@@ -122,15 +122,15 @@ Partial Public Class Form1
                 .GPXFilename = IO.Path.GetFileNameWithoutExtension(GPXFilesManager.GpxRecords(i).Reader.FilePath),'.Substring(11),
                 .DogName = stats.PointsInMTCompetition.dogName,
                 .HandlerName = stats.PointsInMTCompetition.handlerName,
-                 .RunnerDistance = stats.RunnerTotalDistance,
+                 .RunnerDistance = stats.RunnerTotalDistancekm,
                  .TotalTime = stats.DogTotalTime.Minutes,
-                .DogGrossSpeedKmh = stats.DogGrossSpeed,
-                .DogDistance = stats.DogTotalDistance,
+                .DogGrossSpeedKmh = stats.DogGrossSpeedkmh,
+                .DogDistance = stats.DogTotalDistancekm,
                 .AverageDeviation = stats.AverDeviation,
                 .AverageWeightofDeviation = stats.AverWeightOfDeviation,
-                .MaxTeamDistance = stats.DogTotalDistance,
-                .distanceAlongTrailWeighted = stats.MaxDistanceAlongTrailWeighted,
-                .distanceAlongTrailWeightedPerCent = stats.MaxDistanceAlongTrailWeightedPerCent / 100,'je v % převedeno zpět na desetinné číslo
+                .MaxTeamDistance = stats.DogTotalDistancekm,
+                .distanceAlongTrailWeighted = stats.MaxDistAlongTrailkmWeighted,
+                .distanceAlongTrailWeightedPerCent = stats.MaxDistAlongTrailWeightedPerCent / 100,'je v % převedeno zpět na desetinné číslo
                 .StartTime = record.TrailStart.Time,
                 .TrailAge = stats.TrailAge.TotalHours,
                 .RunnerFoundPoints = stats.PointsInMTCompetition.RunnerFoundPoints,
@@ -153,14 +153,14 @@ Partial Public Class Form1
                 If secondIndex >= 0 Then
                     With displayItem
                         .SecondCheckpointEvalDeviationFromTrail = stats.CheckpointsEval(secondIndex).deviationFromTrail
-                        .SecondCheckpointEvalDistance = stats.CheckpointsEval(secondIndex).distanceAlongTrailWeighted
+                        .SecondCheckpointEvalDistance = stats.CheckpointsEval(secondIndex).distAlongTrailkmWeighted
                         .SecondCheckpointEvaldogGrossSpeed = stats.CheckpointsEval(secondIndex).dogGrossSpeedkmh
                     End With
                 End If
                 If firstIndex >= 0 Then
                     With displayItem
                         .FirstCheckpointEvalDeviationFromTrail = stats.CheckpointsEval(firstIndex).deviationFromTrail
-                        .FirstCheckpointEvalDistance = stats.CheckpointsEval(firstIndex).distanceAlongTrailWeighted
+                        .FirstCheckpointEvalDistance = stats.CheckpointsEval(firstIndex).distAlongTrailkmWeighted
                         .FirstCheckpointEvaldogGrossSpeed = stats.CheckpointsEval(firstIndex).dogGrossSpeedkmh
                     End With
                 End If
@@ -420,7 +420,7 @@ Partial Public Class Form1
                 item.ToolTipText = "This gpx record doesn't contain dog's track, video cannot be created from it."
             End If
             item.SubItems.Add(record.TrailStart.Time.ToString("yyyy-MM-dd HH:mm")) ' např. datum
-            item.SubItems.Add($"{record.TrailDistanceWeighted:F2} km") ' délka trasy
+            item.SubItems.Add($"{record.TrailDistancekmWeighted:F2} km") ' délka trasy
             item.SubItems.Add($"{record.TrailStats.TrailAge.TotalHours:F1} h") ' věk trasy v hodinách
             item.SubItems.Add($"{record.Tracks.Count}") ' počet tras
             item.Tag = record ' pro pozdější použití (např. vytvoření videa)
@@ -491,15 +491,15 @@ Partial Public Class Form1
 
                 rtbOutput.SelectionColor = Color.DarkGreen ' Nastavit barvu
                 'Me.rtbOutput.AppendText(_gpxRecord.TrailStart.Time.ToString("dd.MM.yy") & "    ")
-                rtbOutput.AppendText((_gpxRecord.TrailDistanceWeighted).ToString("F2") & " km" & "     ")
+                rtbOutput.AppendText((_gpxRecord.TrailDistancekmWeighted).ToString("F2") & " km" & "     ")
                 If _gpxRecord.TrailStats.TrailAge.TotalHours > 0 Then
                     rtbOutput.AppendText(_gpxRecord.TrailStats.TrailAge.TotalHours.ToString("F1") & " h" & "   ")
                 Else
                     rtbOutput.AppendText("        ")
                 End If
                 'Dim dogspeed As Double = _gpxRecord.DogSpeed
-                If _gpxRecord.TrailStats.DogGrossSpeed > 0 Then
-                    rtbOutput.AppendText(_gpxRecord.TrailStats.DogGrossSpeed.ToString("F1") & " km/h" & "   ")
+                If _gpxRecord.TrailStats.DogGrossSpeedkmh > 0 Then
+                    rtbOutput.AppendText(_gpxRecord.TrailStats.DogGrossSpeedkmh.ToString("F1") & " km/h" & "   ")
                 Else
                     rtbOutput.AppendText("           ")
                 End If
@@ -576,8 +576,8 @@ Partial Public Class Form1
         rtbOutput.AppendText((My.Resources.Resource1.outAverageDistance & manydots).Substring(0, labelLength))
         rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
         rtbOutput.SelectionColor = Color.Firebrick
-        Dim averageDistance As Double = GetAverage(Of Double)(_gpxRecords, Function(r) r.TrailStats.RunnerTotalDistance)
-        rtbOutput.AppendText((averageDistance).ToString("F0") & " m" & vbCrLf)
+        Dim averageDistance As Double = GetAverage(Of Double)(_gpxRecords, Function(r) r.TrailStats.RunnerTotalDistancekm)
+        rtbOutput.AppendText((averageDistance).ToString("G3") & " km" & vbCrLf)
         rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
         rtbOutput.SelectionColor = Color.Maroon
         rtbOutput.AppendText((My.Resources.Resource1.outAverageAge & manydots).Substring(0, labelLength))
@@ -590,7 +590,7 @@ Partial Public Class Form1
         rtbOutput.AppendText((My.Resources.Resource1.outAverageSpeed & manydots).Substring(0, labelLength))
         rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
         rtbOutput.SelectionColor = Color.Firebrick
-        Dim averageDogSpeed As Double = GetAverage(_gpxRecords, Function(r) r.TrailStats.DogGrossSpeed, ignoreZeros:=True)
+        Dim averageDogSpeed As Double = GetAverage(_gpxRecords, Function(r) r.TrailStats.DogGrossSpeedkmh, ignoreZeros:=True)
         rtbOutput.AppendText(averageDogSpeed.ToString("F1") & " km/h")
 
         ' Posunutí kurzoru na konec textu
@@ -734,8 +734,8 @@ Partial Public Class Form1
                         writer.Write($"{fileName};")
                         writer.Write($"{ .TrailStart.Time.ToString("yyyy-MM-dd")};")
                         writer.Write($"{_age};")
-                        writer.Write($"{ .TrailDistanceWeighted:F2};")
-                        If Not .TrailStats.DogGrossSpeed = 0 Then writer.Write($"{ .TrailStats.DogGrossSpeed:F2};") Else writer.Write(";")
+                        writer.Write($"{ .TrailDistancekmWeighted:F2};")
+                        If Not .TrailStats.DogGrossSpeedkmh = 0 Then writer.Write($"{ .TrailStats.DogGrossSpeedkmh:F2};") Else writer.Write(";")
                         writer.Write($"{ .Description};")
                         If Not .Link Is Nothing Then
                             writer.WriteLine($"=HYPERTEXTOVÝ.ODKAZ(""{ .Link}"")")
@@ -831,7 +831,7 @@ Partial Public Class Form1
         Dim monthlySumsWithEmpty = From month In allMonths
                                    Group Join ms In (From record In gpxRecords
                                                      Group record By Month = New DateTime(record.TrailStart.Time.Year, record.TrailStart.Time.Month, 1) Into grp = Group
-                                                     Select New With {Month, .TotalDistanceKm = grp.Sum(Function(r) r.TrailDistanceWeighted / 1000)}) On month Equals ms.Month Into gj = Group From subMs In gj.DefaultIfEmpty(New With {month, .TotalDistanceKm = 0.0})
+                                                     Select New With {Month, .TotalDistanceKm = grp.Sum(Function(r) r.TrailDistancekmWeighted)}) On month Equals ms.Month Into gj = Group From subMs In gj.DefaultIfEmpty(New With {month, .TotalDistanceKm = 0.0})
                                    Select subMs
 
         ' Převedeme na pole pro graf

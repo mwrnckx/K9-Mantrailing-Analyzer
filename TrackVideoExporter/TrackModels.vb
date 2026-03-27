@@ -544,19 +544,19 @@ End Class
 ''' structure for returning calculation results.
 ''' </summary>
 Public Class TrailStats
-    Public Property MaxDistanceAlongTrail As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
-    Public Property MaxDistanceAlongTrailWeighted As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
-    Public Property MaxDistanceAlongTrailWeightedPerCent As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
+    Public Property MaxDistAlongTrailkm As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
+    Public Property MaxDistAlongTrailkmWeighted As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
+    Public Property MaxDistAlongTrailWeightedPerCent As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
     Public Property TrailAge As TimeSpan ' age of the trail 
     Public Property DogTotalTime As TimeSpan ' total time of the dog's route
-    Public Property DogGrossSpeed As Double 'gross speed calculated from the last checkpoint or the dog's last point if the dog is close to the track
+    Public Property DogGrossSpeedkmh As Double 'gross speed calculated from the last checkpoint or the dog's last point if the dog is close to the track
     Public Property AverDeviation As Double ' average deviation in metres of the entire dog's route from the runner's track
     Public Property AverWeightOfDeviation As Double 'average weight of deviation in <0,1> of the entire dog's route from the runner's track
     Public Property MaxDeviationGeoPoints As TrackAsGeoPoints ' maximum deviation of the entire dog's route from the runner's track
     Public Property PointsInMTCompetition As ScoringData '(RunnerFoundPoints As Integer, DogSpeedPoints As Integer, DogAccuracyPoints As Integer, DogReadingPoints As Integer, dogName As String, handlerName As String) ' number of points in MT Competition according to the rules
     Public Property CheckpointsEval As List(Of CheckpointData) '(distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double)) ' evaluation of checkpoints: distance from start along the runner's route and distance from the route in meters
-    Public Property DogTotalDistance As Double ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
-    Public Property RunnerTotalDistance As Double ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
+    Public Property DogTotalDistancekm As Double ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
+    Public Property RunnerTotalDistancekm As Double ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
 
     Public Property RunnerFound As Boolean ' whether dog found the runner or not
     Public Property TrailPickupFactorPerCent As Double 'whether dog found trail quickly
@@ -566,10 +566,10 @@ End Class
 
 ' Struktura pro data checkpointu
 Public Structure CheckpointData
-    Public distanceAlongTrailWeighted As Double
+    Public distAlongTrailkmWeighted As Double
     Public deviationFromTrail As Double
     Public dogGrossSpeedkmh As Double
-    Public distanceAlongTrail As Double
+    Public distAlongTrailkm As Double
 End Structure
 
 Public Class ScoringData

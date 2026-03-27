@@ -199,7 +199,7 @@ Partial Class frmChart
 
             series1.Color = Color.Chocolate
             series1.IsValueShownAsLabel = True
-            series1.LabelFormat = "N1"
+            series1.LabelFormat = "N2"
             series1.XValueType = ChartValueType.String
             series1.IsXValueIndexed = True
             series1.XValueType = ChartValueType.String
