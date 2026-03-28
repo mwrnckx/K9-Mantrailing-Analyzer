@@ -3690,14 +3690,14 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         Dim trailStatsNode As XmlNode = Me.Reader.CreateAndAddElement(extensionsNode, GpxReader.K9_PREFIX & ":" & "trailStats", "", True,,, GpxReader.K9_NAMESPACE_URI)
 
         ' 3. Nastavení atributů pro Double/procenta do <TrailStats>
-        SetAttributeDouble(trailStatsNode, "dogDistance", statsData.DogTotalDistancekm * 1000, "G3")
-        SetAttributeDouble(trailStatsNode, "runnerDistance", statsData.RunnerTotalDistancekm * 1000, "G3")
-        SetAttributeDouble(trailStatsNode, "distanceAlongTrailWeighted", statsData.MaxDistAlongTrailkmWeighted * 1000, "G3")
+        SetAttributeDouble(trailStatsNode, "dogDistance", statsData.DogTotalDistancekm * 1000, "F1")
+        SetAttributeDouble(trailStatsNode, "runnerDistance", statsData.RunnerTotalDistancekm * 1000, "F1")
+        SetAttributeDouble(trailStatsNode, "distanceAlongTrailWeighted", statsData.MaxDistAlongTrailkmWeighted * 1000, "F1")
         SetAttributeDouble(trailStatsNode, "distanceAlongTrail", statsData.MaxDistAlongTrailkm, "G3")
         SetAttributeDouble(trailStatsNode, "distanceAlongTrailWeightedPerCent", statsData.MaxDistAlongTrailWeightedPerCent, "F0")
         SetAttributeDouble(trailStatsNode, "averWeightOfDeviation", statsData.AverWeightOfDeviation, "F2")
         SetAttributeDouble(trailStatsNode, "dogGrossSpeed", statsData.DogGrossSpeedkmh, "G2")
-        SetAttributeDouble(trailStatsNode, "averDeviation", statsData.AverDeviation, "G3")
+        SetAttributeDouble(trailStatsNode, "averDeviation", statsData.AverDeviation, "F1")
         SetAttributeDouble(trailStatsNode, "TrailPickupFactorPerCent", statsData.TrailPickupFactorPerCent, "F0")
         ' 4. Nastavení atributů pro TimeSpan
         SetAttributeTimeSpan(trailStatsNode, "trailAge", statsData.TrailAge, "F0")

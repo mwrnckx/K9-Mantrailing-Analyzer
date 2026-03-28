@@ -2087,12 +2087,12 @@ Public Class TrailStatsDisplay
     Public Property DogDistance As Double ' Distance actually traveled by the dog (measured from the dog's route)
 
 
-    <DisplayName("2nd to last Checkpoint Distance")>
+    <DisplayName("2nd_to_last Checkpoint Distance")>
     Public Property FirstCheckpointEvalDistance As Double = 0
 
-    <DisplayName("2nd to last Checkpoint Deviation")>
+    <DisplayName("2nd_to_last Checkpoint Deviation")>
     Public Property FirstCheckpointEvalDeviationFromTrail As Double = 0
-    <DisplayName("2nd to last Checkpoint dogSpeed km/h")>
+    <DisplayName("2nd_to_last Checkpoint dog_speed km/h")>
     Public Property FirstCheckpointEvaldogGrossSpeed As Double = 0 ' evaluation of checkpoints: distance from start along the runner's route and distance from the route in meters
     <DisplayName("Last Checkpoint Distance")>
     Public Property SecondCheckpointEvalDistance As Double = 0

@@ -165,7 +165,7 @@ Partial Class Form1
         ' 
         ' mnucbActiveCategory
         ' 
-        mnucbActiveCategory.BackColor = Color.LightYellow
+        mnucbActiveCategory.BackColor = Color.DarkSeaGreen
         mnucbActiveCategory.DropDownStyle = ComboBoxStyle.DropDownList
         resources.ApplyResources(mnucbActiveCategory, "mnucbActiveCategory")
         mnucbActiveCategory.ForeColor = SystemColors.ControlText
@@ -487,7 +487,7 @@ Partial Class Form1
         dgvCompetition.BackgroundColor = Color.Salmon
         DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter
         DataGridViewCellStyle1.BackColor = Color.Salmon
-        DataGridViewCellStyle1.Font = New Font("Cascadia Code", 12.0F)
+        DataGridViewCellStyle1.Font = New Font("Cascadia Code", 12F)
         DataGridViewCellStyle1.ForeColor = Color.Maroon
         DataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight
         DataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText
@@ -496,7 +496,7 @@ Partial Class Form1
         dgvCompetition.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight
         DataGridViewCellStyle2.BackColor = Color.LightYellow
-        DataGridViewCellStyle2.Font = New Font("Cascadia Code", 12.0F)
+        DataGridViewCellStyle2.Font = New Font("Cascadia Code", 12F)
         DataGridViewCellStyle2.ForeColor = Color.Maroon
         DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
         DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
@@ -516,7 +516,7 @@ Partial Class Form1
         ' 
         ' cbActiveCategory
         ' 
-        cbActiveCategory.BackColor = Color.LightYellow
+        cbActiveCategory.BackColor = Color.Goldenrod
         resources.ApplyResources(cbActiveCategory, "cbActiveCategory")
         cbActiveCategory.FormattingEnabled = True
         cbActiveCategory.Name = "cbActiveCategory"
