@@ -63,10 +63,10 @@ Namespace TrackVideoExporter
         ''' </summary>
         '''<param name="localisedReports"></param>
         '''<param name="_tracksAsTrkNode"> </param>
-        Public Async Function CreateVideoFromTrkNodes(_tracksAsTrkNode As List(Of TrackAsTrkNode), Optional maxDeviationPoints As TrackAsGeoPoints = Nothing, Optional waypoints As TrackAsTrkPts = Nothing, Optional LocalisedReports As Dictionary(Of String, TrailReport) = Nothing) As Task(Of Boolean)
+        Public Async Function CreateVideoFromTrkNodes(_tracksAsTrkNode As List(Of TrackAsTrkNode), Optional maxDeviationPoints As TrackAsGeoPoints = Nothing, Optional waypoints As TrackAsTrkPts = Nothing, Optional LocalisedReports As Dictionary(Of String, TrailReport) = Nothing, Optional lastConfirmedIndex As Integer = 0) As Task(Of Boolean)
             Dim tracksAsTrkPts = converter.ConvertTracksAsTrkNodesToTrackAsTrkPts(_tracksAsTrkNode)
             Me.LocalisedReports = LocalisedReports
-            Return Await CreateVideoFromTrkPts(tracksAsTrkPts, maxDeviationPoints, waypoints, Me.LocalisedReports)
+            Return Await CreateVideoFromTrkPts(tracksAsTrkPts, maxDeviationPoints, waypoints, Me.LocalisedReports, lastConfirmedIndex)
         End Function
 
         ''' <summary>
@@ -79,7 +79,7 @@ Namespace TrackVideoExporter
             _tracksAsTrkPts As List(Of TrackAsTrkPts),
                 maxDevPointsAsGeoPoints As TrackAsGeoPoints,
             waypoints As TrackAsTrkPts,
-               LocalisedReports As Dictionary(Of String, TrailReport)) As Task(Of Boolean)
+               LocalisedReports As Dictionary(Of String, TrailReport), Optional lastConfirmedIndex As Integer = 0) As Task(Of Boolean)
             Dim wayPointsAsGeoPoints As TrackAsGeoPoints = converter.ConvertTrackTrkPtsToGeoPoints(waypoints)
             Dim tracksAsGeoPoints As List(Of TrackAsGeoPoints) = converter.ConvertTracksTrkPtsToGeoPoints(_tracksAsTrkPts)
 
@@ -94,7 +94,7 @@ Namespace TrackVideoExporter
             Next
             'Dim maxDevPointsAsGeoPoints As TrackAsGeoPoints = converter.ConvertTrackTrkPtsToGeoPoints(maxDeviation)
             Me.LocalisedReports = LocalisedReports
-            Return Await CreateVideoFromGeoPoints(tracksAsGeoPoints, maxDevPointsAsGeoPoints, wayPointsAsGeoPoints)
+            Return Await CreateVideoFromGeoPoints(tracksAsGeoPoints, maxDevPointsAsGeoPoints, wayPointsAsGeoPoints, lastConfirmedIndex)
         End Function
 
         ''' <summary>
@@ -105,7 +105,7 @@ Namespace TrackVideoExporter
         Public Async Function CreateVideoFromGeoPoints(
             _tracksAsGeoPoints As List(Of TrackAsGeoPoints),
                Optional maxDeviationAsGeoPoints As TrackAsGeoPoints = Nothing,
-               Optional waypointsAsGeoPoints As TrackAsGeoPoints = Nothing) As Task(Of Boolean)
+               Optional waypointsAsGeoPoints As TrackAsGeoPoints = Nothing, Optional lastConfirmedIndex As Integer = 0) As Task(Of Boolean)
 
             Dim zoom As Integer = 18
             converter.SetCoordinatesBounds(_tracksAsGeoPoints)
@@ -129,7 +129,7 @@ Namespace TrackVideoExporter
             If maxDeviationAsGeoPoints IsNot Nothing Then
                 maxDeviationMetres = TrackConverter.HaversineDistance(maxDeviationAsGeoPoints.TrackGeoPoints(0).Location.Lat, maxDeviationAsGeoPoints.TrackGeoPoints(0).Location.Lon, maxDeviationAsGeoPoints.TrackGeoPoints(1).Location.Lat, maxDeviationAsGeoPoints.TrackGeoPoints(1).Location.Lon, "m")
             End If
-            Return Await CreateVideoFromPointsF(_TracksAsPointsF, maxDeviationPointsAsPointsF, wayPointsAsPointsF, maxDeviationMetres)
+            Return Await CreateVideoFromPointsF(_TracksAsPointsF, maxDeviationPointsAsPointsF, wayPointsAsPointsF, maxDeviationMetres, lastConfirmedIndex)
 
         End Function
 
@@ -145,7 +145,7 @@ Namespace TrackVideoExporter
         Public Async Function CreateVideoFromPointsF(
             _tracksAsPointsF As List(Of TrackAsPointsF),
             Optional maxDeviationAsPointsF As TrackAsPointsF = Nothing,
-            Optional waypointsAsPointsF As TrackAsPointsF = Nothing, Optional maxDeviationMetres As Double = 0) As Task(Of Boolean)
+            Optional waypointsAsPointsF As TrackAsPointsF = Nothing, Optional maxDeviationMetres As Double = 0, Optional lastConfirmedIndex As Integer = 0) As Task(Of Boolean)
 
             Dim pngDir As DirectoryInfo = Nothing
             Dim pngCreator As PngSequenceCreator = Nothing
@@ -155,7 +155,7 @@ Namespace TrackVideoExporter
                                Dim renderer As New PngRenderer(windDirection, windSpeed, Me.backgroundTiles, Me.VideoSize)
                                renderer.CreateWindArrowBitmap(outputDir)
                                Dim staticBgTransparent = renderer.RenderStaticTransparentBackground(_tracksAsPointsF, backgroundTiles, waypointsAsPointsF)
-                               Dim staticBgMap = renderer.RenderStaticMapBackground(_tracksAsPointsF, backgroundTiles, maxDeviationAsPointsF, waypointsAsPointsF, maxDeviationMetres)
+                               Dim staticBgMap = renderer.RenderStaticMapBackground(_tracksAsPointsF, backgroundTiles, maxDeviationAsPointsF, waypointsAsPointsF, maxDeviationMetres, lastConfirmedIndex)
 
 
                                pngCreator = New PngSequenceCreator(renderer)

@@ -1551,7 +1551,7 @@ Partial Public Class Form1
                            'Dim tracksAsGeopoints As New List(Of TrackAsGeoPoints)()
                            'tracksAsGeopoints.Add(_gpxRecord.TrailStats.PurifiedDogGeoPoints)
                            'Dim succ = Await videoCreator.CreateVideoFromGeoPoints()
-                           Dim success = Await videoCreator.CreateVideoFromTrkNodes(_gpxRecord.Tracks, _gpxRecord.TrailStats.MaxDeviationGeoPoints, _gpxRecord.WptNodes, _gpxRecord.LocalisedReports)
+                           Dim success = Await videoCreator.CreateVideoFromTrkNodes(_gpxRecord.Tracks, _gpxRecord.TrailStats.MaxDeviationGeoPoints, _gpxRecord.WptNodes, _gpxRecord.LocalisedReports, _gpxRecord.TrailStats.BestCheckPointIndex)
 
                            ' When finished, return to the UI thread and perform the actions
                            waitForm.Invoke(Sub()
@@ -2098,7 +2098,7 @@ Public Class TrailStatsDisplay
     Public Property SecondCheckpointEvalDistance As Double = 0
     <DisplayName("Last Checkpoint Deviation")>
     Public Property SecondCheckpointEvalDeviationFromTrail As Double = 0
-    <DisplayName("Last Checkpoint dogSpeed km/h")>
+    <DisplayName("Last Checkpoint dog_speed km/h")>
     Public Property SecondCheckpointEvaldogGrossSpeed As Double = 0
 
     <DisplayName("Runner name")>

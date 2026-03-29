@@ -557,7 +557,7 @@ Public Class TrailStats
     Public Property CheckpointsEval As List(Of CheckpointData) '(distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double)) ' evaluation of checkpoints: distance from start along the runner's route and distance from the route in meters
     Public Property DogTotalDistancekm As Double ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
     Public Property RunnerTotalDistancekm As Double ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
-
+    Public Property BestCheckPointIndex As Integer ' index of the checkpoint with the best score (closest to the track and most far)
     Public Property RunnerFound As Boolean ' whether dog found the runner or not
     Public Property TrailPickupFactorPerCent As Double 'whether dog found trail quickly
     'Public Property PurifiedTrackData As (PurifiedDogGeoPoints As List(Of TrackGeoPoint), PurifiedRunnerGeoPoints As List(Of TrackGeoPoint), Lat0 As Double, Lon0 As Double, RunnerTotalDistance As Double, dogTotalDistance As Double, dogTotalTime As TimeSpan, RunnerFound As Boolean)
@@ -570,6 +570,7 @@ Public Structure CheckpointData
     Public deviationFromTrail As Double
     Public dogGrossSpeedkmh As Double
     Public distAlongTrailkm As Double
+    Public chPtIndex As Integer
 End Structure
 
 Public Class ScoringData

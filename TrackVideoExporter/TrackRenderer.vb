@@ -51,8 +51,6 @@ Public Class PngSequenceCreator
         Next key
         '
 
-
-
         ' Vytvoříme statický obrázek s mapou 
         If staticbgMap IsNot Nothing Then
             Dim filename = IO.Path.Combine(outputDir.FullName, "TracksOnMap.png")
@@ -161,7 +159,7 @@ Public Class PngRenderer
                                               minTileX As Single, minTileY As Single),
                                               Optional maxDeviation As TrackAsPointsF = Nothing,
                                               Optional waypointsAsPointsF As TrackAsPointsF = Nothing,
-                                             Optional maxDeviationMetres As Double = 0) As Bitmap
+                                             Optional maxDeviationMetres As Double = 0, Optional lastConfirmedIndex As Integer = 0) As Bitmap
         ' Vykresli statické stopy
         ' Vrátí bitmapu s podkladem
 
@@ -263,18 +261,23 @@ Public Class PngRenderer
 
                 ' 2. Následně můžeme iterovat seřazenou kolekci, kde každý prvek je stále původní typ 
                 '    s vlastností Location a Time.
-                Dim i As Integer = 1
+                Dim i As Integer = 0
                 For Each wpt In sortedTrackPoints
+                    Dim description As String = wpt.Name ' $"checkpoint {i}" 'waypointsAsPointsF.Label
+
                     ' Pro přístup k souřadnicím použijte Location
                     Dim location As PointF = wpt.Location
                     Dim _Color As Color = If(wpt.Name = "First Contact", Color.Magenta, waypointsAsPointsF.Color) ' First Contact Point je červeně
+                    If i = lastConfirmedIndex Then
+                        _Color = Color.Cyan ' pro testování, třetí waypoint bude azurový
+                        description = "Last Confirmed"
+                    End If
                     Dim contrastColor As Color = GetContrastColor(_Color)
 
                     Dim brush As SolidBrush = New SolidBrush(_Color) ' plná barva pro statické stopy
 
 
                     g.FillEllipse(brush, location.X - radius / 2, location.Y - radius / 2, radius, radius)
-                    Dim description As String = wpt.Name ' $"checkpoint {i}" 'waypointsAsPointsF.Label
                     Dim textSize = g.MeasureString(description, font)
                     Dim textoffsetX As Single
                     If location.X - textSize.Width - radius < 0 Then
@@ -286,6 +289,7 @@ Public Class PngRenderer
                     End If
                     Dim textPos As New PointF(location.X + textoffsetX, location.Y - textSize.Height / 2)
                     If Not waypointsAsPointsF.IsMoving Then DrawTextWithOutline(g, description, font, _Color, contrastColor, textPos, 2)
+                    i += 1
                 Next
             End If
         End Using
@@ -939,12 +943,17 @@ Public Class PngRenderer
     ''' </summary>
     ''' <param name="bgColor">The background color.</param>
     ''' <returns>Either <see cref="Color.White"/> or <see cref="Color.Black"/>, depending on which provides better contrast.</returns>
-    Function GetContrastColor(bgColor As Color) As Color
-        Dim luminance As Double = 0.299 * bgColor.R + 0.587 * bgColor.G + 0.114 * bgColor.B
-        If luminance < 128 Then
-            Return Color.White
+    Function GetContrastColor(textColor As Color) As Color
+        Dim luminance As Double = 0.2126 * (textColor.R / 255) + 0.7152 * (textColor.G / 255) + 0.0722 * (textColor.B / 255)
+
+        If luminance < 0.5 Then
+            ' Text je tmavý -> potřebujeme světlý kontrast (např. pro outline)
+            ' Místo bílé vrátíme velmi světlou béžovou/krémovou
+            Return Color.FromArgb(255, 250, 245, 230)
         Else
-            Return Color.Black
+            ' Text je světlý -> potřebujeme tmavý kontrast
+            ' Místo černé vrátíme "lesní černou" (velmi tmavá hnědo-zelená)
+            Return Color.FromArgb(255, 20, 25, 15)
         End If
     End Function
 
