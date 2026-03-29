@@ -2016,7 +2016,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         With stats
             .RunnerTotalDistancekm = preparedData.RunnerTotalDistance
             .DogTotalDistancekm = preparedData.dogTotalDistance
-            .MaxDistAlongTrailWeightedPerCent = maxWeightedDistance / preparedData.RunnerTotalDistance * 100.0 'jako procento z délky kladečovy stopy
+            .MaxDistAlongTrailWeightedPerCent = If(preparedData.RunnerTotalDistance > 0, maxWeightedDistance / preparedData.RunnerTotalDistance * 100.0, 0) 'jako procento z délky kladečovy stopy
             .MaxDistAlongTrailkmWeighted = maxWeightedDistance 'vzdálenost podél trasy kladeče vážená vzdáleností psa od trasy kladeče
             .MaxDistAlongTrailkm = maxDistance 'vzdálenost podél trasy kladeče bez váhy
             .TrailAge = GetAge()
@@ -2199,15 +2199,13 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         If runnerFound Then pointsToEvaluate.Add(dogGeoPoints.Last())
 
         Dim firstDogPoint = dogGeoPoints.First()
-        'Const MIN_DIST_FROM_START As Double = 5.0 ' Metry, pod které checkpoint ignorujeme (je to hlavně First Contact)
 
         ' --- Hlavní procesní cyklus ---
         Dim cpIndex As Integer = -1
         For Each cp In pointsToEvaluate
             cpIndex += 1
-            ' OPTIMALIZACE: Přeskočení bodu, pokud je příliš blízko startu psa (vynechá First Contact!!!)
             Dim distFromDogStart = TrackConverter.HaversineDistance(cp.Location.Lat, cp.Location.Lon, firstDogPoint.Location.Lat, firstDogPoint.Location.Lon, "m")
-            'If distFromDogStart < MIN_DIST_FROM_START Then Continue For
+
 
             Dim minDeviationFromRunnerTrail As Double = Double.MaxValue
             Dim indexOfClosestRunnerPoint As Integer = -1

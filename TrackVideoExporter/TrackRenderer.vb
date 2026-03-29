@@ -223,7 +223,7 @@ Public Class PngRenderer
                     textoffsetX = -textSize.Width - radius
                 End If
                 Dim textPos As New PointF(p.X + textoffsetX, p.Y - textSize.Height / 2)
-                DrawTextWithOutline(g, description, font, track.Color, contrastColor, textPos, 2)
+                DrawTextWithOutline(g, description, font, track.Color, contrastColor, textPos, 5)
 
             Next
 
@@ -251,7 +251,7 @@ Public Class PngRenderer
                     textoffsetX = -textSize.Width - radius
                 End If
                 Dim textPos As New PointF(TrackPoints(0).X + textoffsetX, TrackPoints(0).Y - textSize.Height / 2)
-                DrawTextWithOutline(g, description, font, deviationColor, contrastColor, textPos, 2)
+                DrawTextWithOutline(g, description, font, deviationColor, contrastColor, textPos, 5)
             End If
 
             If waypointsAsPointsF IsNot Nothing AndAlso waypointsAsPointsF.TrackPointsF.Count > 0 Then
@@ -288,7 +288,7 @@ Public Class PngRenderer
                         textoffsetX = -textSize.Width - radius
                     End If
                     Dim textPos As New PointF(location.X + textoffsetX, location.Y - textSize.Height / 2)
-                    If Not waypointsAsPointsF.IsMoving Then DrawTextWithOutline(g, description, font, _Color, contrastColor, textPos, 2)
+                    If Not waypointsAsPointsF.IsMoving Then DrawTextWithOutline(g, description, font, _Color, contrastColor, textPos, 5)
                     i += 1
                 Next
             End If
@@ -362,7 +362,7 @@ Public Class PngRenderer
                     textoffsetX = -textSize.Width - radius
                 End If
                 Dim textPos As New PointF(p.X + textoffsetX, p.Y - textSize.Height / 2)
-                If Not track.IsMoving Then DrawTextWithOutline(g, popis, font, track.Color, contrastColor, textPos, 2)
+                If Not track.IsMoving Then DrawTextWithOutline(g, popis, font, track.Color, contrastColor, textPos, 5)
             Next
 
             If waypointsAsPointsF IsNot Nothing AndAlso waypointsAsPointsF.TrackPointsF.Count > 0 Then
@@ -387,7 +387,7 @@ Public Class PngRenderer
                         textoffsetX = -textSize.Width - radius
                     End If
                     Dim textPos As New PointF(location.X + textoffsetX, location.Y - textSize.Height / 2)
-                    If Not waypointsAsPointsF.IsMoving Then DrawTextWithOutline(g, popis, font, _Color, contrastColor, textPos, 2)
+                    If Not waypointsAsPointsF.IsMoving Then DrawTextWithOutline(g, popis, font, _Color, contrastColor, textPos, 5)
                 Next
             End If
         End Using
@@ -451,7 +451,7 @@ Public Class PngRenderer
                     Dim contrastColor As Color = GetContrastColor(track.Color)
 
                     'Dim textPos As New PointF(imgWidth - textSize.Width, 0)'alternativně vpravo nahoře
-                    DrawTextWithOutline(g, popis, font, track.Color, contrastColor, textPos, 3)
+                    DrawTextWithOutline(g, popis, font, track.Color, contrastColor, textPos, 5)
                 End If
             Next
         End Using
@@ -947,13 +947,22 @@ Public Class PngRenderer
         Dim luminance As Double = 0.2126 * (textColor.R / 255) + 0.7152 * (textColor.G / 255) + 0.0722 * (textColor.B / 255)
 
         If luminance < 0.5 Then
-            ' Text je tmavý -> potřebujeme světlý kontrast (např. pro outline)
-            ' Místo bílé vrátíme velmi světlou béžovou/krémovou
-            Return Color.FromArgb(255, 250, 245, 230)
+            ' Text je tmavý -> Obrys bude "Smetanový" (mnohem přirozenější než bílá)
+            Return Color.FromArgb(255, 255, 253, 240)
         Else
-            ' Text je světlý -> potřebujeme tmavý kontrast
-            ' Místo černé vrátíme "lesní černou" (velmi tmavá hnědo-zelená)
-            Return Color.FromArgb(255, 20, 25, 15)
+            ' Text je světlý -> Obrys bude "Břidlicový" (tmavě šedá s kapkou modré/zelené)
+            ' Tohle vypadá v přírodě mnohem lépe než čistá černá
+            Return Color.FromArgb(220, 25, 30, 35) ' Přidali jsme i mírnou průhlednost (220)
+        End If
+    End Function
+
+    Function GetColorDerivedContrast(mainColor As Color) As Color
+        ' Pokud je text světlý, udělej obrys jako extrémně tmavou a sytou verzi téže barvy
+        ' (Např. pro světle modrý text to udělá námořnickou modř)
+        If mainColor.GetBrightness() > 0.5 Then
+            Return ControlPaint.Dark(mainColor, 0.8) ' Ztmaví barvu o 80 %
+        Else
+            Return ControlPaint.Light(mainColor, 0.8) ' Zesvětlí barvu
         End If
     End Function
 
@@ -1016,12 +1025,16 @@ Public Class PngRenderer
             Dim emSize As Single = g.DpiY * font.Size / 72
             path.AddString(text, font.FontFamily, CInt(font.Style), emSize, pos, StringFormat.GenericDefault)
 
-            ' 2. Vykreslení obrysu (Outline) - kreslíme ho jako první "pod" text
+            ' 2. Vykreslení MĚKKÉHO obrysu (Pseudo-shadow)
+            ' Vykreslíme širší, poloprůhledný obrys pro "rozpustění" do videa
+            Using softPen As New Pen(Color.FromArgb(100, outlineColor), outlineSize + 2)
+                softPen.LineJoin = LineJoin.Round
+                g.DrawPath(softPen, path)
+            End Using
+
+            ' Vykreslíme tenčí, ostřejší obrys (tvůj původní)
             Using outlinePen As New Pen(outlineColor, outlineSize)
-                ' Round zajistí, že rohy písmen nebudou mít divné špičky
                 outlinePen.LineJoin = LineJoin.Round
-                outlinePen.StartCap = LineCap.Round
-                outlinePen.EndCap = LineCap.Round
                 g.DrawPath(outlinePen, path)
             End Using
 
