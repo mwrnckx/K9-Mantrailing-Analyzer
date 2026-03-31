@@ -2066,7 +2066,7 @@ Public Class TrailStatsDisplay
     Public Property AverageDeviation As Double ' average deviation of the entire dog's route from the runner's track weighted by time
 
     <DisplayName("Average Weight of Deviation")>
-    Public Property AverageWeightofDeviation As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
+    Public Property AverageWeightofDeviation As Double ' Average weight of deviation
 
     <DisplayName("Trail Distance")>
     Public Property RunnerDistance As Double ' Distance actually traveled by the runner (measured from the runner's route)

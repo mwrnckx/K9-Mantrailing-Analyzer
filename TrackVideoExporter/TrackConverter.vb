@@ -14,6 +14,10 @@ Imports Microsoft.VisualBasic.Logging
 ''' Provides conversion of GPX data between various internal formats used for video rendering.
 ''' </summary>
 Public Class TrackConverter
+
+    Public Const EarthRadiusKm As Double = 6371.0
+    Public Const EarthRadiusM As Double = EarthRadiusKm * 1000
+
     ''' <summary>
     ''' Raised when a non-critical warning occurs during processing.
     ''' </summary>
@@ -278,11 +282,6 @@ Public Class TrackConverter
     ''' <param name="zoom">Zoom level of the tile map.</param>
     ''' <returns>List of <see cref="TrackAsPointsF"/> with 2D screen coordinates and timestamps.</returns>
     Public Function ConvertTracksGeoPointsToPointsF(_tracksAsGeoPoints As List(Of TrackAsGeoPoints), minTileX As Single, minTileY As Single, zoom As Integer) As List(Of TrackAsPointsF)
-        'Dim latDistancePerDegree As Double = 111_320.0
-        'Dim centerLat As Double = (minLat + maxLat) / 2
-        'Dim lonDistancePerDegree As Double = Math.Cos(centerLat * Math.PI / 180) * latDistancePerDegree
-        'Dim widthInMeters As Double = (maxLon - minLon) * lonDistancePerDegree
-        'Dim heightInMeters As Double = (maxLat - minLat) * latDistancePerDegree
 
         Dim _tracksAsPointsF As New List(Of TrackAsPointsF)
         For Each Track In _tracksAsGeoPoints
@@ -320,8 +319,8 @@ Public Class TrackConverter
         Dim n = Math.Pow(2, zoom)
         Dim tileX = (lon + 180.0) / 360.0 * n
         Dim tileY = (1 - Math.Log(Math.Tan(lat * Math.PI / 180.0) + 1 / Math.Cos(lat * Math.PI / 180.0)) / Math.PI) / 2 * n
-        Dim pixelX = CSng((tileX - minTileX) * 256)
-        Dim pixelY = CSng((tileY - minTileY) * 256)
+        Dim pixelX = CSng((tileX - minTileX) * OsmTileDownloader.TileSize)
+        Dim pixelY = CSng((tileY - minTileY) * OsmTileDownloader.TileSize)
         Return New PointF(pixelX, pixelY)
     End Function
 
@@ -445,24 +444,23 @@ Public Class TrackConverter
     Public Shared Function HaversineDistance(lat1 As Double, lon1 As Double, lat2 As Double, lon2 As Double, units As String) As Double
         Dim dLat As Double = DegToRad(lat2 - lat1)
         Dim dLon As Double = DegToRad(lon2 - lon1)
-        ' Constants for converting degrees to radians and Earth's radius
-        Const EARTH_RADIUS As Double = 6371 ' Earth's radius in kilometers
+
 
         Dim a As Double = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) + Math.Cos(DegToRad(lat1)) * Math.Cos(DegToRad(lat2)) * Math.Sin(dLon / 2) * Math.Sin(dLon / 2)
         Dim c As Double = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a))
 
         If units = "km" Then
-            Return EARTH_RADIUS * c ' Result in kilometers
+            Return EarthRadiusKm * c ' Result in kilometers
         ElseIf units = "m" Then
-            Return EARTH_RADIUS * c * 1000 'result in metres
+            Return EarthRadiusM * c  'result in metres
         Else
-            Return EARTH_RADIUS * c ' Result in kilometers
+            Return EarthRadiusKm * c ' Result in kilometers
         End If
     End Function
     ' Function to convert degrees to radians
-    Private Shared Function DegToRad(degrees As Double) As Double
-        Const PI As Double = 3.14159265358979
-        Return degrees * PI / 180
+    Public Shared Function DegToRad(degrees As Double) As Double
+
+        Return degrees * Math.PI / 180
     End Function
 
     Public Function PromptForStartTime(trackName As String, start_end As String, Optional maxTries As Integer = 3) As DateTime?

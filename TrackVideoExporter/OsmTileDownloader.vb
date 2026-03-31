@@ -2,7 +2,8 @@
 Imports System.Net.Http
 
 Public Class OsmTileDownloader
-    Private Const TileSize As Integer = 256
+    Public Const TileSize As Integer = 256
+    Public Const zoom As Integer = 18
 
 
     ''' <summary>
@@ -14,7 +15,7 @@ Public Class OsmTileDownloader
     ''' <param name="maxLon">Maximum longitude</param>
     ''' <param name="zoom">Zoom level (např. 13-16)</param>
     ''' <returns>Bitmapa složená z dlaždic</returns>
-    Public Async Function GetMapBitmap(minLat As Double, maxLat As Double, minLon As Double, maxLon As Double, zoom As Integer) As Task(Of (bgmap As Bitmap, minTileX As Single, minTileY As Single))
+    Public Async Function GetMapBitmap(minLat As Double, maxLat As Double, minLon As Double, maxLon As Double) As Task(Of (bgmap As Bitmap, minTileX As Single, minTileY As Single))
         ' Převod souřadnic na indexy dlaždic
         Dim xMin = LonToTileX(minLon, zoom)
         Dim xMax = LonToTileX(maxLon, zoom)
@@ -45,10 +46,8 @@ Public Class OsmTileDownloader
 
 
                     Try
-                        'Dim data = wc.DownloadData(url)
+
                         Dim data = Await client.GetByteArrayAsync(url)
-                        'Dim fileName = IO.Path.GetFileName(url)
-                        'IO.File.WriteAllBytes(fileName, data)
 
                         Await Task.Delay(500) ' pauza, aby tě neblokli
 

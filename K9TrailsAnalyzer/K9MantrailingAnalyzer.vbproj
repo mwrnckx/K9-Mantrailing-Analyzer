@@ -295,6 +295,54 @@
     <None Update="Samples\003\2025-09-20_Kolin_Eva.gpx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Samples\003\2026-03-29_Found_Cut_Fast.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\003\2026-03-29_Found_Cut_Slow.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\003\2026-03-29_Found_precise_5pt.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\003\2026-03-29_NotFound_0pt.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\003\2026-03-29_NotFound_1pt.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\003\2026-03-29_NotFound_4pt.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\003\2026-03-29_NotFound_5pt.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\003\2026-03-29_Čim_údolí_Nedokončená1.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\003\2026-03-29_Čim_údolí_Nedokončená2a.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\003\2026-03-29_Čim_údolí_Nedokončená2b.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\003\2026-03-29_Čim_údolí_Nedokončená2c.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\003\2026-03-29_Čim_údolí_Nedokončená3.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\003\2026-03-29_Čim_údolí_Nedokončená4.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\003\2026-03-29_Čim_údolí_Samo.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\003\2026-03-29_Čim_údolí_Říznutá.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\003\2026-03-29_Čim_údolí_Říznutá2.gpx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Samples\003\Kolin Jana.gpx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

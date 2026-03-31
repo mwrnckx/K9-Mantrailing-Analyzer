@@ -13,8 +13,6 @@ Public Class frmEditComments
     Public Property GpxFileName As String
     Public Property HandlerName As String
 
-
-
     Dim LanguageAbbreviations As New List(Of String) From {
     "cs", ' čeština
     "en", ' angličtina
@@ -64,6 +62,7 @@ Public Class frmEditComments
         txtPerformance.Text = Me.TrailDescription.Performance.Text
         txtDogName.Text = Me.TrailDescription.DogName.Text
         txtHandlerName.Text = Me.HandlerName
+
 
         ' 2. Nastavení výběru jazyka (cbLanguage)
         ' Nejdříve naplníme seznam zkratek (pokud už není naplněn v konstruktoru)

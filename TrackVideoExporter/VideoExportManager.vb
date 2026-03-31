@@ -107,29 +107,30 @@ Namespace TrackVideoExporter
                Optional maxDeviationAsGeoPoints As TrackAsGeoPoints = Nothing,
                Optional waypointsAsGeoPoints As TrackAsGeoPoints = Nothing, Optional lastConfirmedIndex As Integer = 0) As Task(Of Boolean)
 
-            Dim zoom As Integer = 18
+
             converter.SetCoordinatesBounds(_tracksAsGeoPoints)
             Dim downloader As New OsmTileDownloader()
             backgroundTiles = Await downloader.GetMapBitmap(
                 converter.minLat, converter.maxLat,
-                converter.minLon, converter.maxLon, zoom)
+                converter.minLon, converter.maxLon)
 
 
             Dim _TracksAsPointsF As List(Of TrackAsPointsF) =
                 converter.ConvertTracksGeoPointsToPointsF(
-                     _tracksAsGeoPoints, backgroundTiles.minTileX, backgroundTiles.minTileY, zoom)
+                     _tracksAsGeoPoints, backgroundTiles.minTileX, backgroundTiles.minTileY, OsmTileDownloader.zoom)
             Dim wayPointsAsPointsF As TrackAsPointsF =
                 converter.ConvertTrackGeoPointsToPointsF(
-                    waypointsAsGeoPoints, backgroundTiles.minTileX, backgroundTiles.minTileY, zoom)
+                    waypointsAsGeoPoints, backgroundTiles.minTileX, backgroundTiles.minTileY, OsmTileDownloader.zoom)
 
             Dim maxDeviationPointsAsPointsF As TrackAsPointsF =
                 converter.ConvertTrackGeoPointsToPointsF(
-                    maxDeviationAsGeoPoints, backgroundTiles.minTileX, backgroundTiles.minTileY, zoom)
+                    maxDeviationAsGeoPoints, backgroundTiles.minTileX, backgroundTiles.minTileY, OsmTileDownloader.zoom)
             Dim maxDeviationMetres As Double = 0
             If maxDeviationAsGeoPoints IsNot Nothing Then
                 maxDeviationMetres = TrackConverter.HaversineDistance(maxDeviationAsGeoPoints.TrackGeoPoints(0).Location.Lat, maxDeviationAsGeoPoints.TrackGeoPoints(0).Location.Lon, maxDeviationAsGeoPoints.TrackGeoPoints(1).Location.Lat, maxDeviationAsGeoPoints.TrackGeoPoints(1).Location.Lon, "m")
             End If
-            Return Await CreateVideoFromPointsF(_TracksAsPointsF, maxDeviationPointsAsPointsF, wayPointsAsPointsF, maxDeviationMetres, lastConfirmedIndex)
+            Dim latitude As Double = _tracksAsGeoPoints(0).TrackGeoPoints(0).Location.Lat
+            Return Await CreateVideoFromPointsF(_TracksAsPointsF, maxDeviationPointsAsPointsF, wayPointsAsPointsF, maxDeviationMetres, lastConfirmedIndex, latitude)
 
         End Function
 
@@ -145,14 +146,14 @@ Namespace TrackVideoExporter
         Public Async Function CreateVideoFromPointsF(
             _tracksAsPointsF As List(Of TrackAsPointsF),
             Optional maxDeviationAsPointsF As TrackAsPointsF = Nothing,
-            Optional waypointsAsPointsF As TrackAsPointsF = Nothing, Optional maxDeviationMetres As Double = 0, Optional lastConfirmedIndex As Integer = 0) As Task(Of Boolean)
+            Optional waypointsAsPointsF As TrackAsPointsF = Nothing, Optional maxDeviationMetres As Double = 0, Optional lastConfirmedIndex As Integer = 0, Optional latitude As Double = 50) As Task(Of Boolean)
 
             Dim pngDir As DirectoryInfo = Nothing
             Dim pngCreator As PngSequenceCreator = Nothing
 
             Await Task.Run(Sub()
 
-                               Dim renderer As New PngRenderer(windDirection, windSpeed, Me.backgroundTiles, Me.VideoSize)
+                               Dim renderer As New PngRenderer(windDirection, windSpeed, Me.backgroundTiles, Me.VideoSize, latitude)
                                renderer.CreateWindArrowBitmap(outputDir)
                                Dim staticBgTransparent = renderer.RenderStaticTransparentBackground(_tracksAsPointsF, backgroundTiles, waypointsAsPointsF)
                                Dim staticBgMap = renderer.RenderStaticMapBackground(_tracksAsPointsF, backgroundTiles, maxDeviationAsPointsF, waypointsAsPointsF, maxDeviationMetres, lastConfirmedIndex)

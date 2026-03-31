@@ -117,11 +117,11 @@ Public Class PngRenderer
     Private trackBounds As RectangleF
     Private myWindArrow As Bitmap
     Private videoSize As Size
-    'Private emojiFonts As New PrivateFontCollection() 'hezčí emojis
-    'Private emojiFont As Font
+
     Dim diagonal As Single
-    Dim radius As Single ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
-    Dim penWidth As Single ' šířka pera pro kreslení čar, 1% šířky obrázku
+    Dim radius As Single ' poloměr kruhu pro poslední bod, ideálně 5m v pixelech, ale protože se mění s latitudou, bude se přepočítávat v konstruktoru
+    Dim penWidth As Single ' šířka pera pro kreslení čar, ideálně 2 m v pixelech, ale protože se mění s latitudou, bude se přepočítávat v konstruktoru
+    Dim latitude As Double ' pro přepočet šířky pera z metrů na pixely, protože se mění s latitudou
     Dim emSize As Single '
     Dim font As Font
 
@@ -131,15 +131,17 @@ Public Class PngRenderer
     ''' <param name="windDirection">The direction of the wind in degrees (0-360), or null if not available.</param>
     ''' <param name="windSpeed">The speed of the wind in m/s, or null if not available.</param>
     ''' <param name="bgTiles">A tuple containing the background bitmap and its minimum tile X and Y coordinates.</param>
-    Public Sub New(windDirection As Double?, windSpeed As Double?, bgTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single), VideoSize As Size)
+    Public Sub New(windDirection As Double?, windSpeed As Double?, bgTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single), VideoSize As Size, latitude As Double)
         Me.windDirection = windDirection
         Me.windSpeed = windSpeed
         Me.videoSize = VideoSize
+        Me.latitude = latitude
         Me.trackBounds = bgTiles.bgmap.GetBounds(GraphicsUnit.Pixel) 'přepočítá obdélník na souřadnice v pixelech
         diagonal = Math.Sqrt(Me.videoSize.Width ^ 2 + Me.videoSize.Height ^ 2)
-        Me.radius = 0.015 * diagonal ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
-        Me.penWidth = 0.008 * diagonal ' šířka pera pro kreslení čar, 1% šířky obrázku
-        Me.emSize = 0.015 * diagonal '
+        Dim pixelsPerMeter As Single = (OsmTileDownloader.TileSize * Math.Pow(2.0, OsmTileDownloader.zoom)) / (Math.Cos(TrackConverter.DegToRad(latitude)) * 2 * Math.PI * TrackConverter.EarthRadiusM) 'přepočet z metrů na pixely, protože se mění s latitudou
+        Me.radius = 5 * pixelsPerMeter '0.015 * diagonal ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
+        Me.penWidth = 2 * pixelsPerMeter '0.008 * diagonal ' šířka pera pro kreslení čar, 1% šířky obrázku
+        Me.emSize = 10 * pixelsPerMeter '2 * radius '0.015 * diagonal '
         Me.font = New Font("Cascadia Code", emSize, FontStyle.Bold)
     End Sub
 
@@ -159,7 +161,9 @@ Public Class PngRenderer
                                               minTileX As Single, minTileY As Single),
                                               Optional maxDeviation As TrackAsPointsF = Nothing,
                                               Optional waypointsAsPointsF As TrackAsPointsF = Nothing,
-                                             Optional maxDeviationMetres As Double = 0, Optional lastConfirmedIndex As Integer = 0) As Bitmap
+                                             Optional maxDeviationMetres As Double = 0, Optional lastConfirmedIndex As Integer = 0
+                                              ) As Bitmap
+
         ' Vykresli statické stopy
         ' Vrátí bitmapu s podkladem
 
@@ -313,7 +317,8 @@ Public Class PngRenderer
         Using g As Graphics = Graphics.FromImage(staticBmp)
             g.Clear(Color.Transparent)
             g.SmoothingMode = SmoothingMode.AntiAlias
-            For Each track As TrackAsPointsF In tracksAsPointsF
+            ' Procházení od posledního prvku k prvnímu kvůli hezčímu vykreslení blue line
+            For Each track As TrackAsPointsF In tracksAsPointsF.AsEnumerable().Reverse()
                 If track.TrackPointsF.Count = 0 Then Continue For
                 Dim alpha As Integer = If(track.IsMoving, 100, 255)
                 Dim drawColor As Color = Color.FromArgb(alpha, track.Color)

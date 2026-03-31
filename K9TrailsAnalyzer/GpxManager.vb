@@ -309,15 +309,32 @@ Public Class GpxFileManager
 
                 Try
                     If tracker.IsNewOrChanged(remoteFilePath) Then 'new files!!!
-                        Debug.WriteLine("Zpracovávám: " & Path.GetFileName(remoteFilePath))
-                        ' If the file is new or modified, we process it
-                        'copies the file to the local directories
-                        Dim localOriginalsFilePath As String = Path.Combine(CategoryInfo.OriginalsDirectory, Path.GetFileName(remoteFilePath))
+                        Dim fileName As String = Path.GetFileName(remoteFilePath)
+                        Dim fileNameWithoutExtension As String = Path.GetFileNameWithoutExtension(remoteFilePath)
+                        Dim extension As String = Path.GetExtension(remoteFilePath)
+                        Dim localOriginalsFilePath As String = Path.Combine(CategoryInfo.OriginalsDirectory, fileName)
+
+                        ' Pokud soubor existuje, najdeme novou variantu jména
                         If File.Exists(localOriginalsFilePath) Then
-                            RaiseEvent WarningOccurred($"File  {Path.GetFileName(localOriginalsFilePath)} already exists in localOriginals directory!", Color.Red)
-                        Else
-                            IO.File.Copy(remoteFilePath, localOriginalsFilePath, False)
+                            Dim counter As Integer = 1
+                            Dim newFileName As String
+                            Dim newFilePath As String
+
+                            Do
+                                ' Vytvoří název ve formátu: Jmeno (1).ext
+                                newFileName = $"{fileNameWithoutExtension} ({counter}){extension}"
+                                newFilePath = Path.Combine(CategoryInfo.OriginalsDirectory, newFileName)
+                                counter += 1
+                            Loop While File.Exists(newFilePath)
+
+                            ' Aktualizujeme cílovou cestu na tu s číslem
+                            localOriginalsFilePath = newFilePath
+                            RaiseEvent WarningOccurred($"Soubor již existoval, ukládám jako: {newFileName}", Color.Orange)
                         End If
+
+                        ' Teď už máme v localOriginalsFilePath buď původní jméno, nebo očíslovanou variantu
+                        IO.File.Copy(remoteFilePath, localOriginalsFilePath, False)
+                        Debug.WriteLine("Zkopírováno do: " & localOriginalsFilePath)
                         i += 1
                         tracker.MarkAsDownloadeded(remoteFilePath)
                         Try
@@ -698,17 +715,17 @@ Public Class GPXRecord
                 ' 4. Přidání Seřazených Uzlů Zpět
                 ' Přidáme seřazené uzly na konec rodičovského uzlu v novém pořadí.
                 i = 1
-                Dim newName As String = My.Resources.Resource1.article
+                '  Dim newName As String = My.Resources.Resource1.article
                 ' Pokud je to náš START, pojmenujeme ho 
                 For Each wptNode In sortedWptNodeList
                     ' Najdi uzel <name> uvnitř <wpt> s použitím namespace
                     Dim nameNode As XmlNode = TrackConverter.SelectSingleChildNode("name", wptNode)
                     If nameNode IsNot Nothing AndAlso nameNode.InnerText = "First Contact" Then
-                        ' Tady můžeš nastavit název pro UI
+                        ' Pokud je to místo kde se pes přiblíží na 5 m k trase, pojmenujeme ho "First Contact"
                         nameNode.InnerText = "First Contact"
                     Else
 
-                        Dim newNamei As String = $"{newName} {i}"
+                        Dim newNamei As String = $"{"Point"} {i}"
                         i += 1
 
                         If nameNode IsNot Nothing Then
@@ -1436,7 +1453,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
         End If
 
-        Return New TrailReport("", "", goalPart, trailPart, performancePart, "", Nothing, "", levelOfBlinding)
+        Return New TrailReport("", "", goalPart, trailPart, performancePart, "", Nothing, "", levelOfBlinding, Me.WptNodes.TrackPoints.Count - 1)
     End Function
 
 
@@ -1549,6 +1566,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
                                                 .Language = lang}
                 If i = 0 Then
                     frm.TrailDescription.DogNameText = Me.DogName
+                    frm.TrailDescription.NumberOfArticlesFound = Me.WptNodes.TrackPoints.Count - 1
                     If Me.TrailStats IsNot Nothing AndAlso Me.TrailStats.PointsInMTCompetition.handlerName <> "" Then
                         frm.HandlerName = Me.TrailStats.PointsInMTCompetition.handlerName
                     End If
@@ -1588,7 +1606,8 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
                 report = New TrailReport("", firstLocalisedReport.Value.DogName.Text, firstLocalisedReport.Value.Goal.Text,
                                         firstLocalisedReport.Value.Trail.Text,
                                         firstLocalisedReport.Value.Performance.Text,
-                                        "", , , firstLocalisedReport.Value.LevelOfBlinding)
+                                        "", , , firstLocalisedReport.Value.LevelOfBlinding,
+                                         firstLocalisedReport.Value.NumberOfArticlesFound)
                 ' Nová položka – prázdná, připravená k vyplnění
                 Debug.WriteLine($"{i + 1}. [Nový záznam]")
 
@@ -2371,6 +2390,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
                 If d < minDev Then
                     minDev = d
                     nearestRunnerIdx = j
+                    If minDev < 3 Then Exit For ' optimalizace, pokud je odchylka menší než 3 m, už nehledáme dál, body jsou po třech metrech
                 End If
             Next j
             Dim weight As Double = GPXRecord.Weight(minDev)
@@ -2590,36 +2610,36 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             ' --- STEP 4: Calculate Dog Reading Points (Final Logic - No Bonus) ---
 
             Dim totalDogReadingScore As Double = 0
-                Dim previousDistance As Double = 0
-                For i As Integer = 0 To lastActualCheckpointIndex
-                    Dim checkPointEval = stats.CheckpointsEval(i)
-                    Dim currentDistance As Double = checkPointEval.distAlongTrailkmWeighted
+            Dim previousDistance As Double = 0
+            For i As Integer = 0 To lastActualCheckpointIndex
+                Dim checkPointEval = stats.CheckpointsEval(i)
+                Dim currentDistance As Double = checkPointEval.distAlongTrailkm
 
-                    Dim intervalDistance As Double = currentDistance - previousDistance
+                Dim intervalDistance As Double = currentDistance - previousDistance
                 Dim intervalRatio As Double = intervalDistance / stats.RunnerTotalDistancekm
 
                 ' Základní body za úsek (poměr k celkové trase * 100)
                 Dim potentialPoints As Double = intervalRatio * POINTS_FOR_DOG_READING_MAX_CHECKPOINT
-                    Dim actualPoints As Double = 0
-                    Dim gapWeight As Double = Weight(intervalRatio, 0.5, 3.2) '  dlouhé mezery mezi checkpointy jsou penalizovány
-                    Dim devWeight As Double = Weight(checkPointEval.deviationFromTrail, 20) 'pro 20 m od trasy je váha 0,5, pro větší odchylky rychle klesá
+                Dim actualPoints As Double = 0
+                Dim gapWeight As Double = Weight(intervalRatio, 0.5, 3.2) '  dlouhé mezery mezi checkpointy jsou penalizovány
+                Dim devWeight As Double = Weight(checkPointEval.deviationFromTrail, 20) 'pro 20 m od trasy je váha 0,5, pro větší odchylky rychle klesá
 
-                    actualPoints = potentialPoints * gapWeight * devWeight
+                actualPoints = potentialPoints * gapWeight * devWeight
 
-                    totalDogReadingScore += actualPoints
-                    previousDistance = currentDistance
-                Next
+                totalDogReadingScore += actualPoints
+                previousDistance = currentDistance
+            Next
 
-                ' Výsledek bude vždy <= POINTS_FOR_DOG_READING_MAX_CHECKPOINT
-                dogReadingPoints = CInt(Math.Min(POINTS_FOR_DOG_READING_MAX_CHECKPOINT, totalDogReadingScore))
-            End If
+            ' Výsledek bude vždy <= POINTS_FOR_DOG_READING_MAX_CHECKPOINT
+            dogReadingPoints = CInt(Math.Min(POINTS_FOR_DOG_READING_MAX_CHECKPOINT, totalDogReadingScore))
+        End If
 
 
-            ' --------------------------------------------------------------------------------
-            ' --- STEP 5: Calculate TrailPickupPoints
-            ' --------------------------------------------------------------------------------
+        ' --------------------------------------------------------------------------------
+        ' --- STEP 5: Calculate TrailPickupPoints
+        ' --------------------------------------------------------------------------------
 
-            TrailPickupPoints = stats.TrailPickupFactorPerCent / 100 * POINTS_FOR_EARLY_PICKUP_MAX
+        TrailPickupPoints = stats.TrailPickupFactorPerCent / 100 * POINTS_FOR_EARLY_PICKUP_MAX
 
         ' --------------------------------------------------------------------------------
         ' --- Final Step: Return all calculated scores ---

@@ -492,13 +492,12 @@ Public Class TrailReport
         End Set
     End Property
 
-
     ' Ponecháme i WeatherData
     Public Property WeatherData As WeatherData
 
 
     ' Konstruktor pro snadné vytvoření a nastavení
-    Public Sub New(ByVal title As String, ByVal dogName As String, ByVal goal As String, ByVal trail As String, ByVal performance As String, Optional points As String = "", Optional _weatherdata As WeatherData = Nothing, Optional weather As String = " ", Optional _levelOfBlinding As LevelOfBlindingType = 0)
+    Public Sub New(ByVal title As String, ByVal dogName As String, ByVal goal As String, ByVal trail As String, ByVal performance As String, Optional points As String = "", Optional _weatherdata As WeatherData = Nothing, Optional weather As String = " ", Optional _levelOfBlinding As LevelOfBlindingType = 0, Optional NoOfArticklesFound As String = "0")
         Me.TitleText = title
         Me.DogNameText = dogName
         Me.LevelOfBlinding = _levelOfBlinding
@@ -508,6 +507,7 @@ Public Class TrailReport
         Me.PerformancePointsText = points
         Me.WeatherText = weather
         Me.WeatherData = _weatherdata
+        Me.NumberOfArticlesFound = NoOfArticklesFound
     End Sub
 
     ' Přetížený konstruktor pro new() bez argumentů
