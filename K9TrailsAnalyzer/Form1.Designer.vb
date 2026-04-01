@@ -34,6 +34,7 @@ Partial Class Form1
         btnCreateVideos = New Button()
         lblRemoteDirectory = New Label()
         btnVideoSettings = New Button()
+        btnGPXView = New Button()
         MenuStrip1 = New MenuStrip()
         mnuGPXprocessing = New ToolStripMenuItem()
         mnuPrependDateToFileName = New ToolStripMenuItem()
@@ -135,6 +136,14 @@ Partial Class Form1
         btnVideoSettings.Name = "btnVideoSettings"
         ToolTip1.SetToolTip(btnVideoSettings, resources.GetString("btnVideoSettings.ToolTip"))
         btnVideoSettings.UseVisualStyleBackColor = False
+        ' 
+        ' btnGPXView
+        ' 
+        resources.ApplyResources(btnGPXView, "btnGPXView")
+        btnGPXView.BackColor = Color.Gold
+        btnGPXView.Name = "btnGPXView"
+        ToolTip1.SetToolTip(btnGPXView, resources.GetString("btnGPXView.ToolTip"))
+        btnGPXView.UseVisualStyleBackColor = False
         ' 
         ' MenuStrip1
         ' 
@@ -424,6 +433,7 @@ Partial Class Form1
         ' TabVideoExport
         ' 
         TabVideoExport.BackColor = Color.LightYellow
+        TabVideoExport.Controls.Add(btnGPXView)
         TabVideoExport.Controls.Add(btnVideoSettings)
         TabVideoExport.Controls.Add(btnCreateVideos)
         TabVideoExport.Controls.Add(lvGpxFiles)
@@ -734,6 +744,7 @@ Partial Class Form1
     Friend WithEvents mnuWettkampfregelnpdf As ToolStripMenuItem
     Friend WithEvents mnuPravidlazavodupdf As ToolStripMenuItem
     Private WithEvents btnVideoSettings As Button
+    Private WithEvents btnGPXView As Button
 
 
 End Class

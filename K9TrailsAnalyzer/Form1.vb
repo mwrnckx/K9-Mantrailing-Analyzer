@@ -1495,6 +1495,7 @@ Partial Public Class Form1
             If Not _gpxRecord Is Nothing Then
                 selectedFiles.Add(_gpxRecord)
             End If
+
         Next
 
         ' Můžeš je teď předat funkci pro export videa
@@ -1524,6 +1525,23 @@ Partial Public Class Form1
                 mboxEx($"Creating a video from a file {record.FileName} failed." & vbCrLf & $"Message: {ex}")
             End Try
         Next
+    End Sub
+
+    Private Sub ShowInBrowser(gpxRecord As GPXRecord)
+        Dim gpxPath As String = gpxRecord.Reader.FilePath
+        Dim gpxContent As String = File.ReadAllText(gpxPath, Encoding.UTF8)
+
+        ' Načti šablonu (embedded resource nebo soubor)
+        Dim template As String = File.ReadAllText(
+        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "gpx_viewer.html"))
+
+        ' Vlož GPX obsah
+        Dim html As String = template.Replace("%%GPX_CONTENT%%", gpxContent)
+
+        ' Zapiš do temp a otevři
+        Dim tempPath As String = Path.Combine(Path.GetTempPath(), "k9_preview.html")
+        File.WriteAllText(tempPath, html, Encoding.UTF8)
+        Process.Start(New ProcessStartInfo(tempPath) With {.UseShellExecute = True})
     End Sub
 
     Public Async Function CreateVideoFromGPXRecord(_gpxRecord As GPXRecord, videoSettings As VideoSettingsConfig) As Task(Of Boolean)
@@ -1575,6 +1593,7 @@ Partial Public Class Form1
 
     Private Sub lvGpxFiles_ItemChecked(sender As Object, e As ItemCheckedEventArgs) Handles lvGpxFiles.ItemChecked
         Dim _gpxRecord As GPXRecord = TryCast(e.Item.Tag, GPXRecord)
+
         If _gpxRecord.DogStart Is Nothing OrElse _gpxRecord.DogStart.Time = Date.MinValue Then 'Pokud není datum začátku trasy psa, nejde označit
 
             If e.Item.Checked Then
@@ -1582,7 +1601,11 @@ Partial Public Class Form1
                 e.Item.Checked = False
             End If
             e.Item.Selected = False
-
+        End If
+        If lvGpxFiles.CheckedItems.Count > 1 Then
+            mboxEx("You cannot select multiple records!")
+            e.Item.Selected = False
+            e.Item.Checked = False
         End If
     End Sub
 
@@ -1892,6 +1915,25 @@ Partial Public Class Form1
             End If
         End Using
     End Sub
+
+    Private Sub btnGPXView_Click(sender As Object, e As EventArgs) Handles btnGPXView.Click
+
+        Dim selectedFiles As New List(Of GPXRecord)
+        For Each item As ListViewItem In lvGpxFiles.CheckedItems
+            ' Předpoklad: Tag obsahuje plnou cestu k souboru
+            Dim _gpxRecord As GPXRecord = TryCast(item.Tag, GPXRecord) 'není to zbytečný?
+            If Not _gpxRecord Is Nothing Then
+                selectedFiles.Add(_gpxRecord)
+            End If
+
+        Next
+        If selectedFiles.Count > 0 Then
+            ShowInBrowser(selectedFiles(0))
+        End If
+
+
+    End Sub
+
 End Class
 
 ''' <summary>
