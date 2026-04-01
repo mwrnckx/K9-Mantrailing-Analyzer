@@ -1,6 +1,7 @@
 ﻿
 Imports System.Drawing
 Imports System.IO
+Imports System.Text.Json.Serialization
 Imports System.Windows.Forms
 
 Namespace TrackVideoExporter
@@ -20,8 +21,7 @@ Namespace TrackVideoExporter
         Private outputDir As DirectoryInfo
         Private windDirection As Double?
         Private windSpeed As Double?
-        Private VideoSize As Size = New Size(1280, 720) ' Default video size (HD)
-
+        Private videoSettings As VideoSettingsConfig
         Private backgroundTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single) = (Nothing, 0, 0)
         Private LocalisedReports As New Dictionary(Of String, TrailReport)
         'Private textParts As New List(Of (Text As String, Color As Color, FontStyle As FontStyle))
@@ -43,15 +43,15 @@ Namespace TrackVideoExporter
         Public Sub New(FFMpegPath As String, outputDir As DirectoryInfo,
                        Optional windDir As Double? = Nothing,
                        Optional windSpeed As Double? = Nothing,
-                         Optional LocalisedReports As Dictionary(Of String, TrailReport) = Nothing, Optional videoSize As Size = Nothing)
+                         Optional LocalisedReports As Dictionary(Of String, TrailReport) = Nothing, Optional videoSettings As VideoSettingsConfig = Nothing)
             Me.FFMpegPath = FFMpegPath
             Me.outputDir = outputDir
             Me.windDirection = windDir
             Me.windSpeed = windSpeed
             Me.LocalisedReports = LocalisedReports
             ' Zde nastavíme vaši požadovanou "konstantní" výchozí hodnotu
-            If videoSize.IsEmpty Then
-                Me.VideoSize = New Size(1920, 1440)
+            If videoSettings Is Nothing Then
+                Me.videoSettings = New VideoSettingsConfig
             End If
 
             converter = New TrackConverter()
@@ -63,10 +63,18 @@ Namespace TrackVideoExporter
         ''' </summary>
         '''<param name="localisedReports"></param>
         '''<param name="_tracksAsTrkNode"> </param>
-        Public Async Function CreateVideoFromTrkNodes(_tracksAsTrkNode As List(Of TrackAsTrkNode), Optional maxDeviationPoints As TrackAsGeoPoints = Nothing, Optional waypoints As TrackAsTrkPts = Nothing, Optional LocalisedReports As Dictionary(Of String, TrailReport) = Nothing, Optional lastConfirmedIndex As Integer = 0) As Task(Of Boolean)
+        Public Async Function CreateVideoFromTrkNodes(_tracksAsTrkNode As List(Of TrackAsTrkNode),
+                                                      Optional maxDeviationPoints As TrackAsGeoPoints = Nothing,
+                                                      Optional waypoints As TrackAsTrkPts = Nothing,
+                                                      Optional LocalisedReports As Dictionary(Of String, TrailReport) = Nothing,
+                                                      Optional lastConfirmedIndex As Integer = 0,
+                                                      Optional videoSettings As VideoSettingsConfig = Nothing) As Task(Of Boolean)
             Dim tracksAsTrkPts = converter.ConvertTracksAsTrkNodesToTrackAsTrkPts(_tracksAsTrkNode)
             Me.LocalisedReports = LocalisedReports
-            Return Await CreateVideoFromTrkPts(tracksAsTrkPts, maxDeviationPoints, waypoints, Me.LocalisedReports, lastConfirmedIndex)
+            Return Await CreateVideoFromTrkPts(tracksAsTrkPts,
+                                               maxDeviationPoints,
+                                               waypoints, Me.LocalisedReports,
+                                               lastConfirmedIndex, videoSettings)
         End Function
 
         ''' <summary>
@@ -79,7 +87,10 @@ Namespace TrackVideoExporter
             _tracksAsTrkPts As List(Of TrackAsTrkPts),
                 maxDevPointsAsGeoPoints As TrackAsGeoPoints,
             waypoints As TrackAsTrkPts,
-               LocalisedReports As Dictionary(Of String, TrailReport), Optional lastConfirmedIndex As Integer = 0) As Task(Of Boolean)
+               LocalisedReports As Dictionary(Of String, TrailReport),
+            Optional lastConfirmedIndex As Integer = 0,
+            Optional videoSettings As VideoSettingsConfig = Nothing) As Task(Of Boolean)
+
             Dim wayPointsAsGeoPoints As TrackAsGeoPoints = converter.ConvertTrackTrkPtsToGeoPoints(waypoints)
             Dim tracksAsGeoPoints As List(Of TrackAsGeoPoints) = converter.ConvertTracksTrkPtsToGeoPoints(_tracksAsTrkPts)
 
@@ -153,13 +164,13 @@ Namespace TrackVideoExporter
 
             Await Task.Run(Sub()
 
-                               Dim renderer As New PngRenderer(windDirection, windSpeed, Me.backgroundTiles, Me.VideoSize, latitude)
+                               Dim renderer As New PngRenderer(windDirection, windSpeed, Me.backgroundTiles, Me.videoSettings, latitude)
                                renderer.CreateWindArrowBitmap(outputDir)
                                Dim staticBgTransparent = renderer.RenderStaticTransparentBackground(_tracksAsPointsF, backgroundTiles, waypointsAsPointsF)
                                Dim staticBgMap = renderer.RenderStaticMapBackground(_tracksAsPointsF, backgroundTiles, maxDeviationAsPointsF, waypointsAsPointsF, maxDeviationMetres, lastConfirmedIndex)
 
 
-                               pngCreator = New PngSequenceCreator(renderer)
+                               pngCreator = New PngSequenceCreator(renderer, videoSettings)
 
                                Dim pngTimes = pngCreator.GetPngTimes(_tracksAsPointsF)
 
@@ -174,6 +185,26 @@ Namespace TrackVideoExporter
             Return Await encoder.EncodeFromPngs(FFMpegPath, outputDir, outputFile)
 
         End Function
+
+    End Class
+
+    Public Class VideoSettingsConfig
+        <JsonPropertyName("videoWidth")>
+        Public Property VideoWidth As Integer = 1920
+
+        <JsonPropertyName("videoHeight")>
+        Public Property VideoHeight As Integer = 1080
+
+        <JsonPropertyName("trailWidth")>
+        Public Property TrailWidth As Integer = 2
+
+        <JsonPropertyName("videoMode")>
+        Public Property VideoMode As VideoModeEnum = VideoModeEnum.light
+
+        Public Enum VideoModeEnum
+            light
+            dark
+        End Enum
 
     End Class
 

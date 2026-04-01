@@ -33,6 +33,7 @@ Partial Class Form1
         ToolTip1 = New ToolTip(components)
         btnCreateVideos = New Button()
         lblRemoteDirectory = New Label()
+        btnVideoSettings = New Button()
         MenuStrip1 = New MenuStrip()
         mnuGPXprocessing = New ToolStripMenuItem()
         mnuPrependDateToFileName = New ToolStripMenuItem()
@@ -126,6 +127,14 @@ Partial Class Form1
         resources.ApplyResources(lblRemoteDirectory, "lblRemoteDirectory")
         lblRemoteDirectory.Name = "lblRemoteDirectory"
         ToolTip1.SetToolTip(lblRemoteDirectory, resources.GetString("lblRemoteDirectory.ToolTip"))
+        ' 
+        ' btnVideoSettings
+        ' 
+        resources.ApplyResources(btnVideoSettings, "btnVideoSettings")
+        btnVideoSettings.BackColor = Color.Goldenrod
+        btnVideoSettings.Name = "btnVideoSettings"
+        ToolTip1.SetToolTip(btnVideoSettings, resources.GetString("btnVideoSettings.ToolTip"))
+        btnVideoSettings.UseVisualStyleBackColor = False
         ' 
         ' MenuStrip1
         ' 
@@ -415,6 +424,7 @@ Partial Class Form1
         ' TabVideoExport
         ' 
         TabVideoExport.BackColor = Color.LightYellow
+        TabVideoExport.Controls.Add(btnVideoSettings)
         TabVideoExport.Controls.Add(btnCreateVideos)
         TabVideoExport.Controls.Add(lvGpxFiles)
         resources.ApplyResources(TabVideoExport, "TabVideoExport")
@@ -487,7 +497,7 @@ Partial Class Form1
         dgvCompetition.BackgroundColor = Color.Salmon
         DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter
         DataGridViewCellStyle1.BackColor = Color.Salmon
-        DataGridViewCellStyle1.Font = New Font("Cascadia Code", 12F)
+        DataGridViewCellStyle1.Font = New Font("Cascadia Code", 12.0F)
         DataGridViewCellStyle1.ForeColor = Color.Maroon
         DataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight
         DataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText
@@ -496,7 +506,7 @@ Partial Class Form1
         dgvCompetition.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight
         DataGridViewCellStyle2.BackColor = Color.LightYellow
-        DataGridViewCellStyle2.Font = New Font("Cascadia Code", 12F)
+        DataGridViewCellStyle2.Font = New Font("Cascadia Code", 12.0F)
         DataGridViewCellStyle2.ForeColor = Color.Maroon
         DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
         DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
@@ -723,6 +733,7 @@ Partial Class Form1
     Friend WithEvents mnuCompetitionRulespdf As ToolStripMenuItem
     Friend WithEvents mnuWettkampfregelnpdf As ToolStripMenuItem
     Friend WithEvents mnuPravidlazavodupdf As ToolStripMenuItem
+    Private WithEvents btnVideoSettings As Button
 
 
 End Class

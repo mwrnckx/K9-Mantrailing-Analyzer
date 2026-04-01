@@ -64,35 +64,7 @@ Public Class frmCrossTrailSelector
 
     Private Sub frmCrossTrailSelector_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
         Try
-            'Dim RunnerTrailsCount As Integer = 0
-            'Dim dogtracksCount As Integer = 0
 
-
-            'For i = 0 To dgvTracks.Rows.Count - 1
-            '    Dim row = dgvTracks.Rows(i)
-            '    Dim selectedType = CType(row.Cells("TypeColumn").Value, TrackType)
-            '    trkList(i).TrackType = selectedType
-            '    If selectedType = TrackType.RunnerTrail Then
-            '        RunnerTrailsCount += 1
-            '    ElseIf selectedType = TrackType.DogTrack Then
-            '        dogtracksCount += 1
-            '    ElseIf selectedType = TrackType.Unknown Then
-            '        mboxEx("For each track you have to choose its type!")
-            '        e.Cancel = True ' Zabrání uzavření formuláře
-            '        Return
-            '    End If
-            'Next
-
-
-            'If RunnerTrailsCount > 1 Then
-            '    mboxEx("There can be only one Runner trail.")
-            '    e.Cancel = True ' Zabrání uzavření formuláře
-            '    Return ' Zabrání uzavření formuláře
-            'ElseIf dogtracksCount > 1 Then
-            '    mboxEx("There can be only one dog track.")
-            '    e.Cancel = True ' Zabrání uzavření formuláře
-            '    Return ' Zabrání uzavření formuláře
-            'End If
             If Me.ValidateTrailTypes() Then
 
                 Me.DialogResult = DialogResult.OK

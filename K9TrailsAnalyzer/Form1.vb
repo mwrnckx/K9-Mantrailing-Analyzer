@@ -19,6 +19,8 @@ Partial Public Class Form1
     Private currentCulture As CultureInfo = Thread.CurrentThread.CurrentCulture
     Private GPXFilesManager As GpxFileManager
     Private ReadOnly CategoriesInfoPath As String = Path.Combine(Application.StartupPath, "AppData", "categoriesInfo.json")
+    Private ReadOnly VideoSettingsPath As String = Path.Combine(Application.StartupPath, "AppData", "videoSettings.json")
+
     'Private ReadOnly ConfigPath As String = Path.Combine(Application.StartupPath, "AppData", "config.json")
     Private sortColumnName As String = String.Empty 'třídění dgvCompetition
     Private sortDirection As SortOrder = SortOrder.None
@@ -1191,7 +1193,9 @@ Partial Public Class Form1
         CloseGrafs()
     End Sub
 
-    Private Config As Config ' Uložte si instanci této třídy na úrovni třídy/modulu
+    Private Config As CategoriesConfig ' Uložte si instanci této třídy na úrovni třídy/modulu
+    Private VideoSettings As VideoSettingsConfig
+
 
     Private Sub LoadUnifiedConfig()
         Dim UnifiedConfigPath As String = CategoriesInfoPath ' Definujte si novou cestu
@@ -1203,10 +1207,10 @@ Partial Public Class Form1
         }
 
             ' 1. Deserializace do kontejnerové třídy
-            Config = JsonSerializer.Deserialize(Of Config)(json, opts)
+            Config = JsonSerializer.Deserialize(Of CategoriesConfig)(json, opts)
         Else
             ' 2. Pokud soubor neexistuje, vytvořte novou instanci s výchozími hodnotami
-            Config = New Config()
+            Config = New CategoriesConfig()
         End If
 
         ' 3. Přiřazení hodnot do vašich stávajících proměnných (pro snadnou integraci)
@@ -1219,17 +1223,6 @@ Partial Public Class Form1
             Config.ActiveCategory = New activeCategory()
         End If
     End Sub
-    'Private Sub LoadCategories()
-    '    If File.Exists(CategoriesInfoPath) Then
-    '        Dim json = File.ReadAllText(CategoriesInfoPath, Encoding.UTF8)
-    '        Dim opts = New JsonSerializerOptions With {
-    '            .PropertyNameCaseInsensitive = True
-    '        }
-    '        CategoriesInfo = JsonSerializer.Deserialize(Of List(Of CategoryInfo))(json, opts)
-    '    Else
-    '        CategoriesInfo = New List(Of CategoryInfo)()
-    '    End If
-    'End Sub
 
 
     Private Sub SaveConfig()
@@ -1253,34 +1246,37 @@ Partial Public Class Form1
         File.WriteAllText(ConfigPath, JsonSerializer.Serialize(Config, options), Encoding.UTF8)
     End Sub
 
-    'Private Sub SaveCategoriesInfo()
-    '    Dim options As New JsonSerializerOptions With {
-    '        .WriteIndented = True,
-    '        .Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping ' aby se diakritika neescapeovala
-    '    }
-    '    Directory.CreateDirectory(Path.GetDirectoryName(CategoriesInfoPath))
-    '    File.WriteAllText(CategoriesInfoPath, JsonSerializer.Serialize(CategoriesInfo, options), Encoding.UTF8)
-    'End Sub
+    Private Sub LoadVideoSettings()
 
-    ' ----- načtení a uložení config.json (aktivní pes) -----
-    'Private Sub LoadConfig()
-    '    If File.Exists(ConfigPath) Then
-    '        Dim json = File.ReadAllText(ConfigPath, Encoding.UTF8)
-    '        Dim cfg = JsonSerializer.Deserialize(Of activeCategory)(json)
-    '        If cfg IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(cfg.ActiveCategoryId) Then
-    '            ActiveCategoryId = cfg.ActiveCategoryId
-    '        End If
-    '    End If
-    'End Sub
+        If File.Exists(videoSettingsPath) Then
+            Dim json = File.ReadAllText(videoSettingsPath, Encoding.UTF8)
+            Dim opts = New JsonSerializerOptions With {
+            .PropertyNameCaseInsensitive = True ' Nastavení můžete ponechat
+        }
 
-    'Private Sub SaveConfig()
-    '    Dim options As New JsonSerializerOptions With {
-    '        .WriteIndented = True,
-    '        .Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-    '    }
-    '    Dim cfg As New activeCategory With {.ActiveCategoryId = ActiveCategoryId}
-    '    File.WriteAllText(ConfigPath, JsonSerializer.Serialize(cfg, options), Encoding.UTF8)
-    'End Sub
+            ' 1. Deserializace do kontejnerové třídy
+            VideoSettings = JsonSerializer.Deserialize(Of VideoSettingsConfig)(json, opts)
+        Else
+            ' 2. Pokud soubor neexistuje, vytvořte novou instanci s výchozími hodnotami
+            VideoSettings = New VideoSettingsConfig()
+        End If
+
+        ' 3. Přiřazení hodnot do vašich stávajících proměnných (pro snadnou integraci)
+
+    End Sub
+
+    Private Sub SaveVideoSettings(VideoSettings As VideoSettingsConfig)
+
+
+        Dim options As New JsonSerializerOptions With {
+        .WriteIndented = True,
+        .Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+    }
+
+        ' 2. Serializace celé kontejnerové třídy
+        Directory.CreateDirectory(Path.GetDirectoryName(VideoSettingsPath))
+        File.WriteAllText(VideoSettingsPath, JsonSerializer.Serialize(VideoSettings, options), Encoding.UTF8)
+    End Sub
 
     ' ----- naplnění ToolStripComboBoxu objekty CategoryInfo -----
     Private Sub PopulateCategoriesToolStrip()
@@ -1395,7 +1391,7 @@ Partial Public Class Form1
 
 
 
-        ' refresh UI: vložíme nového psa do comboboxu a vybereme ho
+        ' refresh UI: vložíme novou kategorii do comboboxu a vybereme ji
         PopulateCategoriesToolStrip()
         ' vybrat nového psa:
         For i As Integer = 0 To mnucbActiveCategory.ComboBox.Items.Count - 1
@@ -1522,16 +1518,15 @@ Partial Public Class Form1
             Catch ex As Exception
 
             End Try
-
             Try
-                Await CreateVideoFromGPXRecord(record)
+                Await CreateVideoFromGPXRecord(record, VideoSettings)
             Catch ex As Exception
                 mboxEx($"Creating a video from a file {record.FileName} failed." & vbCrLf & $"Message: {ex}")
             End Try
         Next
     End Sub
 
-    Public Async Function CreateVideoFromGPXRecord(_gpxRecord As GPXRecord) As Task(Of Boolean)
+    Public Async Function CreateVideoFromGPXRecord(_gpxRecord As GPXRecord, videoSettings As VideoSettingsConfig) As Task(Of Boolean)
 
         ' Create a video from the dog track and save it in the video directory
         Dim gpxName = System.IO.Path.GetFileNameWithoutExtension(_gpxRecord.FileName)
@@ -1551,7 +1546,11 @@ Partial Public Class Form1
                            'Dim tracksAsGeopoints As New List(Of TrackAsGeoPoints)()
                            'tracksAsGeopoints.Add(_gpxRecord.TrailStats.PurifiedDogGeoPoints)
                            'Dim succ = Await videoCreator.CreateVideoFromGeoPoints()
-                           Dim success = Await videoCreator.CreateVideoFromTrkNodes(_gpxRecord.Tracks, _gpxRecord.TrailStats.MaxDeviationGeoPoints, _gpxRecord.WptNodes, _gpxRecord.LocalisedReports, _gpxRecord.TrailStats.BestCheckPointIndex)
+                           Dim success = Await videoCreator.CreateVideoFromTrkNodes(_gpxRecord.Tracks,
+                                                                                    _gpxRecord.TrailStats.MaxDeviationGeoPoints,
+                                                                                    _gpxRecord.WptNodes, _gpxRecord.LocalisedReports,
+                                                                                    _gpxRecord.TrailStats.BestCheckPointIndex,
+                                                                                    videoSettings)
 
                            ' When finished, return to the UI thread and perform the actions
                            waitForm.Invoke(Sub()
@@ -1833,8 +1832,14 @@ Partial Public Class Form1
     End Sub
 
     Private Sub TabControl1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles TabControl1.SelectedIndexChanged
+
+
+
         If sender.selectedTab Is TabStats Then
             rtbWarnings.Visible = True
+        ElseIf sender.selectedTab Is TabVideoExport Then
+            LoadVideoSettings()
+            rtbWarnings.Visible = False
         Else
             rtbWarnings.Visible = False
         End If
@@ -1875,6 +1880,17 @@ Partial Public Class Form1
             MessageBox.Show("Unable to open PDF: " & ex.Message,
                         "System error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
         End Try
+    End Sub
+
+    Private Sub btnVideoSettings_Click(sender As Object, e As EventArgs) Handles btnVideoSettings.Click
+        ' Blok Using automaticky uvolní paměť po zavření okna
+        Using videoSettingsForm As New frmVideoSettings(VideoSettings)
+            ' Můžeš spojit zobrazení a podmínku do jednoho řádku
+            If videoSettingsForm.ShowDialog() = DialogResult.OK Then
+                Me.VideoSettings = videoSettingsForm.videoSettings ' aktualizuje nastavení z formuláře
+                SaveVideoSettings(Me.VideoSettings)
+            End If
+        End Using
     End Sub
 End Class
 
@@ -2215,7 +2231,7 @@ Public Class activeCategory
 End Class
 
 
-Public Class Config
+Public Class CategoriesConfig
     <JsonPropertyName("categoriesInfo")>
     Public Property CategoriesInfo As List(Of CategoryInfo)
 
@@ -2228,3 +2244,4 @@ Public Class Config
         ActiveCategory = New activeCategory() ' Zajistí, že activeCategory není Nothing
     End Sub
 End Class
+

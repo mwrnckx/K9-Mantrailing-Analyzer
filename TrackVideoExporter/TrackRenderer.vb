@@ -17,15 +17,20 @@ Imports TrackVideoExporter.TrackVideoExporter
 
 Public Class PngSequenceCreator
     Private renderer As PngRenderer
+    Private videoSettings As VideoSettingsConfig
     Dim PNGTimes As New List(Of DateTime) ' Časové značky pro PNG obrázky, pokud nejsou, vytvoří se z GPS bodů psa)
     Public frameInterval As Double
+    Private videoSize As Size
+    Private mode As VideoSettingsConfig.VideoModeEnum
     'Private Localizator As TrackVideoExporter.Localizer
 
     'Public bgPNG As Bitmap
 
-    Public Sub New(renderer As PngRenderer)
+    Public Sub New(renderer As PngRenderer, videoSettings As VideoSettingsConfig)
         Me.renderer = renderer
-
+        Me.videoSettings = videoSettings
+        Me.videoSize = New Size(videoSettings.VideoWidth, videoSettings.VideoHeight)
+        Me.mode = videoSettings.VideoMode '
     End Sub
 
     Public Sub CreateFrames(tracks As List(Of TrackAsPointsF), staticBgTransparent As Bitmap, staticbgMap As Bitmap, outputDir As DirectoryInfo, pngTimes As List(Of DateTime), LocalisedReports As Dictionary(Of String, TrailReport))
@@ -36,7 +41,7 @@ Public Class PngSequenceCreator
             'Dim textParts As New List(Of (Text As String, Color As Color, FontStyle As FontStyle))
             Dim trailReport = LocalisedReports(key)
             Dim title = Localizer.GetString("Trail_description", key)
-            Dim staticTextbmp = renderer.RenderStaticText(trailReport.ToBasicList(title))
+            Dim staticTextbmp = renderer.RenderStaticText(trailReport.ToBasicList(title), videoSize)
             Dim filename = IO.Path.Combine(outputDir.FullName, key & "-" & "TrailDescription.png")
             staticTextbmp.Save(filename, ImageFormat.Png)
 
@@ -45,7 +50,7 @@ Public Class PngSequenceCreator
 
 
             title = Localizer.GetString("Scoring", key)
-            Dim staticTextbmpPoints = renderer.RenderStaticText(trailReportPoints.ToCompetitionList(Title))
+            Dim staticTextbmpPoints = renderer.RenderStaticText(trailReportPoints.ToCompetitionList(title), videoSize)
             Dim filenamePoints = IO.Path.Combine(outputDir.FullName, key & "-" & "Points.png")
             staticTextbmpPoints.Save(filenamePoints, ImageFormat.Png)
         Next key
@@ -131,16 +136,17 @@ Public Class PngRenderer
     ''' <param name="windDirection">The direction of the wind in degrees (0-360), or null if not available.</param>
     ''' <param name="windSpeed">The speed of the wind in m/s, or null if not available.</param>
     ''' <param name="bgTiles">A tuple containing the background bitmap and its minimum tile X and Y coordinates.</param>
-    Public Sub New(windDirection As Double?, windSpeed As Double?, bgTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single), VideoSize As Size, latitude As Double)
+    Public Sub New(windDirection As Double?, windSpeed As Double?, bgTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single), VideoSettings As VideoSettingsConfig, latitude As Double)
         Me.windDirection = windDirection
         Me.windSpeed = windSpeed
-        Me.videoSize = VideoSize
+        Me.videoSize = New Size(VideoSettings.VideoWidth, VideoSettings.VideoHeight)
+
         Me.latitude = latitude
         Me.trackBounds = bgTiles.bgmap.GetBounds(GraphicsUnit.Pixel) 'přepočítá obdélník na souřadnice v pixelech
         diagonal = Math.Sqrt(Me.videoSize.Width ^ 2 + Me.videoSize.Height ^ 2)
         Dim pixelsPerMeter As Single = (OsmTileDownloader.TileSize * Math.Pow(2.0, OsmTileDownloader.zoom)) / (Math.Cos(TrackConverter.DegToRad(latitude)) * 2 * Math.PI * TrackConverter.EarthRadiusM) 'přepočet z metrů na pixely, protože se mění s latitudou
-        Me.radius = 5 * pixelsPerMeter '0.015 * diagonal ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
-        Me.penWidth = 2 * pixelsPerMeter '0.008 * diagonal ' šířka pera pro kreslení čar, 1% šířky obrázku
+        Me.radius = 3 * VideoSettings.TrailWidth * pixelsPerMeter '0.015 * diagonal ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
+        Me.penWidth = VideoSettings.TrailWidth * pixelsPerMeter '0.008 * diagonal ' šířka pera pro kreslení čar, 1% šířky obrázku
         Me.emSize = 10 * pixelsPerMeter '2 * radius '0.015 * diagonal '
         Me.font = New Font("Cascadia Code", emSize, FontStyle.Bold)
     End Sub
@@ -581,7 +587,7 @@ Public Class PngRenderer
         Me.myWindArrow = bmp
         Dim filename = IO.Path.Combine(outputDir.FullName, "windRose.png")
         Me.myWindArrow.Save(filename, ImageFormat.Png)
-        SaveWindArrowOverlay(outputDir)
+        SaveWindArrowOverlay(outputDir, Me.videoSize.Width, Me.videoSize.Height)
     End Sub
 
     ''' <summary>
@@ -779,9 +785,11 @@ Public Class PngRenderer
         Return currentY
     End Function
 
-    Public Function RenderStaticText(trailReportList As List(Of StyledText), Optional width As Integer = 1920, Optional height As Integer = 1440) As Bitmap
-        Dim maxWidth As Single = width * 0.9
-        Dim startX As Single = width * 0.05
+    Public Function RenderStaticText(trailReportList As List(Of StyledText), videoSize As Size) As Bitmap
+        Dim width As Integer = videoSize.Width
+        Dim maxWidth As Single = videoSize.Width * 0.9
+        Dim height As Single = videoSize.Height
+        Dim startX As Single = maxWidth * 0.05
         Dim startY As Single = 0
         Dim currentY As Single = startY
         Dim fits As Boolean = False

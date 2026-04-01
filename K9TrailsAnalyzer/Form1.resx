@@ -136,20 +136,20 @@
     <value>Cascadia Code, 10pt, style=Bold</value>
   </data>
   <data name="btnCreateVideos.Location" type="System.Drawing.Point, System.Drawing">
-    <value>814, 334</value>
+    <value>779, 334</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="btnCreateVideos.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
   <data name="btnCreateVideos.Size" type="System.Drawing.Size, System.Drawing">
-    <value>153, 42</value>
+    <value>188, 42</value>
   </data>
   <data name="btnCreateVideos.TabIndex" type="System.Int32, mscorlib">
     <value>34</value>
   </data>
   <data name="btnCreateVideos.Text" xml:space="preserve">
-    <value>Create Videos</value>
+    <value>Create Overlay Videos</value>
   </data>
   <data name="btnCreateVideos.ToolTip" xml:space="preserve">
     <value>Create videos from selected files</value>
@@ -164,7 +164,7 @@
     <value>TabVideoExport</value>
   </data>
   <data name="&gt;&gt;btnCreateVideos.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="lblRemoteDirectory.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 31</value>
@@ -191,6 +191,51 @@
     <value>pnlCategory</value>
   </data>
   <data name="&gt;&gt;lblRemoteDirectory.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="btnVideoSettings.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
+  </data>
+  <data name="btnVideoSettings.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="btnVideoSettings.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Flat</value>
+  </data>
+  <data name="btnVideoSettings.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Cascadia Code, 10pt, style=Bold</value>
+  </data>
+  <data name="btnVideoSettings.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="btnVideoSettings.Location" type="System.Drawing.Point, System.Drawing">
+    <value>779, 266</value>
+  </data>
+  <data name="btnVideoSettings.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="btnVideoSettings.Size" type="System.Drawing.Size, System.Drawing">
+    <value>188, 42</value>
+  </data>
+  <data name="btnVideoSettings.TabIndex" type="System.Int32, mscorlib">
+    <value>35</value>
+  </data>
+  <data name="btnVideoSettings.Text" xml:space="preserve">
+    <value>Video settings</value>
+  </data>
+  <data name="btnVideoSettings.ToolTip" xml:space="preserve">
+    <value>Create videos from selected files</value>
+  </data>
+  <data name="&gt;&gt;btnVideoSettings.Name" xml:space="preserve">
+    <value>btnVideoSettings</value>
+  </data>
+  <data name="&gt;&gt;btnVideoSettings.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnVideoSettings.Parent" xml:space="preserve">
+    <value>TabVideoExport</value>
+  </data>
+  <data name="&gt;&gt;btnVideoSettings.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="MenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -812,7 +857,7 @@
     <value>3, 2, 3, 2</value>
   </data>
   <data name="lvGpxFiles.Size" type="System.Drawing.Size, System.Drawing">
-    <value>970, 457</value>
+    <value>970, 468</value>
   </data>
   <data name="lvGpxFiles.TabIndex" type="System.Int32, mscorlib">
     <value>33</value>
@@ -827,7 +872,7 @@
     <value>TabVideoExport</value>
   </data>
   <data name="&gt;&gt;lvGpxFiles.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="TabVideoExport.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 30</value>
@@ -839,7 +884,7 @@
     <value>3, 2, 3, 2</value>
   </data>
   <data name="TabVideoExport.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 461</value>
+    <value>976, 472</value>
   </data>
   <data name="TabVideoExport.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -944,7 +989,7 @@
     <value>0, 0</value>
   </data>
   <data name="pnlForDgv.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 461</value>
+    <value>976, 472</value>
   </data>
   <data name="pnlForDgv.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -965,7 +1010,7 @@
     <value>4, 30</value>
   </data>
   <data name="TabCompetition.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 461</value>
+    <value>976, 472</value>
   </data>
   <data name="TabCompetition.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
