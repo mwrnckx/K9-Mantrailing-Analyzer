@@ -2223,7 +2223,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         Dim cpIndex As Integer = -1
         For Each cp In pointsToEvaluate
             cpIndex += 1
-            Dim distFromDogStart = TrackConverter.HaversineDistance(cp.Location.Lat, cp.Location.Lon, firstDogPoint.Location.Lat, firstDogPoint.Location.Lon, "m")
+            'Dim distFromDogStart = TrackConverter.HaversineDistance(cp.Location.Lat, cp.Location.Lon, firstDogPoint.Location.Lat, firstDogPoint.Location.Lon, "m")
 
 
             Dim minDeviationFromRunnerTrail As Double = Double.MaxValue
@@ -2278,10 +2278,10 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
                 Dim segmentDist = TrackConverter.HaversineDistance(runnerGeoPoints(k).Location.Lat, runnerGeoPoints(k).Location.Lon, runnerGeoPoints(k - 1).Location.Lat, runnerGeoPoints(k - 1).Location.Lon, "km")
                 distanceAlongRunnTrail += segmentDist
                 weightedDistanceAlongRunnTrail += Weight(currentMinDevDog) * segmentDist
-            Next
+            Next k ' další runner point
 
             ' Výpočet rychlosti
-            Dim dogGrossTime As TimeSpan = cp.Time - firstDogPoint.Time
+            Dim dogGrossTime As TimeSpan = dogGeoPoints(indexOfDogPointNearCP).Time - firstDogPoint.Time
             Dim dogGrossSpeedkmh As Double = If(dogGrossTime.TotalHours > 0, distanceAlongRunnTrail / dogGrossTime.TotalHours, 0)
 
             _checkPointsData.Add(New CheckpointData With {

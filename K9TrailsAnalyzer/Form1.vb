@@ -1602,11 +1602,14 @@ Partial Public Class Form1
             End If
             e.Item.Selected = False
         End If
-        If lvGpxFiles.CheckedItems.Count > 1 Then
-            mboxEx("You cannot select multiple records!")
-            e.Item.Selected = False
-            e.Item.Checked = False
-        End If
+        'If lvGpxFiles.CheckedItems.Count > 1 Then
+        '    For Each item In lvGpxFiles.CheckedItems
+        '        item.checked = False
+        '    Next
+        '    'mboxEx("You cannot select multiple records!")
+        '    e.Item.Selected = False
+        '    e.Item.Checked = True
+        'End If
     End Sub
 
     Private Sub lvGpxFiles_ItemSelectionChanged(sender As Object, e As ListViewItemSelectionChangedEventArgs) Handles lvGpxFiles.ItemSelectionChanged
@@ -1934,6 +1937,18 @@ Partial Public Class Form1
 
     End Sub
 
+    Private Sub lvGpxFiles_ItemCheck(sender As Object, e As ItemCheckEventArgs) Handles lvGpxFiles.ItemCheck
+        ' Tento blok se spustí jen tehdy, když se položka CHYSTÁ být zaškrtnuta
+        If e.NewValue = CheckState.Checked Then
+            ' Projdeme všechny aktuálně zaškrtnuté položky a odškrtneme je
+            For Each index As Integer In lvGpxFiles.CheckedIndices
+                ' Odškrtneme všechno kromě té položky, na kterou se právě kliklo
+                If index <> e.Index Then
+                    lvGpxFiles.Items(index).Checked = False
+                End If
+            Next
+        End If
+    End Sub
 End Class
 
 ''' <summary>

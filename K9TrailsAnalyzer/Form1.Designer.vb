@@ -447,6 +447,7 @@ Partial Class Form1
         lvGpxFiles.CheckBoxes = True
         lvGpxFiles.Columns.AddRange(New ColumnHeader() {clmFileName, clmDate, clmLength, clmAge, clmTrkCount})
         resources.ApplyResources(lvGpxFiles, "lvGpxFiles")
+        lvGpxFiles.MultiSelect = False
         lvGpxFiles.Name = "lvGpxFiles"
         lvGpxFiles.UseCompatibleStateImageBehavior = False
         lvGpxFiles.View = View.Details

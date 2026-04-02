@@ -26,6 +26,7 @@
     <None Remove="Resources\Competition_Rules.pdf" />
     <None Remove="Resources\Pravidla_zavodu.pdf" />
     <None Remove="Resources\Wettkampfregeln.pdf" />
+    <None Remove="Samples\003\2026-03-29_Found_unprecise_6pt.gpx" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,6 +48,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\images\icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\003\2026-03-29_Found_unprecise_6pt.gpx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

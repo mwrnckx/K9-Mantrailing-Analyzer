@@ -4,10 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>K9 Trails — GPX Viewer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue:wght@700;800&display=swap');
 
   :root {
     --orange: #FFA814;
@@ -43,7 +45,7 @@
   }
 
   .logo {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Bebas Neue', sans-serif;
     font-weight: 800;
     font-size: 18px;
     color: var(--orange);
@@ -107,7 +109,7 @@
   .custom-popup .leaflet-popup-tip { background: var(--panel); }
 
   .popup-title {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Bebas Neue', sans-serif;
     font-weight: 700;
     font-size: 13px;
     margin-bottom: 4px;
@@ -150,7 +152,7 @@
   <div class="stats-bar">
     <div class="stat">
       <span class="stat-value" id="stat-tracks">—</span>
-      <span class="stat-label">Trasy</span>
+      <span class="stat-label">Tracks</span>
     </div>
     
   </div>
@@ -165,7 +167,7 @@
   </div>
   <div class="legend-item">
     <div class="legend-dot" style="background:var(--end)"></div>
-    Cíl
+    End
   </div>
   <span id="track-legend"></span>
   <span style="margin-left:auto">K9 Mantrailing Analyzer · OpenStreetMap</span>
@@ -180,9 +182,10 @@ const COLORS = ['blue', 'red', 'green', 'orange', 'yellow', 'black', 'white', 'b
 // Použití:
 console.log(COLORS.red); // #f87171
 const map = L.map('map', { zoomControl: true });
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap contributors',
-  maxZoom: 19
+
+L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenTopoMap © OpenStreetMap',
+  maxZoom: 17
 }).addTo(map);
 
 function haversine(a, b) {
@@ -279,7 +282,7 @@ function render(gpxString) {
   wpts.forEach(wpt => {
     const wName = wpt.querySelector('name')?.textContent?.trim() || '';
     const wIcon = L.divIcon({
-      html: `<div style="width:10px;height:10px;background:#fff;border:2px solid #555;border-radius:50%"></div>`,
+      html: `<div style="width:12px;height:12px;background:#555;border:2px solid #000;border-radius:50%"></div>`,
       className: '',
       iconAnchor: [3, 3]
     });
