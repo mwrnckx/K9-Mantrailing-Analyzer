@@ -497,9 +497,10 @@ Public Class TrailReport
 
 
     ' Konstruktor pro snadné vytvoření a nastavení
-    Public Sub New(ByVal title As String, ByVal dogName As String, ByVal goal As String, ByVal trail As String, ByVal performance As String, Optional points As String = "", Optional _weatherdata As WeatherData = Nothing, Optional weather As String = " ", Optional _levelOfBlinding As LevelOfBlindingType = 0, Optional NoOfArticklesFound As String = "0")
+    Public Sub New(ByVal title As String, ByVal dogName As String, ByVal goal As String, ByVal trail As String, ByVal performance As String, Optional points As String = "", Optional _weatherdata As WeatherData = Nothing, Optional weather As String = " ", Optional _levelOfBlinding As LevelOfBlindingType = 0, Optional NoOfArticklesFound As String = "0", Optional handlerName As String = "")
         Me.TitleText = title
         Me.DogNameText = dogName
+        Me.HandlerNameText = handlerName
         Me.LevelOfBlinding = _levelOfBlinding
         Me.GoalText = goal
         Me.TrailText = trail
@@ -560,8 +561,8 @@ Public Class TrailStats
     Public Property BestCheckPointIndex As Integer ' index of the checkpoint with the best score (closest to the track and most far)
     Public Property RunnerFound As Boolean ' whether dog found the runner or not
     Public Property TrailPickupFactorPerCent As Double 'whether dog found trail quickly
-    'Public Property PurifiedTrackData As (PurifiedDogGeoPoints As List(Of TrackGeoPoint), PurifiedRunnerGeoPoints As List(Of TrackGeoPoint), Lat0 As Double, Lon0 As Double, RunnerTotalDistance As Double, dogTotalDistance As Double, dogTotalTime As TimeSpan, RunnerFound As Boolean)
-
+    'Public Property DogName As String
+    'Public Property HandlerName As String
 End Class
 
 ' Struktura pro data checkpointu
@@ -579,8 +580,8 @@ Public Class ScoringData
     Public Property DogAccuracyPoints As Integer
     Public Property DogReadingPoints As Integer
     Public Property TrailPickupPoints As Integer
-    Public Property dogName As String
-    Public Property handlerName As String
+    'Public Property dogName As String
+    'Public Property handlerName As String
 End Class
 
 Public Class WeatherData

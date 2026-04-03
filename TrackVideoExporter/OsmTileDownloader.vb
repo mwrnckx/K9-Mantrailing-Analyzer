@@ -13,7 +13,6 @@ Public Class OsmTileDownloader
     ''' <param name="maxLat">Maximum latitude</param>
     ''' <param name="minLon">Minimum longitude</param>
     ''' <param name="maxLon">Maximum longitude</param>
-    ''' <param name="zoom">Zoom level (např. 13-16)</param>
     ''' <returns>Bitmapa složená z dlaždic</returns>
     Public Async Function GetMapBitmap(minLat As Double, maxLat As Double, minLon As Double, maxLon As Double) As Task(Of (bgmap As Bitmap, minTileX As Single, minTileY As Single))
         ' Převod souřadnic na indexy dlaždic

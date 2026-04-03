@@ -122,8 +122,8 @@ Partial Public Class Form1
             displayList.Add(New TrailStatsDisplay With {
                 .OriginalRecord = record,
                 .GPXFilename = IO.Path.GetFileNameWithoutExtension(GPXFilesManager.GpxRecords(i).Reader.FilePath),'.Substring(11),
-                .DogName = stats.PointsInMTCompetition.dogName,
-                .HandlerName = stats.PointsInMTCompetition.handlerName,
+                .DogName = record.LocalisedReports.FirstOrDefault.Value.DogNameText,
+                .HandlerName = record.LocalisedReports.FirstOrDefault.Value.HandlerNameText,
                  .RunnerDistance = stats.RunnerTotalDistancekm,
                  .TotalTime = stats.DogTotalTime.Minutes,
                 .DogGrossSpeedKmh = stats.DogGrossSpeedkmh,
@@ -198,11 +198,11 @@ Partial Public Class Form1
         If changedItem IsNot Nothing AndAlso changedItem.OriginalRecord IsNot Nothing Then
 
             ' 1. Získat KOPII celé nadřazené struktury TrailStats.
-            Dim currentStats As TrackVideoExporter.TrailStats = changedItem.OriginalRecord.TrailStats
-
+            Dim currentStats As TrailStats = changedItem.OriginalRecord.TrailStats
+            Dim currentReports As Dictionary(Of String, TrailReport) = changedItem.OriginalRecord.LocalisedReports
             ' 2. Získat KOPII vnitřní struktury PointsInMTCompetition, kterou budeme měnit.
-            Dim pointsStruct As TrackVideoExporter.ScoringData = currentStats.PointsInMTCompetition
-
+            Dim pointsStruct As ScoringData = currentStats.PointsInMTCompetition
+            Dim firstLocalisedReport As KeyValuePair(Of String, TrailReport) = currentReports.FirstOrDefault
             Select Case e.PropertyName
                 Case NameOf(TrailStatsDisplay.RunnerFoundPoints)
                     pointsStruct.RunnerFoundPoints = changedItem.RunnerFoundPoints
@@ -220,10 +220,10 @@ Partial Public Class Form1
                     pointsStruct.TrailPickupPoints = changedItem.TrailPickupPoints
 
                 Case NameOf(TrailStatsDisplay.DogName)
-                    pointsStruct.dogName = changedItem.DogName
+                    firstLocalisedReport.Value.DogNameText = changedItem.DogName
 
                 Case NameOf(TrailStatsDisplay.HandlerName)
-                    pointsStruct.handlerName = changedItem.HandlerName
+                    firstLocalisedReport.Value.HandlerNameText = changedItem.HandlerName
 
                 Case Else
                     Return 'není třeba nic zapisovat, proto return
@@ -1479,7 +1479,11 @@ Partial Public Class Form1
             If mboxq($"Are you sure you want to create videos from {lvGpxFiles.CheckedItems.Count} gpx records now? It can take a long time and there's no chance to stop it 🤣!") = DialogResult.No Then
                 Return
             End If
+        ElseIf lvGpxFiles.CheckedItems.Count = 0 Then
+            mboxEx("First, select the trail records from which to create the video!")
+            Return
         End If
+
 
         ' Zkontroluj, zda je nastavená složka pro videa
         Dim videoDir = My.Settings.VideoDirectory
@@ -1500,10 +1504,7 @@ Partial Public Class Form1
 
         ' Můžeš je teď předat funkci pro export videa
 
-        If selectedFiles.Count = 0 Then
-            mboxEx("First, select the footage from which to create the video!")
-            Return
-        End If
+
 
 
         For Each record In selectedFiles
@@ -1514,6 +1515,7 @@ Partial Public Class Form1
                 record.WriteDescription() 'zapíše agregovaný popis do tracku Runner
                 record.BuildLocalisedPerformancePoints()
                 record.WriteLocalizedReports() 'zapíše popis do DogTracku
+                'record.WriteTrailStatsToXml(record.TrailStats)
                 record.IsAlreadyProcessed = True 'už byl soubor zpracován
                 record.Save()
             Catch ex As Exception
@@ -1553,7 +1555,7 @@ Partial Public Class Form1
         ' If the directory does not exist, create it
         If Not directory.Exists Then directory.Create()
         Dim FFmpegPath As String = FindAnSaveFfmpegPath()
-        Dim videoCreator As New VideoExportManager(FFmpegPath, directory, _gpxRecord.WeatherData.windDirection, _gpxRecord.WeatherData.windSpeed)
+        Dim videoCreator As New VideoExportManager(FFmpegPath, directory, _gpxRecord.WeatherData.windDirection, _gpxRecord.WeatherData.windSpeed,, videoSettings)
         AddHandler videoCreator.WarningOccurred, AddressOf WriteRTBWarning
 
         Dim waitForm As New frmPleaseWait("I'm making an overlay video, please stand by...")
@@ -1567,8 +1569,7 @@ Partial Public Class Form1
                            Dim success = Await videoCreator.CreateVideoFromTrkNodes(_gpxRecord.Tracks,
                                                                                     _gpxRecord.TrailStats.MaxDeviationGeoPoints,
                                                                                     _gpxRecord.WptNodes, _gpxRecord.LocalisedReports,
-                                                                                    _gpxRecord.TrailStats.BestCheckPointIndex,
-                                                                                    videoSettings)
+                                                                                    _gpxRecord.TrailStats.BestCheckPointIndex)
 
                            ' When finished, return to the UI thread and perform the actions
                            waitForm.Invoke(Sub()
@@ -1922,6 +1923,11 @@ Partial Public Class Form1
     Private Sub btnGPXView_Click(sender As Object, e As EventArgs) Handles btnGPXView.Click
 
         Dim selectedFiles As New List(Of GPXRecord)
+        If lvGpxFiles.CheckedItems.Count = 0 Then
+            mboxEx("First, select the trail record to show!")
+            Return
+        End If
+
         For Each item As ListViewItem In lvGpxFiles.CheckedItems
             ' Předpoklad: Tag obsahuje plnou cestu k souboru
             Dim _gpxRecord As GPXRecord = TryCast(item.Tag, GPXRecord) 'není to zbytečný?

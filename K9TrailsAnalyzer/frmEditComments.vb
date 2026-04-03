@@ -11,7 +11,7 @@ Public Class frmEditComments
     Public Property DogPart As String
     Public Property Language As String = CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLowerInvariant()
     Public Property GpxFileName As String
-    Public Property HandlerName As String
+
 
     Dim LanguageAbbreviations As New List(Of String) From {
     "cs", ' čeština
@@ -61,7 +61,7 @@ Public Class frmEditComments
         txtTrail.Text = Me.TrailDescription.Trail.Text
         txtPerformance.Text = Me.TrailDescription.Performance.Text
         txtDogName.Text = Me.TrailDescription.DogName.Text
-        txtHandlerName.Text = Me.HandlerName
+        txtHandlerName.Text = Me.TrailDescription.HandlerNameText
 
 
         ' 2. Nastavení výběru jazyka (cbLanguage)
@@ -152,7 +152,7 @@ Public Class frmEditComments
         Me.TrailDescription.DogNameText = txtDogName.Text ' 
         Me.TrailDescription.HandlerNameText = txtHandlerName.Text '
         Me.TrailDescription.DogName.Text = txtDogName.Text
-        Me.HandlerName = txtHandlerName.Text
+        Me.TrailDescription.HandlerNameText = txtHandlerName.Text
         If Me.Language Is Nothing Then
             Me.Language = cbLanguage.SelectedItem?.ToString()?.ToLowerInvariant() ' Uloží vybraný jazyk
         ElseIf Me.Language <> cbLanguage.SelectedItem?.ToString()?.ToLowerInvariant() Then

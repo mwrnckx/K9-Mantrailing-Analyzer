@@ -47,11 +47,14 @@ Namespace TrackVideoExporter
             Me.FFMpegPath = FFMpegPath
             Me.outputDir = outputDir
             Me.windDirection = windDir
+
             Me.windSpeed = windSpeed
             Me.LocalisedReports = LocalisedReports
             ' Zde nastavíme vaši požadovanou "konstantní" výchozí hodnotu
             If videoSettings Is Nothing Then
                 Me.videoSettings = New VideoSettingsConfig
+            Else
+                Me.videoSettings = videoSettings
             End If
 
             converter = New TrackConverter()
@@ -67,14 +70,13 @@ Namespace TrackVideoExporter
                                                       Optional maxDeviationPoints As TrackAsGeoPoints = Nothing,
                                                       Optional waypoints As TrackAsTrkPts = Nothing,
                                                       Optional LocalisedReports As Dictionary(Of String, TrailReport) = Nothing,
-                                                      Optional lastConfirmedIndex As Integer = 0,
-                                                      Optional videoSettings As VideoSettingsConfig = Nothing) As Task(Of Boolean)
+                                                      Optional lastConfirmedIndex As Integer = 0) As Task(Of Boolean)
             Dim tracksAsTrkPts = converter.ConvertTracksAsTrkNodesToTrackAsTrkPts(_tracksAsTrkNode)
             Me.LocalisedReports = LocalisedReports
             Return Await CreateVideoFromTrkPts(tracksAsTrkPts,
                                                maxDeviationPoints,
                                                waypoints, Me.LocalisedReports,
-                                               lastConfirmedIndex, videoSettings)
+                                               lastConfirmedIndex)
         End Function
 
         ''' <summary>
@@ -88,8 +90,7 @@ Namespace TrackVideoExporter
                 maxDevPointsAsGeoPoints As TrackAsGeoPoints,
             waypoints As TrackAsTrkPts,
                LocalisedReports As Dictionary(Of String, TrailReport),
-            Optional lastConfirmedIndex As Integer = 0,
-            Optional videoSettings As VideoSettingsConfig = Nothing) As Task(Of Boolean)
+            Optional lastConfirmedIndex As Integer = 0) As Task(Of Boolean)
 
             Dim wayPointsAsGeoPoints As TrackAsGeoPoints = converter.ConvertTrackTrkPtsToGeoPoints(waypoints)
             Dim tracksAsGeoPoints As List(Of TrackAsGeoPoints) = converter.ConvertTracksTrkPtsToGeoPoints(_tracksAsTrkPts)

@@ -145,9 +145,9 @@ Public Class PngRenderer
         Me.trackBounds = bgTiles.bgmap.GetBounds(GraphicsUnit.Pixel) 'přepočítá obdélník na souřadnice v pixelech
         diagonal = Math.Sqrt(Me.videoSize.Width ^ 2 + Me.videoSize.Height ^ 2)
         Dim pixelsPerMeter As Single = (OsmTileDownloader.TileSize * Math.Pow(2.0, OsmTileDownloader.zoom)) / (Math.Cos(TrackConverter.DegToRad(latitude)) * 2 * Math.PI * TrackConverter.EarthRadiusM) 'přepočet z metrů na pixely, protože se mění s latitudou
-        Me.radius = 3 * VideoSettings.TrailWidth * pixelsPerMeter '0.015 * diagonal ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
+        Me.radius = 4 * VideoSettings.TrailWidth * pixelsPerMeter '0.015 * diagonal ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
         Me.penWidth = VideoSettings.TrailWidth * pixelsPerMeter '0.008 * diagonal ' šířka pera pro kreslení čar, 1% šířky obrázku
-        Me.emSize = 10 * pixelsPerMeter '2 * radius '0.015 * diagonal '
+        Me.emSize = 4 * VideoSettings.TrailWidth * pixelsPerMeter '2 * radius '0.015 * diagonal '
         Me.font = New Font("Cascadia Code", emSize, FontStyle.Bold)
     End Sub
 
@@ -954,7 +954,6 @@ Public Class PngRenderer
     ''' <summary>
     ''' Determines a contrasting color (black or white) for a given background color.
     ''' </summary>
-    ''' <param name="bgColor">The background color.</param>
     ''' <returns>Either <see cref="Color.White"/> or <see cref="Color.Black"/>, depending on which provides better contrast.</returns>
     Function GetContrastColor(textColor As Color) As Color
         Dim luminance As Double = 0.2126 * (textColor.R / 255) + 0.7152 * (textColor.G / 255) + 0.0722 * (textColor.B / 255)
