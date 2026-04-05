@@ -397,4 +397,28 @@
   <data name="mnuPointsForHandlerText.Text" xml:space="preserve">
     <value>Max. body za čtení psa</value>
   </data>
+  <data name="lblRemoteDirectory.Text" xml:space="preserve">
+    <value>Vzdálená složka gpx</value>
+  </data>
+  <data name="btnVideoSettings.Text" xml:space="preserve">
+    <value>Nastavení videa</value>
+  </data>
+  <data name="btnVideoSettings.ToolTip" xml:space="preserve">
+    <value>Vytvářejte videa z vybraných souborů</value>
+  </data>
+  <data name="btnGPXView.Text" xml:space="preserve">
+    <value>Rychlý náhled vybraného trailu</value>
+  </data>
+  <data name="btnGPXView.ToolTip" xml:space="preserve">
+    <value>Vytvářejte videa z vybraných souborů</value>
+  </data>
+  <data name="btnEditPoints.Text" xml:space="preserve">
+    <value>Nastavte body v kategorii a přepočítejte</value>
+  </data>
+  <data name="btnQuickGPXPreview.Text" xml:space="preserve">
+    <value>Rychlý náhled vybraného trailu</value>
+  </data>
+  <data name="mnuAbout.Text" xml:space="preserve">
+    <value>O programu</value>
+  </data>
 </root>

@@ -287,12 +287,6 @@ Jeśli są tylko dwie trasy, jest to dość proste - pierwszy to szlak tematyczn
   <data name="CrossingTrail" xml:space="preserve">
     <value>przecięcie śladu</value>
   </data>
-  <data name="dogTrack" xml:space="preserve">
-    <value>Ślad psa</value>
-  </data>
-  <data name="RunnerTrail" xml:space="preserve">
-    <value>Ścieżka biegacza</value>
-  </data>
   <data name="article" xml:space="preserve">
     <value>Punkt kontrolny</value>
   </data>

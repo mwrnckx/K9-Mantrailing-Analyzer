@@ -28,8 +28,8 @@ Partial Class Form1
     Private Sub InitializeComponent()
         components = New Container()
         Dim resources As ComponentResourceManager = New ComponentResourceManager(GetType(Form1))
-        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
-        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle3 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle4 As DataGridViewCellStyle = New DataGridViewCellStyle()
         ToolTip1 = New ToolTip(components)
         btnCreateVideos = New Button()
         lblRemoteDirectory = New Label()
@@ -92,6 +92,8 @@ Partial Class Form1
         pnlForDgv = New Panel()
         ToolStrCategorySettings = New ToolStrip()
         btnEditPoints = New ToolStripButton()
+        ToolStripSeparator3 = New ToolStripSeparator()
+        btnQuickGPXPreview = New ToolStripButton()
         dgvCompetition = New DataGridView()
         bsCompetitions = New BindingSource(components)
         pnlCategory = New Panel()
@@ -132,7 +134,7 @@ Partial Class Form1
         ' btnVideoSettings
         ' 
         resources.ApplyResources(btnVideoSettings, "btnVideoSettings")
-        btnVideoSettings.BackColor = Color.Goldenrod
+        btnVideoSettings.BackColor = Color.Gold
         btnVideoSettings.Name = "btnVideoSettings"
         ToolTip1.SetToolTip(btnVideoSettings, resources.GetString("btnVideoSettings.ToolTip"))
         btnVideoSettings.UseVisualStyleBackColor = False
@@ -140,7 +142,7 @@ Partial Class Form1
         ' btnGPXView
         ' 
         resources.ApplyResources(btnGPXView, "btnGPXView")
-        btnGPXView.BackColor = Color.Gold
+        btnGPXView.BackColor = Color.Goldenrod
         btnGPXView.Name = "btnGPXView"
         ToolTip1.SetToolTip(btnGPXView, resources.GetString("btnGPXView.ToolTip"))
         btnGPXView.UseVisualStyleBackColor = False
@@ -490,7 +492,7 @@ Partial Class Form1
         ' ToolStrCategorySettings
         ' 
         resources.ApplyResources(ToolStrCategorySettings, "ToolStrCategorySettings")
-        ToolStrCategorySettings.Items.AddRange(New ToolStripItem() {btnEditPoints})
+        ToolStrCategorySettings.Items.AddRange(New ToolStripItem() {btnEditPoints, ToolStripSeparator3, btnQuickGPXPreview})
         ToolStrCategorySettings.Name = "ToolStrCategorySettings"
         ' 
         ' btnEditPoints
@@ -500,29 +502,42 @@ Partial Class Form1
         resources.ApplyResources(btnEditPoints, "btnEditPoints")
         btnEditPoints.Name = "btnEditPoints"
         ' 
+        ' ToolStripSeparator3
+        ' 
+        ToolStripSeparator3.ForeColor = SystemColors.Control
+        ToolStripSeparator3.Name = "ToolStripSeparator3"
+        resources.ApplyResources(ToolStripSeparator3, "ToolStripSeparator3")
+        ' 
+        ' btnQuickGPXPreview
+        ' 
+        btnQuickGPXPreview.BackColor = Color.Goldenrod
+        btnQuickGPXPreview.DisplayStyle = ToolStripItemDisplayStyle.Text
+        resources.ApplyResources(btnQuickGPXPreview, "btnQuickGPXPreview")
+        btnQuickGPXPreview.Name = "btnQuickGPXPreview"
+        ' 
         ' dgvCompetition
         ' 
         dgvCompetition.AllowUserToAddRows = False
         dgvCompetition.AllowUserToDeleteRows = False
         dgvCompetition.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
         dgvCompetition.BackgroundColor = Color.Salmon
-        DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter
-        DataGridViewCellStyle1.BackColor = Color.Salmon
-        DataGridViewCellStyle1.Font = New Font("Cascadia Code", 12.0F)
-        DataGridViewCellStyle1.ForeColor = Color.Maroon
-        DataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight
-        DataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText
-        DataGridViewCellStyle1.WrapMode = DataGridViewTriState.True
-        dgvCompetition.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
+        DataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter
+        DataGridViewCellStyle3.BackColor = Color.Salmon
+        DataGridViewCellStyle3.Font = New Font("Cascadia Code", 12.0F)
+        DataGridViewCellStyle3.ForeColor = Color.Maroon
+        DataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight
+        DataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText
+        DataGridViewCellStyle3.WrapMode = DataGridViewTriState.True
+        dgvCompetition.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle3
         dgvCompetition.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight
-        DataGridViewCellStyle2.BackColor = Color.LightYellow
-        DataGridViewCellStyle2.Font = New Font("Cascadia Code", 12.0F)
-        DataGridViewCellStyle2.ForeColor = Color.Maroon
-        DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
-        DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
-        DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
-        dgvCompetition.DefaultCellStyle = DataGridViewCellStyle2
+        DataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleRight
+        DataGridViewCellStyle4.BackColor = Color.LightYellow
+        DataGridViewCellStyle4.Font = New Font("Cascadia Code", 12.0F)
+        DataGridViewCellStyle4.ForeColor = Color.Maroon
+        DataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight
+        DataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText
+        DataGridViewCellStyle4.WrapMode = DataGridViewTriState.False
+        dgvCompetition.DefaultCellStyle = DataGridViewCellStyle4
         dgvCompetition.EnableHeadersVisualStyles = False
         resources.ApplyResources(dgvCompetition, "dgvCompetition")
         dgvCompetition.Name = "dgvCompetition"
@@ -746,6 +761,8 @@ Partial Class Form1
     Friend WithEvents mnuPravidlazavodupdf As ToolStripMenuItem
     Private WithEvents btnVideoSettings As Button
     Private WithEvents btnGPXView As Button
+    Friend WithEvents btnQuickGPXPreview As ToolStripButton
+    Friend WithEvents ToolStripSeparator3 As ToolStripSeparator
 
 
 End Class

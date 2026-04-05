@@ -360,4 +360,34 @@
   <data name="mnuOpenLocalFolder.ToolTipText" xml:space="preserve">
     <value>Відкриває локальну папку в Провіднику</value>
   </data>
+  <data name="lblRemoteDirectory.Text" xml:space="preserve">
+    <value>Віддалена папка gpx</value>
+  </data>
+  <data name="btnVideoSettings.Text" xml:space="preserve">
+    <value>Налаштування відео</value>
+  </data>
+  <data name="btnVideoSettings.ToolTip" xml:space="preserve">
+    <value>Створіть відео з вибраних файлів</value>
+  </data>
+  <data name="btnGPXView.Text" xml:space="preserve">
+    <value>Швидкий попередній перегляд вибраного маршруту</value>
+  </data>
+  <data name="btnGPXView.ToolTip" xml:space="preserve">
+    <value>Створіть відео з вибраних файлів</value>
+  </data>
+  <data name="mnuCompetitionRules.Text" xml:space="preserve">
+    <value>Правила змагань</value>
+  </data>
+  <data name="btnEditPoints.Text" xml:space="preserve">
+    <value>Встановіть бали в категорії та перерахуйте</value>
+  </data>
+  <data name="btnEditPoints.ToolTipText" xml:space="preserve">
+    <value>Видаляє зміни, внесені користувачем, або перераховує, коли змінюються правила оцінки</value>
+  </data>
+  <data name="btnQuickGPXPreview.Text" xml:space="preserve">
+    <value>Швидкий попередній перегляд вибраного маршруту</value>
+  </data>
+  <data name="mnuAbout.Text" xml:space="preserve">
+    <value>Про K9 Mantrailing Analyzer</value>
+  </data>
 </root>

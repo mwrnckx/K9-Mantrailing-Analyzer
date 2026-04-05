@@ -363,4 +363,34 @@
   <data name="mnuOpenLocalFolder.ToolTipText" xml:space="preserve">
     <value>Открывает локальную папку в проводнике</value>
   </data>
+  <data name="lblRemoteDirectory.Text" xml:space="preserve">
+    <value>Удаленная папка gpx</value>
+  </data>
+  <data name="lblRemoteDirectory.ToolTip" xml:space="preserve">
+    <value>Путь к удаленной папке</value>
+  </data>
+  <data name="btnVideoSettings.Text" xml:space="preserve">
+    <value>Настройки видео</value>
+  </data>
+  <data name="btnVideoSettings.ToolTip" xml:space="preserve">
+    <value>Создать видео из выбранных файлов</value>
+  </data>
+  <data name="btnGPXView.Text" xml:space="preserve">
+    <value>Быстрый просмотр выбранного маршрута</value>
+  </data>
+  <data name="btnGPXView.ToolTip" xml:space="preserve">
+    <value>Создать видео из выбранных файлов</value>
+  </data>
+  <data name="mnuCompetitionRules.Text" xml:space="preserve">
+    <value>Правила соревнований</value>
+  </data>
+  <data name="btnEditPoints.Text" xml:space="preserve">
+    <value>Установите баллы в категории и пересчитайте</value>
+  </data>
+  <data name="btnEditPoints.ToolTipText" xml:space="preserve">
+    <value>Удаляет изменения, внесенные пользователем, или выполняет перерасчет при изменении правил оценки.</value>
+  </data>
+  <data name="btnQuickGPXPreview.Text" xml:space="preserve">
+    <value>Быстрый просмотр выбранного маршрута</value>
+  </data>
 </root>

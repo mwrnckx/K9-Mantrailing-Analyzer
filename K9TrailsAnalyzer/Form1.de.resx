@@ -378,4 +378,31 @@
   <data name="DeleteCurrentDogToolStripMenuItem.Text" xml:space="preserve">
     <value>Aktuellen Hund löschen</value>
   </data>
+  <data name="lblRemoteDirectory.Text" xml:space="preserve">
+    <value>Remote-GPX-Ordner</value>
+  </data>
+  <data name="btnVideoSettings.Text" xml:space="preserve">
+    <value>Videoeinstellungen</value>
+  </data>
+  <data name="btnVideoSettings.ToolTip" xml:space="preserve">
+    <value>Erstellen Sie Videos aus ausgewählten Dateien</value>
+  </data>
+  <data name="btnGPXView.Text" xml:space="preserve">
+    <value>Ausgewählte Trail-Schnellvorschau</value>
+  </data>
+  <data name="btnGPXView.ToolTip" xml:space="preserve">
+    <value>Erstellen Sie Videos aus ausgewählten Dateien</value>
+  </data>
+  <data name="btnEditPoints.Text" xml:space="preserve">
+    <value>Punkte in Kategorie setzen und neu berechnen</value>
+  </data>
+  <data name="btnEditPoints.ToolTipText" xml:space="preserve">
+    <value>Löscht vom Benutzer vorgenommene Änderungen oder führt eine Neuberechnung durch, wenn Bewertungsregeln geändert werden</value>
+  </data>
+  <data name="btnQuickGPXPreview.Text" xml:space="preserve">
+    <value>Schnelle Vorschau des ausgewählten Trails</value>
+  </data>
+  <data name="mnuAbout.Text" xml:space="preserve">
+    <value>Über den K9 Mantrailing-Analysator</value>
+  </data>
 </root>

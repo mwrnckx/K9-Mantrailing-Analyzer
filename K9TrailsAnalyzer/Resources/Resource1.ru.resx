@@ -287,12 +287,6 @@
   <data name="CrossingTrail" xml:space="preserve">
     <value>пересечение следа</value>
   </data>
-  <data name="dogTrack" xml:space="preserve">
-    <value>Трек собаки</value>
-  </data>
-  <data name="RunnerTrail" xml:space="preserve">
-    <value>След следопрокладчикa</value>
-  </data>
   <data name="article" xml:space="preserve">
     <value>Контрольная точка</value>
   </data>

@@ -1,4 +1,5 @@
 ﻿Imports System.Drawing
+Imports System.IO
 Imports System.Net.Http
 
 Public Class OsmTileDownloader
@@ -15,6 +16,7 @@ Public Class OsmTileDownloader
     ''' <param name="maxLon">Maximum longitude</param>
     ''' <returns>Bitmapa složená z dlaždic</returns>
     Public Async Function GetMapBitmap(minLat As Double, maxLat As Double, minLon As Double, maxLon As Double) As Task(Of (bgmap As Bitmap, minTileX As Single, minTileY As Single))
+
         ' Převod souřadnic na indexy dlaždic
         Dim xMin = LonToTileX(minLon, zoom)
         Dim xMax = LonToTileX(maxLon, zoom)
@@ -29,38 +31,61 @@ Public Class OsmTileDownloader
 
         Dim result As New Bitmap(bmpWidth, bmpHeight)
 
+        ' Cache složka
+        Dim cacheDir = Path.Combine(System.Windows.Forms.Application.StartupPath, "TileCache", "cyclosm")
+        Directory.CreateDirectory(cacheDir)
+
+        Dim subdomains = {"a", "b", "c"}
+        Dim rand As New Random()
+
         Using g As Graphics = Graphics.FromImage(result)
 
             Dim client As New HttpClient()
             client.DefaultRequestHeaders.UserAgent.ParseAdd("K9TrailsAnalyzer/1.0 (mwrnckx@seznam.cz)")
             client.DefaultRequestHeaders.Referrer = New Uri("https://github.com/mwrnckx/")
-
+            Dim cacheMaxAgeDays = 30
 
 
 
             For y = yMin To yMax
-                For x = xMin To xMax
-                    Dim url = $"https://tile.openstreetmap.org/{zoom}/{x}/{y}.png"
-                    Debug.WriteLine($"Stahuji: {url}")
+                    For x = xMin To xMax
+
+                        Dim cachePath = Path.Combine(cacheDir, $"{zoom}_{x}_{y}.png")
+
+                        Try
+                            Dim tileData As Byte()
 
 
-                    Try
+                        If File.Exists(cachePath) AndAlso (DateTime.Now - File.GetLastWriteTime(cachePath)).TotalDays < cacheMaxAgeDays Then
 
-                        Dim data = Await client.GetByteArrayAsync(url)
+                            ' Načíst z cache – žádný delay ani request
+                            Debug.WriteLine($"Z cache: {zoom}/{x}/{y}")
+                            tileData = File.ReadAllBytes(cachePath)
+                        Else
+                            ' Stáhnout a uložit do cache
+                            Dim s = subdomains(rand.Next(0, 3))
+                            Dim url = $"https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{zoom}/{x}/{y}.png"
+                            Debug.WriteLine($"Stahuji: {url}")
+                            tileData = Await client.GetByteArrayAsync(url)
+                            File.WriteAllBytes(cachePath, tileData)
+                            Await Task.Delay(500)
+                        End If
 
-                        Await Task.Delay(500) ' pauza, aby tě neblokli
+                        Using tileStream As New IO.MemoryStream(tileData)
+                                Using tileImage As New Bitmap(tileStream)
+                                    Dim offsetX = (x - xMin) * TileSize
+                                    Dim offsetY = (y - yMin) * TileSize
+                                    g.DrawImage(tileImage, offsetX, offsetY, TileSize, TileSize)
+                                End Using
+                            End Using
 
-                        Using tileImage As New Bitmap(New IO.MemoryStream(data))
-                            Dim offsetX = (x - xMin) * TileSize
-                            Dim offsetY = (y - yMin) * TileSize
-                            g.DrawImage(tileImage, offsetX, offsetY, TileSize, TileSize)
-                        End Using
-                    Catch ex As Exception
-                        ' Když tile neexistuje nebo je problém, přeskočíme
-                        Debug.WriteLine($"Error downloading a tile: {ex.Message}")
-                    End Try
+                        Catch ex As Exception
+                            Debug.WriteLine($"Error downloading a tile: {ex.Message}")
+                        End Try
+
+                    Next
                 Next
-            Next
+
         End Using
 
         Return (result, xMin, yMin)

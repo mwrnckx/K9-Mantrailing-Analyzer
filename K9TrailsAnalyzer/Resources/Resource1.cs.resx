@@ -288,12 +288,6 @@ Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče
   <data name="CrossingTrail" xml:space="preserve">
     <value>Crossing trail</value>
   </data>
-  <data name="dogTrack" xml:space="preserve">
-    <value>Dog's track</value>
-  </data>
-  <data name="RunnerTrail" xml:space="preserve">
-    <value>Runner's trail</value>
-  </data>
   <data name="article" xml:space="preserve">
     <value>Checkpoint</value>
   </data>

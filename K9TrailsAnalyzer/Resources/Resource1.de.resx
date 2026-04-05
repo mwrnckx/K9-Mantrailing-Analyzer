@@ -287,12 +287,6 @@ Wenn es nur zwei Routen gibt, ist es ziemlich unkompliziert - der erste ist der 
   <data name="CrossingTrail" xml:space="preserve">
     <value>Spurkreuzung</value>
   </data>
-  <data name="dogTrack" xml:space="preserve">
-    <value>Hundespur</value>
-  </data>
-  <data name="RunnerTrail" xml:space="preserve">
-    <value>Läuferpfad</value>
-  </data>
   <data name="article" xml:space="preserve">
     <value>Kontrollpunkt</value>
   </data>

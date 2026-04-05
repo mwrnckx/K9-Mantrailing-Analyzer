@@ -433,4 +433,31 @@
   <data name="mnuOpenLocalFolder.ToolTipText" xml:space="preserve">
     <value>Otwiera folder lokalny w Eksploratorze</value>
   </data>
+  <data name="lblRemoteDirectory.ToolTip" xml:space="preserve">
+    <value>Ścieżka zdalnego folderu</value>
+  </data>
+  <data name="btnVideoSettings.Text" xml:space="preserve">
+    <value>Ustawienia wideo</value>
+  </data>
+  <data name="btnVideoSettings.ToolTip" xml:space="preserve">
+    <value>Utwórz filmy z wybranych plików</value>
+  </data>
+  <data name="btnGPXView.Text" xml:space="preserve">
+    <value>Szybki podgląd wybranego szlaku</value>
+  </data>
+  <data name="btnGPXView.ToolTip" xml:space="preserve">
+    <value>Utwórz filmy z wybranych plików</value>
+  </data>
+  <data name="mnuCompetitionRules.Text" xml:space="preserve">
+    <value>Regulamin konkursu</value>
+  </data>
+  <data name="btnEditPoints.Text" xml:space="preserve">
+    <value>Ustaw punkty w kategorii i przelicz</value>
+  </data>
+  <data name="btnEditPoints.ToolTipText" xml:space="preserve">
+    <value>Usuwa zmiany wprowadzone przez użytkownika lub przelicza w przypadku zmiany zasad punktacji</value>
+  </data>
+  <data name="btnQuickGPXPreview.Text" xml:space="preserve">
+    <value>Szybki podgląd wybranego szlaku</value>
+  </data>
 </root>

@@ -9,7 +9,9 @@
         <k9:performance>Best work  - precise</k9:performance>
         <k9:levelOfBlindingType>Open</k9:levelOfBlindingType>
         <k9:levelOfBlindingText>Open</k9:levelOfBlindingText>
-        <k9:numberOfArticlesFound>0</k9:numberOfArticlesFound>
+        <k9:numberOfArticlesFound>5</k9:numberOfArticlesFound>
+                <k9:dogName>Rex</k9:dogName>
+        <k9:handlerName>Richard</k9:handlerName>
         <k9:weather temperature="3" windSpeed="2.55" windDirection="318" precipitation="0" relHumidity="85" cloudCover="100">🌡3 °C,  🌬2,6 m/s NW, 💧85 %,   ☔​0 mm/h, 🌥100 %</k9:weather>
        </k9:report>
       <k9:processed>30.03.2026 8:10:31</k9:processed>

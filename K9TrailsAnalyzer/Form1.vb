@@ -7,6 +7,7 @@ Imports System.Text.Json
 Imports System.Text.Json.Serialization
 Imports System.Threading
 Imports System.Windows.Forms.DataVisualization.Charting
+Imports System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel
 Imports GPXTrailAnalyzer.My.Resources
 Imports TrackVideoExporter
 Imports TrackVideoExporter.TrackVideoExporter
@@ -279,8 +280,13 @@ Partial Public Class Form1
 
         ' Krok 3: Projít sloupce, lokalizovat, vynutit zalomení a nastavit Autosize
         For Each column As DataGridViewColumn In dgvCompetition.Columns
-
-            ' Příklad získání lokalizovaného textu TODO:!!!!!!
+            'If column.Name = "IsSelected" Then
+            '    dgvCompetition.Columns("IsSelected").DisplayIndex = 0
+            '    dgvCompetition.Columns("IsSelected").HeaderText = ""
+            '    dgvCompetition.Columns("IsSelected").Width = 20
+            '    Continue For
+            'End If
+            ' Příklad získání lokalizovaného textu 
             Dim propertyName As String = column.DataPropertyName
             Dim resourceKey As String = "Header_" & propertyName
             Dim localizedText As String = My.Resources.ResourceManager.GetString(resourceKey, My.Resources.Culture)
@@ -311,7 +317,7 @@ Partial Public Class Form1
         Dim columnsIntegerData As String() = {
        "Deviation",
        "SecondCheckpointEvalDeviationFromTrail"
-}
+        }
 
         For Each columnName As String In columnsIntegerData
             ' Zkontrolujte, jestli sloupec existuje
@@ -325,6 +331,8 @@ Partial Public Class Form1
 
             End If
         Next
+
+
         Dim columnsFloatData As String() = {
     "DogGrossSpeedKmh",
      "TrailAge",
@@ -400,6 +408,8 @@ Partial Public Class Form1
         If dgvCompetition.Columns.Contains(NameOf(TrailStatsDisplay.Ranking)) Then
             dgvCompetition.Columns(NameOf(TrailStatsDisplay.Ranking)).ReadOnly = True
         End If
+
+
 
     End Sub
     ' Funkce nahradí mezery v textu záhlaví za zalomení řádku (vbCrLf)
@@ -1248,8 +1258,8 @@ Partial Public Class Form1
 
     Private Sub LoadVideoSettings()
 
-        If File.Exists(videoSettingsPath) Then
-            Dim json = File.ReadAllText(videoSettingsPath, Encoding.UTF8)
+        If File.Exists(VideoSettingsPath) Then
+            Dim json = File.ReadAllText(VideoSettingsPath, Encoding.UTF8)
             Dim opts = New JsonSerializerOptions With {
             .PropertyNameCaseInsensitive = True ' Nastavení můžete ponechat
         }
@@ -1529,7 +1539,7 @@ Partial Public Class Form1
         Next
     End Sub
 
-    Private Sub ShowInBrowser(gpxRecord As GPXRecord)
+    Private Sub ShowInBrowser(gpxRecord As GPXRecord, Optional fileName As String = "gpx_preview", Optional dogName As String = "", Optional handlerName As String = "")
         Dim gpxPath As String = gpxRecord.Reader.FilePath
         Dim gpxContent As String = File.ReadAllText(gpxPath, Encoding.UTF8)
 
@@ -1538,10 +1548,10 @@ Partial Public Class Form1
         Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "gpx_viewer.html"))
 
         ' Vlož GPX obsah
-        Dim html As String = template.Replace("%%GPX_CONTENT%%", gpxContent)
-
+        Dim html1 As String = template.Replace("%%GPX_CONTENT%%", gpxContent)
+        Dim html As String = html1.Replace("%%NAME_FILE%%", fileName & "  " & dogName & "  " & handlerName)
         ' Zapiš do temp a otevři
-        Dim tempPath As String = Path.Combine(Path.GetTempPath(), "k9_preview.html")
+        Dim tempPath As String = Path.Combine(Path.GetTempPath(), fileName & ".html")
         File.WriteAllText(tempPath, html, Encoding.UTF8)
         Process.Start(New ProcessStartInfo(tempPath) With {.UseShellExecute = True})
     End Sub
@@ -1614,7 +1624,7 @@ Partial Public Class Form1
     End Sub
 
     Private Sub lvGpxFiles_ItemSelectionChanged(sender As Object, e As ListViewItemSelectionChangedEventArgs) Handles lvGpxFiles.ItemSelectionChanged
-        e.Item.Selected = False 'aby se to nepletlo s checked
+        'e.Item.Selected = False 'aby se to nepletlo s checked
     End Sub
 
     Private Sub TabControl1_Selecting(sender As Object, e As TabControlCancelEventArgs) Handles TabControl1.Selecting
@@ -1845,7 +1855,7 @@ Partial Public Class Form1
 
     Private Sub btnEditPoints_Click(sender As Object, e As EventArgs) Handles btnEditPoints.Click
         Dim EditCategoryPoints As New frmEditCategoryPoints(ActiveCategoryInfo)
-        If EditCategoryPoints.ShowDialog() = DialogResult.OK Then
+        If EditCategoryPoints.ShowDialog = DialogResult.OK Then
 
             RecalculateScoreAndSave()
             SaveConfig()
@@ -1937,7 +1947,8 @@ Partial Public Class Form1
 
         Next
         If selectedFiles.Count > 0 Then
-            ShowInBrowser(selectedFiles(0))
+            Dim selectedFile = selectedFiles(0)
+            ShowInBrowser(selectedFile, selectedFile.FileName, selectedFile.DogName, selectedFile.LocalisedReports.FirstOrDefault.Value.HandlerNameText)
         End If
 
 
@@ -1946,14 +1957,46 @@ Partial Public Class Form1
     Private Sub lvGpxFiles_ItemCheck(sender As Object, e As ItemCheckEventArgs) Handles lvGpxFiles.ItemCheck
         ' Tento blok se spustí jen tehdy, když se položka CHYSTÁ být zaškrtnuta
         If e.NewValue = CheckState.Checked Then
-            ' Projdeme všechny aktuálně zaškrtnuté položky a odškrtneme je
+
+            lvGpxFiles.Items(e.Index).Selected = True
+            ' Projdeme všechny aktuálně zaškrtnuté položky a odškrtneme je (nechceme více zaškrtnutých - pěkně po jednom!)
             For Each index As Integer In lvGpxFiles.CheckedIndices
                 ' Odškrtneme všechno kromě té položky, na kterou se právě kliklo
                 If index <> e.Index Then
                     lvGpxFiles.Items(index).Checked = False
+                    lvGpxFiles.Items(index).Selected = False
                 End If
             Next
+        Else 'unchecked
+            lvGpxFiles.Items(e.Index).Selected = False
         End If
+    End Sub
+
+    Private Sub btnQuickGPXPreview_Click(sender As Object, e As EventArgs) Handles btnQuickGPXPreview.Click
+        dgvCompetition.EndEdit()
+        'Dim selectedRecords = displayList.Where(Function(x) x.IsSelected).Select(Function(x) x.OriginalRecord).ToList()
+        Dim selectedrecords = dgvCompetition.SelectedRows.Cast(Of DataGridViewRow)() _
+    .Select(Function(r) CType(r.DataBoundItem, TrailStatsDisplay).OriginalRecord) _
+    .ToList()
+
+        If selectedRecords.Count = 0 Then
+            mboxEx("First, select the trail record to show!")
+            Return
+        End If
+
+        For Each selectedFile As GPXRecord In selectedRecords
+
+            ShowInBrowser(selectedFile, selectedFile.FileName, selectedFile.DogName, selectedFile.LocalisedReports.FirstOrDefault.Value.HandlerNameText)
+
+        Next
+
+
+    End Sub
+
+    Private Sub lvGpxFiles_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lvGpxFiles.SelectedIndexChanged
+        For Each row In TryCast(sender, ListView).SelectedItems
+            row.checked = True 'aby výběr zaškrtl zaškrtávátko - je to pohodlnější!
+        Next
     End Sub
 End Class
 
@@ -2198,6 +2241,21 @@ Public Class TrailStatsDisplay
         End If
     End Sub
 
+
+    'Private _isSelected As Boolean = False
+
+    '<DisplayName("")>
+    'Public Property IsSelected As Boolean
+    '    Get
+    '        Return _isSelected
+    '    End Get
+    '    Set(value As Boolean)
+    '        If _isSelected <> value Then
+    '            _isSelected = value
+    '            OnPropertyChanged(NameOf(IsSelected))
+    '        End If
+    '    End Set
+    'End Property
 
 End Class
 

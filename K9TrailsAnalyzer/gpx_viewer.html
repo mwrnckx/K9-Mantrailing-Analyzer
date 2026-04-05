@@ -55,8 +55,8 @@
   .logo span { color: var(--text); font-weight: 700; }
 
   .filename {
-    font-size: 11px;
-    color: var(--muted);
+    font-size: 16px;
+    color: var(--orange);
     padding: 3px 8px;
     background: var(--dark);
     border: 1px solid var(--border);
@@ -148,7 +148,7 @@
 
 <header>
   <div class="logo">K9 <span>Mantrailing</span> Analyzer</div>
-  <div class="filename" id="filename">gpx_viewer</div>
+  <div class="filename" id="filename">%%NAME_FILE%%</div>
   <div class="stats-bar">
     <div class="stat">
       <span class="stat-value" id="stat-tracks">—</span>
@@ -183,9 +183,13 @@ const COLORS = ['blue', 'red', 'green', 'orange', 'yellow', 'black', 'white', 'b
 console.log(COLORS.red); // #f87171
 const map = L.map('map', { zoomControl: true });
 
-L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenTopoMap © OpenStreetMap',
-  maxZoom: 17
+//L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+//  attribution: '© OpenTopoMap © OpenStreetMap',
+//  maxZoom: 17
+//}).addTo(map);
+L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://github.com/cyclosm/cyclosm-cartocss-style/releases">CyclOSM</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 17
 }).addTo(map);
 
 function haversine(a, b) {
