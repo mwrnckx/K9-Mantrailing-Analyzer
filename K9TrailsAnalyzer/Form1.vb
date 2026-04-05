@@ -99,7 +99,8 @@ Partial Public Class Form1
 
         ' Naplnění ListView s daty
         FillListViewWithGpxRecords()
-
+        'vyčistíme - plní se až po překliknutí na záložku soutěž, aby se načítaly rychleji
+        ClearDgvCompetition()
         Enabled = True
         AcceptButton = btnCharts
 
@@ -276,15 +277,11 @@ Partial Public Class Form1
     End Sub
 
     Private Sub FormatDgvCompetition()
-
+        dgvCompetition.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
         ' Krok 3: Projít sloupce, lokalizovat, vynutit zalomení a nastavit Autosize
         For Each column As DataGridViewColumn In dgvCompetition.Columns
-            'If column.Name = "IsSelected" Then
-            '    dgvCompetition.Columns("IsSelected").DisplayIndex = 0
-            '    dgvCompetition.Columns("IsSelected").HeaderText = ""
-            '    dgvCompetition.Columns("IsSelected").Width = 20
-            '    Continue For
-            'End If
+            'column.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
+            column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
             ' Příklad získání lokalizovaného textu 
             Dim propertyName As String = column.DataPropertyName
 
@@ -343,10 +340,10 @@ Partial Public Class Form1
         Dim columnsFloatData As String() = {
     "DogGrossSpeedKmh",
      "TrailAge",
-       "maxTeamDistance",
+       "DogDistance",
        "AverageWeightofDeviation",
        "AverageDeviation",
-           "DogDistance",
+           "TeamDistance",
     "RunnerDistance",
           "FirstCheckpointEvalDistance",
           "SecondCheckpointEvalDistance",
@@ -384,7 +381,7 @@ Partial Public Class Form1
         If dgvCompetition.Columns.Contains("StartTime") Then
             Dim column As DataGridViewColumn = dgvCompetition.Columns("StartTime")
             column.DefaultCellStyle.Format = "HH:mm"
-            column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+
         End If
 
         Dim columnsPointsData As String() = {
@@ -2185,45 +2182,45 @@ Public Class TrailStatsDisplay
     ' protože jejich hodnota by se neměla po startu měnit, nebo je nemusíte notifikovat.
     ' 
 
-    <DisplayName("Dog Speed km/h")>
+    <DisplayName("Team speed (km/h)")>
     Public Property DogGrossSpeedKmh As Double 'gross speed calculated from the last checkpoint or the dog's last point if the dog is close to the track
 
-    <DisplayName("Team route length")>
+    <DisplayName("Team route length (km)")>
     Public Property TeamDistance As Double 'where on the trail the team reached (measured to the last checkpointu)
 
-    <DisplayName("Average Deviation")>
+    <DisplayName("Average Deviation (m)")>
     Public Property AverageDeviation As Double ' average deviation of the entire dog's route from the runner's track weighted by time
 
     <DisplayName("Average Weight of Deviation")>
     Public Property AverageWeightofDeviation As Double ' Average weight of deviation
 
-    <DisplayName("Runner's route length")>
+    <DisplayName("Runner's route length (km)")>
     Public Property RunnerDistance As Double ' Distance actually traveled by the runner (measured from the runner's route)
 
-    <DisplayName("The search team's time min")>
+    <DisplayName("The search team's_time (min)")>
     Public Property TotalTime As Double ' total time of the dog's route
 
-    <DisplayName("Trail Age h")>
+    <DisplayName("Trail Age (h)")>
     Public Property TrailAge As Double ' age of the trail 
 
-    <DisplayName("Weighted Distance Along Trail")>
+    <DisplayName("Weighted Distance Along Trail_%")>
     Public Property distanceAlongTrailWeightedPerCent As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
 
-    <DisplayName("Weighted Distance Along Trail")>
+    <DisplayName("Weighted Distance Along Trail_(km)")>
     Public Property distanceAlongTrailWeighted As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
 
-    <DisplayName("2nd_to_last Checkpoint Distance")>
+    <DisplayName("2nd_to_last Point Distance (km)")>
     Public Property FirstCheckpointEvalDistance As Double = 0
 
-    <DisplayName("2nd_to_last Checkpoint Deviation")>
+    <DisplayName("2nd_to_last Point Deviation (m)")>
     Public Property FirstCheckpointEvalDeviationFromTrail As Double = 0
-    <DisplayName("2nd_to_last Checkpoint dog_speed km/h")>
+    <DisplayName("2nd_to_last Point dog_speed (km/h)")>
     Public Property FirstCheckpointEvaldogGrossSpeed As Double = 0 ' evaluation of checkpoints: distance from start along the runner's route and distance from the route in meters
-    <DisplayName("Last Checkpoint Distance")>
+    <DisplayName("Last Point Distance (km)")>
     Public Property SecondCheckpointEvalDistance As Double = 0
-    <DisplayName("Last Checkpoint Deviation")>
+    <DisplayName("Last Point Deviation (m)")>
     Public Property SecondCheckpointEvalDeviationFromTrail As Double = 0
-    <DisplayName("Last Checkpoint dog_speed km/h")>
+    <DisplayName("Last Point dog_speed (km/h)")>
     Public Property SecondCheckpointEvaldogGrossSpeed As Double = 0
 
     <DisplayName("Runner")>

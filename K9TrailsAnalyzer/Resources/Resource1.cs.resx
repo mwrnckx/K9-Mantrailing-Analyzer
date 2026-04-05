@@ -309,13 +309,16 @@ Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče
   <data name="hdr_RunnerFoundPoints" xml:space="preserve">
     <value>Body za nalezení kladeče</value>
   </data>
-  <data name="hdr_DogAccuracyPoints" xml:space="preserve">
-    <value>Bonus za přesnost</value>
-  </data>
   <data name="hdr_DogSpeedPoints" xml:space="preserve">
     <value>Bonus za rychlost</value>
   </data>
+  <data name="hdr_DogAccuracyPoints" xml:space="preserve">
+    <value>Bonus za přesnost</value>
+  </data>
   <data name="hdr_DogReadingPoints" xml:space="preserve">
-    <value>Bonus za dobré čtení psa</value>
+    <value>Bonus za_dobré čtení psa</value>
+  </data>
+  <data name="hdr_TrailPickupPoints" xml:space="preserve">
+    <value>Bonus za_rychlé vyhledání stopy</value>
   </data>
 </root>

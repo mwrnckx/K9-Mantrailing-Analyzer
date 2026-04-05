@@ -133,7 +133,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Bonus for good dog reading.
+        '''  Vyhledá lokalizovaný řetězec podobný Bonus for_good dog reading.
         '''</summary>
         Friend Shared ReadOnly Property hdr_DogReadingPoints() As String
             Get
@@ -187,7 +187,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Bonus for Fast Trail PickUp.
+        '''  Vyhledá lokalizovaný řetězec podobný Bonus for_Fast Trail Pick-up.
         '''</summary>
         Friend Shared ReadOnly Property hdr_TrailPickupPoints() As String
             Get

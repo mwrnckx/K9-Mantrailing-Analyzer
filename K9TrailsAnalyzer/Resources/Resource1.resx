@@ -322,9 +322,9 @@ If there are only two routes, it's pretty straightforward - the first is the sub
     <value>Bonus for accuracy</value>
   </data>
   <data name="hdr_DogReadingPoints" xml:space="preserve">
-    <value>Bonus for good dog reading</value>
+    <value>Bonus for_good dog reading</value>
   </data>
   <data name="hdr_TrailPickupPoints" xml:space="preserve">
-    <value>Bonus for Fast Trail PickUp</value>
+    <value>Bonus for_Fast Trail Pick-up</value>
   </data>
 </root>
