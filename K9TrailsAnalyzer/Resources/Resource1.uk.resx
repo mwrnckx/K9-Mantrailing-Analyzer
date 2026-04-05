@@ -302,9 +302,6 @@
   <data name="hdr_TotalPoints" xml:space="preserve">
     <value>Всього балів</value>
   </data>
-  <data name="hdr_Ranking" xml:space="preserve">
-    <value>Рейтинг</value>
-  </data>
   <data name="hdr_DogAccuracyPoints" xml:space="preserve">
     <value>Бонус за точність</value>
   </data>

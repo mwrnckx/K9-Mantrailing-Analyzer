@@ -40,8 +40,12 @@ Public Class DiplomaGenerator
             dlg.Title = If(language = "cs", "Uložit diplom", "Save diploma")
             dlg.Filter = "Word Document (*.docx)|*.docx"
             dlg.FileName = $"diploma_{category}_{dogName}_{eventDate:yyyy-MM-dd}.docx"
-            dlg.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) &
-                                   Path.DirectorySeparatorChar & "Downloads"
+            Dim downloads As String = Convert.ToString(
+    My.Computer.Registry.GetValue(
+        "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders",
+        "{374DE290-123F-4565-9164-39C4925E467B}",
+        Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) & "\Downloads"))
+            dlg.InitialDirectory = downloads
 
             If dlg.ShowDialog() <> DialogResult.OK Then Return
 

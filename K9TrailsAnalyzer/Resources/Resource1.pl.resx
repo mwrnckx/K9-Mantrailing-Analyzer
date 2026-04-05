@@ -302,9 +302,6 @@ Jeśli są tylko dwie trasy, jest to dość proste - pierwszy to szlak tematyczn
   <data name="hdr_TotalPoints" xml:space="preserve">
     <value>Suma punktów</value>
   </data>
-  <data name="hdr_Ranking" xml:space="preserve">
-    <value>Zaszeregowanie</value>
-  </data>
   <data name="hdr_DogAccuracyPoints" xml:space="preserve">
     <value>Premia za dokładność</value>
   </data>

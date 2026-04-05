@@ -98,6 +98,8 @@ Partial Class Form1
         bsCompetitions = New BindingSource(components)
         pnlCategory = New Panel()
         cbActiveCategory = New ComboBox()
+        ToolStripSeparator4 = New ToolStripSeparator()
+        btnCreateDiploma = New ToolStripButton()
         MenuStrip1.SuspendLayout()
         TabControl1.SuspendLayout()
         TabStats.SuspendLayout()
@@ -492,7 +494,7 @@ Partial Class Form1
         ' ToolStrCategorySettings
         ' 
         resources.ApplyResources(ToolStrCategorySettings, "ToolStrCategorySettings")
-        ToolStrCategorySettings.Items.AddRange(New ToolStripItem() {btnEditPoints, ToolStripSeparator3, btnQuickGPXPreview})
+        ToolStrCategorySettings.Items.AddRange(New ToolStripItem() {btnEditPoints, ToolStripSeparator3, btnQuickGPXPreview, ToolStripSeparator4, btnCreateDiploma})
         ToolStrCategorySettings.Name = "ToolStrCategorySettings"
         ' 
         ' btnEditPoints
@@ -556,6 +558,18 @@ Partial Class Form1
         resources.ApplyResources(cbActiveCategory, "cbActiveCategory")
         cbActiveCategory.FormattingEnabled = True
         cbActiveCategory.Name = "cbActiveCategory"
+        ' 
+        ' ToolStripSeparator4
+        ' 
+        ToolStripSeparator4.Name = "ToolStripSeparator4"
+        resources.ApplyResources(ToolStripSeparator4, "ToolStripSeparator4")
+        ' 
+        ' btnCreateDiploma
+        ' 
+        btnCreateDiploma.BackColor = Color.Gold
+        btnCreateDiploma.DisplayStyle = ToolStripItemDisplayStyle.Text
+        resources.ApplyResources(btnCreateDiploma, "btnCreateDiploma")
+        btnCreateDiploma.Name = "btnCreateDiploma"
         ' 
         ' Form1
         ' 
@@ -763,6 +777,8 @@ Partial Class Form1
     Private WithEvents btnGPXView As Button
     Friend WithEvents btnQuickGPXPreview As ToolStripButton
     Friend WithEvents ToolStripSeparator3 As ToolStripSeparator
+    Friend WithEvents ToolStripSeparator4 As ToolStripSeparator
+    Friend WithEvents btnCreateDiploma As ToolStripButton
 
 
 End Class

@@ -254,7 +254,7 @@ Partial Public Class Form1
                 ' Důležité: Nastavte Ranking pomocí vlastnosti, kde máte implementovaný INotifyPropertyChanged
                 ' i pro Ranking. Pokud Ranking nemá INotifyPropertyChanged, musíte ho přidat.
                 ' Předpokládáme, že jej nyní přidáme do TrailStatsDisplay (viz Krok 2).
-                item.Ranking = ranking.ToString() & "."
+                item.Ranking = ranking.ToString()
                 ranking += 1
             Next
         Else 'Velký počet záznamů - pak seřadit podle data
@@ -1865,17 +1865,6 @@ Partial Public Class Form1
             SaveConfig()
         End If
 
-        DiplomaGenerator.GenerateDiploma(
-    category:="Advanced",
-    dogName:=dgvCompetition.CurrentRow.Cells("DogName").Value.ToString(),
-    handlerName:=dgvCompetition.CurrentRow.Cells("HandlerName").Value.ToString(),
-    totalScore:=dgvCompetition.CurrentRow.Cells("TotalPoints").Value.ToString,
-    bonusScore:=333,
-    eventDate:=New Date.Today,
-    placement:=1,
-    workingDirectory:=Application.StartupPath,
-    language:="cs"  ' "cs" nebo "en"
-)
     End Sub
 
     Private Sub OpenLocalDirectoryWithGpxFilesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles mnuOpenLocalFolder.Click
@@ -2014,12 +2003,30 @@ Partial Public Class Form1
             row.checked = True 'aby výběr zaškrtl zaškrtávátko - je to pohodlnější!
         Next
     End Sub
+
+    Private Sub btnCreateDiploma_Click(sender As Object, e As EventArgs) Handles btnCreateDiploma.Click
+        For Each _row In dgvCompetition.Rows
+            Dim ranking As String = _row.Cells("Ranking").Value?.ToString()?.TrimEnd("."c)
+
+            Select Case ranking
+                Case "1", "2", "3"
+                    DiplomaGenerator.GenerateDiploma(
+                  category:=Me.ActiveCategoryInfo.Name,
+                        dogName:=_row.Cells("DogName").Value.ToString(),
+                  handlerName:=_row.Cells("HandlerName").Value.ToString(),
+                  totalScore:=_row.Cells("TotalPoints").Value.ToString,
+                  bonusScore:=333,
+                  eventDate:=New Date.Today,
+                  placement:=ranking,
+                  workingDirectory:=Application.StartupPath,
+                  language:="cs"  ' "cs" nebo "en"
+                  )
+
+            End Select
+        Next
+    End Sub
 End Class
 
-''' <summary>
-''' structure for returning calculation results.
-''' </summary>
-''' 
 
 
 Public Class TrailStatsDisplay
@@ -2090,7 +2097,7 @@ Public Class TrailStatsDisplay
 
 
     ' 2. VLASTNOSTi, KTERÁ SE PŘEPOČÍTÁVÁJÍ:
-    <DisplayName("Ranking")>
+    <DisplayName("Place")>
     Public Property Ranking As String ' 
         Get
             Return _ranking

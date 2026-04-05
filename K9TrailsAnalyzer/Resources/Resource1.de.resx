@@ -302,9 +302,6 @@ Wenn es nur zwei Routen gibt, ist es ziemlich unkompliziert - der erste ist der 
   <data name="hdr_TotalPoints" xml:space="preserve">
     <value>Gesamtpunktzahl</value>
   </data>
-  <data name="hdr_Ranking" xml:space="preserve">
-    <value>Rang</value>
-  </data>
   <data name="hdr_RunnerFoundPoints" xml:space="preserve">
     <value>Punkte für Runner Find</value>
   </data>

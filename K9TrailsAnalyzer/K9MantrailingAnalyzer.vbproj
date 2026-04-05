@@ -24,6 +24,7 @@
   <ItemGroup>
     <None Remove="gpx_viewer.html" />
     <None Remove="Resources\Competition_Rules.pdf" />
+    <None Remove="Resources\images\logo.png" />
     <None Remove="Resources\Pravidla_zavodu.pdf" />
     <None Remove="Resources\Wettkampfregeln.pdf" />
     <None Remove="Samples\003\2026-03-29_Found_unprecise_6pt.gpx" />
@@ -31,6 +32,9 @@
 
   <ItemGroup>
     <Content Include="gpx_viewer.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\images\logo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Pravidla_zavodu.pdf">

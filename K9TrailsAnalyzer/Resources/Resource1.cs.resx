@@ -303,9 +303,6 @@ Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče
   <data name="hdr_TotalPoints" xml:space="preserve">
     <value>Body celkem</value>
   </data>
-  <data name="hdr_Ranking" xml:space="preserve">
-    <value>Pořadí</value>
-  </data>
   <data name="hdr_RunnerFoundPoints" xml:space="preserve">
     <value>Body za nalezení kladeče</value>
   </data>
@@ -320,5 +317,8 @@ Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče
   </data>
   <data name="hdr_TrailPickupPoints" xml:space="preserve">
     <value>Bonus za_rychlé vyhledání stopy</value>
+  </data>
+  <data name="hdr_Ranking" xml:space="preserve">
+    <value>Pořadí</value>
   </data>
 </root>

@@ -310,7 +310,7 @@ If there are only two routes, it's pretty straightforward - the first is the sub
     <value>Points Total</value>
   </data>
   <data name="hdr_Ranking" xml:space="preserve">
-    <value>Ranking</value>
+    <value>Placement</value>
   </data>
   <data name="hdr_RunnerFoundPoints" xml:space="preserve">
     <value>Points for Runner Find</value>
