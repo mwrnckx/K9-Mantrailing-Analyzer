@@ -305,4 +305,16 @@
   <data name="hdr_Ranking" xml:space="preserve">
     <value>Рейтинг</value>
   </data>
+  <data name="hdr_DogAccuracyPoints" xml:space="preserve">
+    <value>Бонус за точність</value>
+  </data>
+  <data name="hdr_DogSpeedPoints" xml:space="preserve">
+    <value>Бонус за швидкість</value>
+  </data>
+  <data name="hdr_DogReadingPoints" xml:space="preserve">
+    <value>Бонус за гарне читання собак</value>
+  </data>
+  <data name="RunnerTrail" xml:space="preserve">
+    <value>бігун</value>
+  </data>
 </root>

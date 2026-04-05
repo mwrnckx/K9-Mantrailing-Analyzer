@@ -308,4 +308,16 @@ Wenn es nur zwei Routen gibt, ist es ziemlich unkompliziert - der erste ist der 
   <data name="hdr_RunnerFoundPoints" xml:space="preserve">
     <value>Punkte für Runner Find</value>
   </data>
+  <data name="hdr_DogAccuracyPoints" xml:space="preserve">
+    <value>Bonus für Genauigkeit</value>
+  </data>
+  <data name="hdr_DogSpeedPoints" xml:space="preserve">
+    <value>Bonus für die Schnelligkeit</value>
+  </data>
+  <data name="hdr_DogReadingPoints" xml:space="preserve">
+    <value>Bonus für gute Hundelektüre</value>
+  </data>
+  <data name="RunnerTrail" xml:space="preserve">
+    <value>Läufer</value>
+  </data>
 </root>

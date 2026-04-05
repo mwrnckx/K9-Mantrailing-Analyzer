@@ -313,7 +313,7 @@ If there are only two routes, it's pretty straightforward - the first is the sub
     <value>Ranking</value>
   </data>
   <data name="hdr_RunnerFoundPoints" xml:space="preserve">
-    <value>Point for Runner Find</value>
+    <value>Points for Runner Find</value>
   </data>
   <data name="hdr_DogSpeedPoints" xml:space="preserve">
     <value>Bonus for being fast</value>

@@ -169,7 +169,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Point for Runner Find.
+        '''  Vyhledá lokalizovaný řetězec podobný Points for Runner Find.
         '''</summary>
         Friend Shared ReadOnly Property hdr_RunnerFoundPoints() As String
             Get
