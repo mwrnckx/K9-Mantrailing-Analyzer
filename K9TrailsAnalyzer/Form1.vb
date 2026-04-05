@@ -1864,6 +1864,18 @@ Partial Public Class Form1
             RecalculateScoreAndSave()
             SaveConfig()
         End If
+
+        DiplomaGenerator.GenerateDiploma(
+    category:="Advanced",
+    dogName:=dgvCompetition.CurrentRow.Cells("DogName").Value.ToString(),
+    handlerName:=dgvCompetition.CurrentRow.Cells("HandlerName").Value.ToString(),
+    totalScore:=dgvCompetition.CurrentRow.Cells("TotalPoints").Value.ToString,
+    bonusScore:=333,
+    eventDate:=New Date.Today,
+    placement:=1,
+    workingDirectory:=Application.StartupPath,
+    language:="cs"  ' "cs" nebo "en"
+)
     End Sub
 
     Private Sub OpenLocalDirectoryWithGpxFilesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles mnuOpenLocalFolder.Click
