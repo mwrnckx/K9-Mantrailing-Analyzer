@@ -291,11 +291,22 @@ Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče
   <data name="article" xml:space="preserve">
     <value>Checkpoint</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="points" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
   <data name="points" xml:space="preserve">
     <value>bodů</value>
+  </data>
+  <data name="hdr_DogName" xml:space="preserve">
+    <value>Pes</value>
+  </data>
+  <data name="hdr_RunnerFoundPoints" xml:space="preserve">
+    <value>Bod za nalezení kladeče</value>
+  </data>
+  <data name="hdr_TotalPoints" xml:space="preserve">
+    <value>Body celkem</value>
+  </data>
+  <data name="hdr_Ranking" xml:space="preserve">
+    <value>Pořadí</value>
+  </data>
+  <data name="hdr_HandlerName" xml:space="preserve">
+    <value>Psovod</value>
   </data>
 </root>

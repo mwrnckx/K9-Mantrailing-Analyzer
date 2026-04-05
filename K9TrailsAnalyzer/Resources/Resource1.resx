@@ -299,4 +299,20 @@ If there are only two routes, it's pretty straightforward - the first is the sub
   <data name="points" xml:space="preserve">
     <value>points</value>
   </data>
+  <data name="hdr_DogName" xml:space="preserve">
+    <value>Dog</value>
+    <comment>Dog</comment>
+  </data>
+  <data name="hdr_HandlerName" xml:space="preserve">
+    <value>Dog Handler</value>
+  </data>
+  <data name="hdr_TotalPoints" xml:space="preserve">
+    <value>Points Total</value>
+  </data>
+  <data name="hdr_Ranking" xml:space="preserve">
+    <value>Ranking</value>
+  </data>
+  <data name="hdr_RunnerFoundPoints" xml:space="preserve">
+    <value>Point for Runner Find</value>
+  </data>
 </root>

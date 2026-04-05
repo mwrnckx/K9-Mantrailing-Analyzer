@@ -115,6 +115,51 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Dog.
+        '''</summary>
+        Friend Shared ReadOnly Property hdr_DogName() As String
+            Get
+                Return ResourceManager.GetString("hdr_DogName", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Dog Handler.
+        '''</summary>
+        Friend Shared ReadOnly Property hdr_HandlerName() As String
+            Get
+                Return ResourceManager.GetString("hdr_HandlerName", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Ranking.
+        '''</summary>
+        Friend Shared ReadOnly Property hdr_Ranking() As String
+            Get
+                Return ResourceManager.GetString("hdr_Ranking", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Point for Runner Find.
+        '''</summary>
+        Friend Shared ReadOnly Property hdr_RunnerFoundPoints() As String
+            Get
+                Return ResourceManager.GetString("hdr_RunnerFoundPoints", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Points Total.
+        '''</summary>
+        Friend Shared ReadOnly Property hdr_TotalPoints() As String
+            Get
+                Return ResourceManager.GetString("hdr_TotalPoints", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný From: .
         '''</summary>
         Friend Shared ReadOnly Property lblFrom() As String

@@ -290,11 +290,22 @@ Wenn es nur zwei Routen gibt, ist es ziemlich unkompliziert - der erste ist der 
   <data name="article" xml:space="preserve">
     <value>Kontrollpunkt</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="points" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
   <data name="points" xml:space="preserve">
     <value>Punkte</value>
+  </data>
+  <data name="hdr_DogName" xml:space="preserve">
+    <value>Hund</value>
+  </data>
+  <data name="hdr_HandlerName" xml:space="preserve">
+    <value>Hundeführer</value>
+  </data>
+  <data name="hdr_RunnerFoundPoints" xml:space="preserve">
+    <value>Punkt für Runner Find</value>
+  </data>
+  <data name="hdr_TotalPoints" xml:space="preserve">
+    <value>Gesamtpunktzahl</value>
+  </data>
+  <data name="hdr_Ranking" xml:space="preserve">
+    <value>Rang</value>
   </data>
 </root>

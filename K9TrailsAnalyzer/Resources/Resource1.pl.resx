@@ -290,11 +290,22 @@ Jeśli są tylko dwie trasy, jest to dość proste - pierwszy to szlak tematyczn
   <data name="article" xml:space="preserve">
     <value>Punkt kontrolny</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="points" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
   <data name="points" xml:space="preserve">
     <value>zwrotnica</value>
+  </data>
+  <data name="hdr_DogName" xml:space="preserve">
+    <value>Pies</value>
+  </data>
+  <data name="hdr_HandlerName" xml:space="preserve">
+    <value>Opiekun psa</value>
+  </data>
+  <data name="hdr_RunnerFoundPoints" xml:space="preserve">
+    <value>Punkt za znalezienie biegacza</value>
+  </data>
+  <data name="hdr_TotalPoints" xml:space="preserve">
+    <value>Suma punktów</value>
+  </data>
+  <data name="hdr_Ranking" xml:space="preserve">
+    <value>Zaszeregowanie</value>
   </data>
 </root>

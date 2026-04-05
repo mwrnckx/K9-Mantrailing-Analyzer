@@ -290,11 +290,22 @@
   <data name="article" xml:space="preserve">
     <value>Контрольная точка</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="points" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
   <data name="points" xml:space="preserve">
     <value>очки</value>
+  </data>
+  <data name="hdr_DogName" xml:space="preserve">
+    <value>Собака</value>
+  </data>
+  <data name="hdr_HandlerName" xml:space="preserve">
+    <value>Хэндлер собак</value>
+  </data>
+  <data name="hdr_RunnerFoundPoints" xml:space="preserve">
+    <value>Точка для поиска бегуна</value>
+  </data>
+  <data name="hdr_TotalPoints" xml:space="preserve">
+    <value>Всего очков</value>
+  </data>
+  <data name="hdr_Ranking" xml:space="preserve">
+    <value>Рейтинг</value>
   </data>
 </root>

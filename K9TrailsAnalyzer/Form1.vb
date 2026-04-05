@@ -288,8 +288,16 @@ Partial Public Class Form1
             'End If
             ' Příklad získání lokalizovaného textu 
             Dim propertyName As String = column.DataPropertyName
-            Dim resourceKey As String = "Header_" & propertyName
-            Dim localizedText As String = My.Resources.ResourceManager.GetString(resourceKey, My.Resources.Culture)
+
+            Dim resourceKey As String = "hdr_" & propertyName
+
+            ' Načtení textu pomocí stringového klíče
+            Dim localizedText As String = My.Resources.Resource1.ResourceManager.GetString(resourceKey)
+
+            ' Kontrola, zda klíč existuje (GetString vrátí Nothing, pokud klíč nenajde)
+            If String.IsNullOrEmpty(localizedText) Then
+                localizedText = column.HeaderText ' Záložní řešení, když překlad chybí
+            End If
 
             ' ZAJIŠTĚNÍ JEDNOTNÉ FORMÁTU HLAVIČKY:
             If Not String.IsNullOrEmpty(localizedText) Then
