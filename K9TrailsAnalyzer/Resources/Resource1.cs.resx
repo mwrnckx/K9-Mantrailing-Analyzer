@@ -297,8 +297,8 @@ Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče
   <data name="hdr_DogName" xml:space="preserve">
     <value>Pes</value>
   </data>
-  <data name="hdr_RunnerFoundPoints" xml:space="preserve">
-    <value>Bod za nalezení kladeče</value>
+  <data name="hdr_HandlerName" xml:space="preserve">
+    <value>Psovod</value>
   </data>
   <data name="hdr_TotalPoints" xml:space="preserve">
     <value>Body celkem</value>
@@ -306,7 +306,7 @@ Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče
   <data name="hdr_Ranking" xml:space="preserve">
     <value>Pořadí</value>
   </data>
-  <data name="hdr_HandlerName" xml:space="preserve">
-    <value>Psovod</value>
+  <data name="hdr_RunnerFoundPoints" xml:space="preserve">
+    <value>Body za nalezení kladeče</value>
   </data>
 </root>

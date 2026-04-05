@@ -128,10 +128,9 @@ Partial Public Class Form1
                  .RunnerDistance = stats.RunnerTotalDistancekm,
                  .TotalTime = stats.DogTotalTime.Minutes,
                 .DogGrossSpeedKmh = stats.DogGrossSpeedkmh,
-                .DogDistance = stats.DogTotalDistancekm,
                 .AverageDeviation = stats.AverDeviation,
                 .AverageWeightofDeviation = stats.AverWeightOfDeviation,
-                .MaxTeamDistance = stats.DogTotalDistancekm,
+                .TeamDistance = stats.DogTotalDistancekm,
                 .distanceAlongTrailWeighted = stats.MaxDistAlongTrailkmWeighted,
                 .distanceAlongTrailWeightedPerCent = stats.MaxDistAlongTrailWeightedPerCent / 100,'je v % převedeno zpět na desetinné číslo
                 .StartTime = record.TrailStart.Time,
@@ -1987,12 +1986,12 @@ Partial Public Class Form1
     .Select(Function(r) CType(r.DataBoundItem, TrailStatsDisplay).OriginalRecord) _
     .ToList()
 
-        If selectedRecords.Count = 0 Then
+        If selectedrecords.Count = 0 Then
             mboxEx("First, select the trail record to show!")
             Return
         End If
 
-        For Each selectedFile As GPXRecord In selectedRecords
+        For Each selectedFile As GPXRecord In selectedrecords
 
             ShowInBrowser(selectedFile, selectedFile.FileName, selectedFile.DogName, selectedFile.LocalisedReports.FirstOrDefault.Value.HandlerNameText)
 
@@ -2189,8 +2188,8 @@ Public Class TrailStatsDisplay
     <DisplayName("Dog Speed km/h")>
     Public Property DogGrossSpeedKmh As Double 'gross speed calculated from the last checkpoint or the dog's last point if the dog is close to the track
 
-    <DisplayName("Max. Team Distance")>
-    Public Property MaxTeamDistance As Double 'where on the trail the team reached (measured to the last checkpointu)
+    <DisplayName("Team route length")>
+    Public Property TeamDistance As Double 'where on the trail the team reached (measured to the last checkpointu)
 
     <DisplayName("Average Deviation")>
     Public Property AverageDeviation As Double ' average deviation of the entire dog's route from the runner's track weighted by time
@@ -2198,10 +2197,10 @@ Public Class TrailStatsDisplay
     <DisplayName("Average Weight of Deviation")>
     Public Property AverageWeightofDeviation As Double ' Average weight of deviation
 
-    <DisplayName("Trail Distance")>
+    <DisplayName("Runner's route length")>
     Public Property RunnerDistance As Double ' Distance actually traveled by the runner (measured from the runner's route)
 
-    <DisplayName("Total Time min")>
+    <DisplayName("The search team's time min")>
     Public Property TotalTime As Double ' total time of the dog's route
 
     <DisplayName("Trail Age h")>
@@ -2212,10 +2211,6 @@ Public Class TrailStatsDisplay
 
     <DisplayName("Weighted Distance Along Trail")>
     Public Property distanceAlongTrailWeighted As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
-
-    <DisplayName("Dog Distance")>
-    Public Property DogDistance As Double ' Distance actually traveled by the dog (measured from the dog's route)
-
 
     <DisplayName("2nd_to_last Checkpoint Distance")>
     Public Property FirstCheckpointEvalDistance As Double = 0
@@ -2231,7 +2226,7 @@ Public Class TrailStatsDisplay
     <DisplayName("Last Checkpoint dog_speed km/h")>
     Public Property SecondCheckpointEvaldogGrossSpeed As Double = 0
 
-    <DisplayName("Runner name")>
+    <DisplayName("Runner")>
     Public Property RunnerName As String '
 
 

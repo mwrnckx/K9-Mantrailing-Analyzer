@@ -315,4 +315,16 @@ If there are only two routes, it's pretty straightforward - the first is the sub
   <data name="hdr_RunnerFoundPoints" xml:space="preserve">
     <value>Point for Runner Find</value>
   </data>
+  <data name="hdr_DogSpeedPoints" xml:space="preserve">
+    <value>Bonus for being fast</value>
+  </data>
+  <data name="hdr_DogAccuracyPoints" xml:space="preserve">
+    <value>Bonus for accuracy</value>
+  </data>
+  <data name="hdr_DogReadingPoints" xml:space="preserve">
+    <value>Bonus for good dog reading</value>
+  </data>
+  <data name="hdr_TrailPickupPoints" xml:space="preserve">
+    <value>Bonus for Fast Trail PickUp</value>
+  </data>
 </root>

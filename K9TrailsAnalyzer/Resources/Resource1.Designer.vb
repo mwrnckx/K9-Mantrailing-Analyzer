@@ -115,11 +115,38 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Bonus for accuracy.
+        '''</summary>
+        Friend Shared ReadOnly Property hdr_DogAccuracyPoints() As String
+            Get
+                Return ResourceManager.GetString("hdr_DogAccuracyPoints", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Dog.
         '''</summary>
         Friend Shared ReadOnly Property hdr_DogName() As String
             Get
                 Return ResourceManager.GetString("hdr_DogName", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Bonus for good dog reading.
+        '''</summary>
+        Friend Shared ReadOnly Property hdr_DogReadingPoints() As String
+            Get
+                Return ResourceManager.GetString("hdr_DogReadingPoints", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Bonus for being fast.
+        '''</summary>
+        Friend Shared ReadOnly Property hdr_DogSpeedPoints() As String
+            Get
+                Return ResourceManager.GetString("hdr_DogSpeedPoints", resourceCulture)
             End Get
         End Property
         
@@ -156,6 +183,15 @@ Namespace My.Resources
         Friend Shared ReadOnly Property hdr_TotalPoints() As String
             Get
                 Return ResourceManager.GetString("hdr_TotalPoints", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Bonus for Fast Trail PickUp.
+        '''</summary>
+        Friend Shared ReadOnly Property hdr_TrailPickupPoints() As String
+            Get
+                Return ResourceManager.GetString("hdr_TrailPickupPoints", resourceCulture)
             End Get
         End Property
         

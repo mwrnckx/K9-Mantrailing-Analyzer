@@ -299,13 +299,13 @@
   <data name="hdr_HandlerName" xml:space="preserve">
     <value>Хэндлер собак</value>
   </data>
-  <data name="hdr_RunnerFoundPoints" xml:space="preserve">
-    <value>Точка для поиска бегуна</value>
-  </data>
   <data name="hdr_TotalPoints" xml:space="preserve">
     <value>Всего очков</value>
   </data>
   <data name="hdr_Ranking" xml:space="preserve">
     <value>Рейтинг</value>
+  </data>
+  <data name="hdr_RunnerFoundPoints" xml:space="preserve">
+    <value>Точка для поиска бегуна</value>
   </data>
 </root>
