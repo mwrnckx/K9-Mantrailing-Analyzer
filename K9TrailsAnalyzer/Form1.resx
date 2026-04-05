@@ -289,45 +289,6 @@
   <data name="MenuStrip1.Font" type="System.Drawing.Font, System.Drawing">
     <value>Cascadia Code, 10pt</value>
   </data>
-  <data name="MenuStrip1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="MenuStrip1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>5, 1, 0, 1</value>
-  </data>
-  <data name="MenuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>984, 24</value>
-  </data>
-  <data name="MenuStrip1.TabIndex" type="System.Int32, mscorlib">
-    <value>27</value>
-  </data>
-  <data name="MenuStrip1.Text" xml:space="preserve">
-    <value>MenuStrip1</value>
-  </data>
-  <data name="&gt;&gt;MenuStrip1.Name" xml:space="preserve">
-    <value>MenuStrip1</value>
-  </data>
-  <data name="&gt;&gt;MenuStrip1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;MenuStrip1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;MenuStrip1.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="mnuGPXprocessing.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Cascadia Code, 10pt</value>
-  </data>
-  <data name="mnuGPXprocessing.Size" type="System.Drawing.Size, System.Drawing">
-    <value>132, 33</value>
-  </data>
-  <data name="mnuGPXprocessing.Text" xml:space="preserve">
-    <value>Gpx processing</value>
-  </data>
-  <data name="mnuGPXprocessing.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="mnuPrependDateToFileName.Size" type="System.Drawing.Size, System.Drawing">
     <value>388, 22</value>
   </data>
@@ -358,6 +319,18 @@
   <data name="mnuProcessProcessed.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
+  <data name="mnuGPXprocessing.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Cascadia Code, 10pt</value>
+  </data>
+  <data name="mnuGPXprocessing.Size" type="System.Drawing.Size, System.Drawing">
+    <value>132, 33</value>
+  </data>
+  <data name="mnuGPXprocessing.Text" xml:space="preserve">
+    <value>Gpx processing</value>
+  </data>
+  <data name="mnuGPXprocessing.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="mnucbActiveCategory.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
     <value>Flat</value>
   </data>
@@ -369,15 +342,6 @@
   </data>
   <data name="mnucbActiveCategory.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
-  </data>
-  <data name="mnuFile.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Cascadia Code, 10pt</value>
-  </data>
-  <data name="mnuFile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>52, 22</value>
-  </data>
-  <data name="mnuFile.Text" xml:space="preserve">
-    <value>File</value>
   </data>
   <data name="mnuSelectADirectoryToSaveVideo.Size" type="System.Drawing.Size, System.Drawing">
     <value>388, 22</value>
@@ -403,14 +367,14 @@
   <data name="mnuExit.Text" xml:space="preserve">
     <value>Exit</value>
   </data>
-  <data name="mnuCategory.Font" type="System.Drawing.Font, System.Drawing">
+  <data name="mnuFile.Font" type="System.Drawing.Font, System.Drawing">
     <value>Cascadia Code, 10pt</value>
   </data>
-  <data name="mnuCategory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>156, 22</value>
+  <data name="mnuFile.Size" type="System.Drawing.Size, System.Drawing">
+    <value>52, 33</value>
   </data>
-  <data name="mnuCategory.Text" xml:space="preserve">
-    <value>Category Settings</value>
+  <data name="mnuFile.Text" xml:space="preserve">
+    <value>File</value>
   </data>
   <data name="mnuSelect_directory_gpx_files.Size" type="System.Drawing.Size, System.Drawing">
     <value>268, 22</value>
@@ -448,23 +412,20 @@
   <data name="mnuDeleteCurrentCategory.Text" xml:space="preserve">
     <value>Delete current category</value>
   </data>
-  <data name="mnuHelp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>52, 22</value>
+  <data name="mnuCategory.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Cascadia Code, 10pt</value>
   </data>
-  <data name="mnuHelp.Text" xml:space="preserve">
-    <value>Help</value>
+  <data name="mnuCategory.Size" type="System.Drawing.Size, System.Drawing">
+    <value>156, 33</value>
+  </data>
+  <data name="mnuCategory.Text" xml:space="preserve">
+    <value>Category Settings</value>
   </data>
   <data name="mnuAbout.Size" type="System.Drawing.Size, System.Drawing">
-    <value>212, 22</value>
+    <value>308, 22</value>
   </data>
   <data name="mnuAbout.Text" xml:space="preserve">
     <value>About K9 Mantrailing Analyzer</value>
-  </data>
-  <data name="mnuCompetitionRules.Size" type="System.Drawing.Size, System.Drawing">
-    <value>212, 22</value>
-  </data>
-  <data name="mnuCompetitionRules.Text" xml:space="preserve">
-    <value>Competition Rules</value>
   </data>
   <data name="mnuCompetitionRulespdf.Size" type="System.Drawing.Size, System.Drawing">
     <value>244, 22</value>
@@ -484,38 +445,41 @@
   <data name="mnuPravidlazavodupdf.Text" xml:space="preserve">
     <value>Pravidla_zavodu.pdf</value>
   </data>
+  <data name="mnuCompetitionRules.Size" type="System.Drawing.Size, System.Drawing">
+    <value>308, 22</value>
+  </data>
+  <data name="mnuCompetitionRules.Text" xml:space="preserve">
+    <value>Competition Rules</value>
+  </data>
   <data name="mnuCheckForUpdates1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>212, 22</value>
+    <value>308, 22</value>
   </data>
   <data name="mnuCheckForUpdates1.Text" xml:space="preserve">
     <value>Check for updates</value>
   </data>
   <data name="ToolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>209, 6</value>
+    <value>305, 6</value>
   </data>
   <data name="mnuSetFFmpegPath.Size" type="System.Drawing.Size, System.Drawing">
-    <value>212, 22</value>
+    <value>308, 22</value>
   </data>
   <data name="mnuSetFFmpegPath.Text" xml:space="preserve">
     <value>Set FFmpeg path</value>
   </data>
   <data name="ToolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>209, 6</value>
+    <value>305, 6</value>
   </data>
   <data name="mnuFactoryReset.Size" type="System.Drawing.Size, System.Drawing">
-    <value>212, 22</value>
+    <value>308, 22</value>
   </data>
   <data name="mnuFactoryReset.Text" xml:space="preserve">
     <value>Factory reset</value>
   </data>
-  <data name="mnuLanguage.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Cascadia Code, 10pt</value>
+  <data name="mnuHelp.Size" type="System.Drawing.Size, System.Drawing">
+    <value>52, 33</value>
   </data>
-  <data name="mnuLanguage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>84, 22</value>
-  </data>
-  <data name="mnuLanguage.Text" xml:space="preserve">
-    <value>Language</value>
+  <data name="mnuHelp.Text" xml:space="preserve">
+    <value>Help</value>
   </data>
   <data name="mnuEnglish.Size" type="System.Drawing.Size, System.Drawing">
     <value>156, 22</value>
@@ -553,6 +517,42 @@
   <data name="mnuRussian.Text" xml:space="preserve">
     <value>Русский</value>
   </data>
+  <data name="mnuLanguage.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Cascadia Code, 10pt</value>
+  </data>
+  <data name="mnuLanguage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>84, 33</value>
+  </data>
+  <data name="mnuLanguage.Text" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="MenuStrip1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="MenuStrip1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>5, 1, 0, 1</value>
+  </data>
+  <data name="MenuStrip1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>984, 35</value>
+  </data>
+  <data name="MenuStrip1.TabIndex" type="System.Int32, mscorlib">
+    <value>27</value>
+  </data>
+  <data name="MenuStrip1.Text" xml:space="preserve">
+    <value>MenuStrip1</value>
+  </data>
+  <data name="&gt;&gt;MenuStrip1.Name" xml:space="preserve">
+    <value>MenuStrip1</value>
+  </data>
+  <data name="&gt;&gt;MenuStrip1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;MenuStrip1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;MenuStrip1.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
   <data name="mnuCheckUpdates.Size" type="System.Drawing.Size, System.Drawing">
     <value>32, 19</value>
   </data>
@@ -589,6 +589,27 @@
   <data name="&gt;&gt;rtbWarnings.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="rtbOutput.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="rtbOutput.Location" type="System.Drawing.Point, System.Drawing">
+    <value>291, 13</value>
+  </data>
+  <data name="rtbOutput.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="rtbOutput.Size" type="System.Drawing.Size, System.Drawing">
+    <value>676, 352</value>
+  </data>
+  <data name="rtbOutput.TabIndex" type="System.Int32, mscorlib">
+    <value>34</value>
+  </data>
+  <data name="rtbOutput.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="rtbOutput.WordWrap" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="&gt;&gt;rtbOutput.Name" xml:space="preserve">
     <value>rtbOutput</value>
   </data>
@@ -600,6 +621,129 @@
   </data>
   <data name="&gt;&gt;rtbOutput.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="cmbTimeInterval.Items" xml:space="preserve">
+    <value>Last 7 days</value>
+  </data>
+  <data name="cmbTimeInterval.Items1" xml:space="preserve">
+    <value>Last 30 days</value>
+  </data>
+  <data name="cmbTimeInterval.Items2" xml:space="preserve">
+    <value>Last  365 days</value>
+  </data>
+  <data name="cmbTimeInterval.Items3" xml:space="preserve">
+    <value>Current year</value>
+  </data>
+  <data name="cmbTimeInterval.Items4" xml:space="preserve">
+    <value>Last year</value>
+  </data>
+  <data name="cmbTimeInterval.Items5" xml:space="preserve">
+    <value>Custom range</value>
+  </data>
+  <data name="cmbTimeInterval.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 96</value>
+  </data>
+  <data name="cmbTimeInterval.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 2, 3, 2</value>
+  </data>
+  <data name="cmbTimeInterval.Size" type="System.Drawing.Size, System.Drawing">
+    <value>248, 25</value>
+  </data>
+  <data name="cmbTimeInterval.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;cmbTimeInterval.Name" xml:space="preserve">
+    <value>cmbTimeInterval</value>
+  </data>
+  <data name="&gt;&gt;cmbTimeInterval.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cmbTimeInterval.Parent" xml:space="preserve">
+    <value>gbPeriod</value>
+  </data>
+  <data name="&gt;&gt;cmbTimeInterval.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="dtpEndDate.CalendarFont" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI Semibold, 9pt, style=Bold</value>
+  </data>
+  <data name="dtpEndDate.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 9pt, style=Bold</value>
+  </data>
+  <data name="dtpEndDate.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 64</value>
+  </data>
+  <data name="dtpEndDate.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="dtpEndDate.Size" type="System.Drawing.Size, System.Drawing">
+    <value>248, 23</value>
+  </data>
+  <data name="dtpEndDate.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;dtpEndDate.Name" xml:space="preserve">
+    <value>dtpEndDate</value>
+  </data>
+  <data name="&gt;&gt;dtpEndDate.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DateTimePicker, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;dtpEndDate.Parent" xml:space="preserve">
+    <value>gbPeriod</value>
+  </data>
+  <data name="&gt;&gt;dtpEndDate.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="dtpStartDate.CalendarFont" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI Semibold, 9pt, style=Bold</value>
+  </data>
+  <data name="dtpStartDate.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 9pt, style=Bold</value>
+  </data>
+  <data name="dtpStartDate.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 32</value>
+  </data>
+  <data name="dtpStartDate.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="dtpStartDate.Size" type="System.Drawing.Size, System.Drawing">
+    <value>248, 23</value>
+  </data>
+  <data name="dtpStartDate.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;dtpStartDate.Name" xml:space="preserve">
+    <value>dtpStartDate</value>
+  </data>
+  <data name="&gt;&gt;dtpStartDate.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DateTimePicker, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;dtpStartDate.Parent" xml:space="preserve">
+    <value>gbPeriod</value>
+  </data>
+  <data name="&gt;&gt;dtpStartDate.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="gbPeriod.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Cascadia Code SemiBold, 10pt, style=Bold</value>
+  </data>
+  <data name="gbPeriod.Location" type="System.Drawing.Point, System.Drawing">
+    <value>19, 13</value>
+  </data>
+  <data name="gbPeriod.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gbPeriod.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gbPeriod.Size" type="System.Drawing.Size, System.Drawing">
+    <value>260, 137</value>
+  </data>
+  <data name="gbPeriod.TabIndex" type="System.Int32, mscorlib">
+    <value>33</value>
+  </data>
+  <data name="gbPeriod.Text" xml:space="preserve">
+    <value>Select period</value>
   </data>
   <data name="&gt;&gt;gbPeriod.Name" xml:space="preserve">
     <value>gbPeriod</value>
@@ -613,6 +757,33 @@
   <data name="&gt;&gt;gbPeriod.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="btnCharts.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Flat</value>
+  </data>
+  <data name="btnCharts.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Cascadia Code, 14pt, style=Bold</value>
+  </data>
+  <data name="btnCharts.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="btnCharts.Location" type="System.Drawing.Point, System.Drawing">
+    <value>19, 240</value>
+  </data>
+  <data name="btnCharts.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="btnCharts.Size" type="System.Drawing.Size, System.Drawing">
+    <value>260, 63</value>
+  </data>
+  <data name="btnCharts.TabIndex" type="System.Int32, mscorlib">
+    <value>32</value>
+  </data>
+  <data name="btnCharts.Text" xml:space="preserve">
+    <value>Show Charts</value>
+  </data>
+  <data name="btnCharts.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="&gt;&gt;btnCharts.Name" xml:space="preserve">
     <value>btnCharts</value>
   </data>
@@ -624,6 +795,30 @@
   </data>
   <data name="&gt;&gt;btnCharts.ZOrder" xml:space="preserve">
     <value>2</value>
+  </data>
+  <data name="btnReadGpxFiles.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Flat</value>
+  </data>
+  <data name="btnReadGpxFiles.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Cascadia Code, 12pt, style=Bold</value>
+  </data>
+  <data name="btnReadGpxFiles.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="btnReadGpxFiles.Location" type="System.Drawing.Point, System.Drawing">
+    <value>19, 160</value>
+  </data>
+  <data name="btnReadGpxFiles.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="btnReadGpxFiles.Size" type="System.Drawing.Size, System.Drawing">
+    <value>260, 72</value>
+  </data>
+  <data name="btnReadGpxFiles.TabIndex" type="System.Int32, mscorlib">
+    <value>31</value>
+  </data>
+  <data name="btnReadGpxFiles.Text" xml:space="preserve">
+    <value>Load data from gpx files for current category</value>
   </data>
   <data name="&gt;&gt;btnReadGpxFiles.Name" xml:space="preserve">
     <value>btnReadGpxFiles</value>
@@ -647,7 +842,7 @@
     <value>3, 2, 3, 2</value>
   </data>
   <data name="TabStats.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 472</value>
+    <value>976, 461</value>
   </data>
   <data name="TabStats.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -666,6 +861,51 @@
   </data>
   <data name="&gt;&gt;TabStats.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="clmFileName.Text" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="clmFileName.Width" type="System.Int32, mscorlib">
+    <value>300</value>
+  </data>
+  <data name="clmDate.Text" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="clmDate.Width" type="System.Int32, mscorlib">
+    <value>180</value>
+  </data>
+  <data name="clmLength.Text" xml:space="preserve">
+    <value>Length</value>
+  </data>
+  <data name="clmLength.Width" type="System.Int32, mscorlib">
+    <value>80</value>
+  </data>
+  <data name="clmAge.Text" xml:space="preserve">
+    <value>Age</value>
+  </data>
+  <data name="clmAge.Width" type="System.Int32, mscorlib">
+    <value>80</value>
+  </data>
+  <data name="clmTrkCount.Text" xml:space="preserve">
+    <value>Number of tracks</value>
+  </data>
+  <data name="clmTrkCount.Width" type="System.Int32, mscorlib">
+    <value>180</value>
+  </data>
+  <data name="lvGpxFiles.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="lvGpxFiles.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 2</value>
+  </data>
+  <data name="lvGpxFiles.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 2, 3, 2</value>
+  </data>
+  <data name="lvGpxFiles.Size" type="System.Drawing.Size, System.Drawing">
+    <value>970, 457</value>
+  </data>
+  <data name="lvGpxFiles.TabIndex" type="System.Int32, mscorlib">
+    <value>33</value>
   </data>
   <data name="&gt;&gt;lvGpxFiles.Name" xml:space="preserve">
     <value>lvGpxFiles</value>
@@ -689,7 +929,7 @@
     <value>3, 2, 3, 2</value>
   </data>
   <data name="TabVideoExport.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 472</value>
+    <value>976, 461</value>
   </data>
   <data name="TabVideoExport.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -815,7 +1055,7 @@
     <value>0, 0</value>
   </data>
   <data name="pnlForDgv.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 472</value>
+    <value>976, 461</value>
   </data>
   <data name="pnlForDgv.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -836,7 +1076,7 @@
     <value>4, 30</value>
   </data>
   <data name="TabCompetition.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 472</value>
+    <value>976, 461</value>
   </data>
   <data name="TabCompetition.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -860,13 +1100,13 @@
     <value>Fill</value>
   </data>
   <data name="TabControl1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 83</value>
+    <value>0, 94</value>
   </data>
   <data name="TabControl1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 2, 3, 2</value>
   </data>
   <data name="TabControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>984, 506</value>
+    <value>984, 495</value>
   </data>
   <data name="TabControl1.TabIndex" type="System.Int32, mscorlib">
     <value>32</value>
@@ -883,381 +1123,9 @@
   <data name="&gt;&gt;TabControl1.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="rtbOutput.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
-  </data>
-  <data name="rtbOutput.Location" type="System.Drawing.Point, System.Drawing">
-    <value>291, 13</value>
-  </data>
-  <data name="rtbOutput.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="rtbOutput.Size" type="System.Drawing.Size, System.Drawing">
-    <value>676, 363</value>
-  </data>
-  <data name="rtbOutput.TabIndex" type="System.Int32, mscorlib">
-    <value>34</value>
-  </data>
-  <data name="rtbOutput.Text" xml:space="preserve">
-    <value />
-  </data>
-  <data name="rtbOutput.WordWrap" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;rtbOutput.Name" xml:space="preserve">
-    <value>rtbOutput</value>
-  </data>
-  <data name="&gt;&gt;rtbOutput.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RichTextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;rtbOutput.Parent" xml:space="preserve">
-    <value>TabStats</value>
-  </data>
-  <data name="&gt;&gt;rtbOutput.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;cmbTimeInterval.Name" xml:space="preserve">
-    <value>cmbTimeInterval</value>
-  </data>
-  <data name="&gt;&gt;cmbTimeInterval.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;cmbTimeInterval.Parent" xml:space="preserve">
-    <value>gbPeriod</value>
-  </data>
-  <data name="&gt;&gt;cmbTimeInterval.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;dtpEndDate.Name" xml:space="preserve">
-    <value>dtpEndDate</value>
-  </data>
-  <data name="&gt;&gt;dtpEndDate.Type" xml:space="preserve">
-    <value>System.Windows.Forms.DateTimePicker, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;dtpEndDate.Parent" xml:space="preserve">
-    <value>gbPeriod</value>
-  </data>
-  <data name="&gt;&gt;dtpEndDate.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;dtpStartDate.Name" xml:space="preserve">
-    <value>dtpStartDate</value>
-  </data>
-  <data name="&gt;&gt;dtpStartDate.Type" xml:space="preserve">
-    <value>System.Windows.Forms.DateTimePicker, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;dtpStartDate.Parent" xml:space="preserve">
-    <value>gbPeriod</value>
-  </data>
-  <data name="&gt;&gt;dtpStartDate.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="gbPeriod.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Cascadia Code SemiBold, 10pt, style=Bold</value>
-  </data>
-  <data name="gbPeriod.Location" type="System.Drawing.Point, System.Drawing">
-    <value>19, 13</value>
-  </data>
-  <data name="gbPeriod.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="gbPeriod.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="gbPeriod.Size" type="System.Drawing.Size, System.Drawing">
-    <value>260, 137</value>
-  </data>
-  <data name="gbPeriod.TabIndex" type="System.Int32, mscorlib">
-    <value>33</value>
-  </data>
-  <data name="gbPeriod.Text" xml:space="preserve">
-    <value>Select period</value>
-  </data>
-  <data name="&gt;&gt;gbPeriod.Name" xml:space="preserve">
-    <value>gbPeriod</value>
-  </data>
-  <data name="&gt;&gt;gbPeriod.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;gbPeriod.Parent" xml:space="preserve">
-    <value>TabStats</value>
-  </data>
-  <data name="&gt;&gt;gbPeriod.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="cmbTimeInterval.Items" xml:space="preserve">
-    <value>Last 7 days</value>
-  </data>
-  <data name="cmbTimeInterval.Items1" xml:space="preserve">
-    <value>Last 30 days</value>
-  </data>
-  <data name="cmbTimeInterval.Items2" xml:space="preserve">
-    <value>Last  365 days</value>
-  </data>
-  <data name="cmbTimeInterval.Items3" xml:space="preserve">
-    <value>Current year</value>
-  </data>
-  <data name="cmbTimeInterval.Items4" xml:space="preserve">
-    <value>Last year</value>
-  </data>
-  <data name="cmbTimeInterval.Items5" xml:space="preserve">
-    <value>Custom range</value>
-  </data>
-  <data name="cmbTimeInterval.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 96</value>
-  </data>
-  <data name="cmbTimeInterval.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 2, 3, 2</value>
-  </data>
-  <data name="cmbTimeInterval.Size" type="System.Drawing.Size, System.Drawing">
-    <value>248, 25</value>
-  </data>
-  <data name="cmbTimeInterval.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
-  </data>
-  <data name="&gt;&gt;cmbTimeInterval.Name" xml:space="preserve">
-    <value>cmbTimeInterval</value>
-  </data>
-  <data name="&gt;&gt;cmbTimeInterval.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;cmbTimeInterval.Parent" xml:space="preserve">
-    <value>gbPeriod</value>
-  </data>
-  <data name="&gt;&gt;cmbTimeInterval.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="dtpEndDate.CalendarFont" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI Semibold, 9pt, style=Bold</value>
-  </data>
-  <data name="dtpEndDate.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 9pt, style=Bold</value>
-  </data>
-  <data name="dtpEndDate.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 64</value>
-  </data>
-  <data name="dtpEndDate.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="dtpEndDate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>248, 23</value>
-  </data>
-  <data name="dtpEndDate.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;dtpEndDate.Name" xml:space="preserve">
-    <value>dtpEndDate</value>
-  </data>
-  <data name="&gt;&gt;dtpEndDate.Type" xml:space="preserve">
-    <value>System.Windows.Forms.DateTimePicker, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;dtpEndDate.Parent" xml:space="preserve">
-    <value>gbPeriod</value>
-  </data>
-  <data name="&gt;&gt;dtpEndDate.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="dtpStartDate.CalendarFont" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI Semibold, 9pt, style=Bold</value>
-  </data>
-  <data name="dtpStartDate.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 9pt, style=Bold</value>
-  </data>
-  <data name="dtpStartDate.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 32</value>
-  </data>
-  <data name="dtpStartDate.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="dtpStartDate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>248, 23</value>
-  </data>
-  <data name="dtpStartDate.TabIndex" type="System.Int32, mscorlib">
-    <value>5</value>
-  </data>
-  <data name="&gt;&gt;dtpStartDate.Name" xml:space="preserve">
-    <value>dtpStartDate</value>
-  </data>
-  <data name="&gt;&gt;dtpStartDate.Type" xml:space="preserve">
-    <value>System.Windows.Forms.DateTimePicker, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;dtpStartDate.Parent" xml:space="preserve">
-    <value>gbPeriod</value>
-  </data>
-  <data name="&gt;&gt;dtpStartDate.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="btnCharts.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
-  <data name="btnCharts.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Cascadia Code, 14pt, style=Bold</value>
-  </data>
-  <data name="btnCharts.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="btnCharts.Location" type="System.Drawing.Point, System.Drawing">
-    <value>19, 240</value>
-  </data>
-  <data name="btnCharts.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="btnCharts.Size" type="System.Drawing.Size, System.Drawing">
-    <value>260, 63</value>
-  </data>
-  <data name="btnCharts.TabIndex" type="System.Int32, mscorlib">
-    <value>32</value>
-  </data>
-  <data name="btnCharts.Text" xml:space="preserve">
-    <value>Show Charts</value>
-  </data>
-  <data name="btnCharts.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;btnCharts.Name" xml:space="preserve">
-    <value>btnCharts</value>
-  </data>
-  <data name="&gt;&gt;btnCharts.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;btnCharts.Parent" xml:space="preserve">
-    <value>TabStats</value>
-  </data>
-  <data name="&gt;&gt;btnCharts.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="btnReadGpxFiles.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
-  <data name="btnReadGpxFiles.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Cascadia Code, 12pt, style=Bold</value>
-  </data>
-  <data name="btnReadGpxFiles.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="btnReadGpxFiles.Location" type="System.Drawing.Point, System.Drawing">
-    <value>19, 160</value>
-  </data>
-  <data name="btnReadGpxFiles.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="btnReadGpxFiles.Size" type="System.Drawing.Size, System.Drawing">
-    <value>260, 72</value>
-  </data>
-  <data name="btnReadGpxFiles.TabIndex" type="System.Int32, mscorlib">
-    <value>31</value>
-  </data>
-  <data name="btnReadGpxFiles.Text" xml:space="preserve">
-    <value>Load data from gpx files for current category</value>
-  </data>
-  <data name="&gt;&gt;btnReadGpxFiles.Name" xml:space="preserve">
-    <value>btnReadGpxFiles</value>
-  </data>
-  <data name="&gt;&gt;btnReadGpxFiles.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;btnReadGpxFiles.Parent" xml:space="preserve">
-    <value>TabStats</value>
-  </data>
-  <data name="&gt;&gt;btnReadGpxFiles.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="lvGpxFiles.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
-  </data>
-  <data name="lvGpxFiles.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 2</value>
-  </data>
-  <data name="lvGpxFiles.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 2, 3, 2</value>
-  </data>
-  <data name="lvGpxFiles.Size" type="System.Drawing.Size, System.Drawing">
-    <value>970, 468</value>
-  </data>
-  <data name="lvGpxFiles.TabIndex" type="System.Int32, mscorlib">
-    <value>33</value>
-  </data>
-  <data name="&gt;&gt;lvGpxFiles.Name" xml:space="preserve">
-    <value>lvGpxFiles</value>
-  </data>
-  <data name="&gt;&gt;lvGpxFiles.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ListView, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;lvGpxFiles.Parent" xml:space="preserve">
-    <value>TabVideoExport</value>
-  </data>
-  <data name="&gt;&gt;lvGpxFiles.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="clmFileName.Text" xml:space="preserve">
-    <value>File</value>
-  </data>
-  <data name="clmFileName.Width" type="System.Int32, mscorlib">
-    <value>300</value>
-  </data>
-  <data name="clmDate.Text" xml:space="preserve">
-    <value>Date</value>
-  </data>
-  <data name="clmDate.Width" type="System.Int32, mscorlib">
-    <value>180</value>
-  </data>
-  <data name="clmLength.Text" xml:space="preserve">
-    <value>Length</value>
-  </data>
-  <data name="clmLength.Width" type="System.Int32, mscorlib">
-    <value>80</value>
-  </data>
-  <data name="clmAge.Text" xml:space="preserve">
-    <value>Age</value>
-  </data>
-  <data name="clmAge.Width" type="System.Int32, mscorlib">
-    <value>80</value>
-  </data>
-  <data name="clmTrkCount.Text" xml:space="preserve">
-    <value>Number of tracks</value>
-  </data>
-  <data name="clmTrkCount.Width" type="System.Int32, mscorlib">
-    <value>180</value>
-  </data>
   <metadata name="bsCompetitions.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="&gt;&gt;cbActiveCategory.Name" xml:space="preserve">
-    <value>cbActiveCategory</value>
-  </data>
-  <data name="&gt;&gt;cbActiveCategory.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;cbActiveCategory.Parent" xml:space="preserve">
-    <value>pnlCategory</value>
-  </data>
-  <data name="&gt;&gt;cbActiveCategory.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="pnlCategory.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Top</value>
-  </data>
-  <data name="pnlCategory.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 24</value>
-  </data>
-  <data name="pnlCategory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>984, 59</value>
-  </data>
-  <data name="pnlCategory.TabIndex" type="System.Int32, mscorlib">
-    <value>35</value>
-  </data>
-  <data name="&gt;&gt;pnlCategory.Name" xml:space="preserve">
-    <value>pnlCategory</value>
-  </data>
-  <data name="&gt;&gt;pnlCategory.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;pnlCategory.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;pnlCategory.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
   <data name="cbActiveCategory.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
     <value>Flat</value>
   </data>
@@ -1284,6 +1152,30 @@
   </data>
   <data name="&gt;&gt;cbActiveCategory.ZOrder" xml:space="preserve">
     <value>1</value>
+  </data>
+  <data name="pnlCategory.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="pnlCategory.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 35</value>
+  </data>
+  <data name="pnlCategory.Size" type="System.Drawing.Size, System.Drawing">
+    <value>984, 59</value>
+  </data>
+  <data name="pnlCategory.TabIndex" type="System.Int32, mscorlib">
+    <value>35</value>
+  </data>
+  <data name="&gt;&gt;pnlCategory.Name" xml:space="preserve">
+    <value>pnlCategory</value>
+  </data>
+  <data name="&gt;&gt;pnlCategory.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pnlCategory.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;pnlCategory.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -1581,8 +1473,5 @@
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.Form, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="HelpToolStripMenuItem.Text" xml:space="preserve">
-    <value>Help</value>
   </data>
 </root>
