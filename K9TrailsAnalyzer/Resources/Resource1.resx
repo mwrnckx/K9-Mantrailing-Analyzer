@@ -299,4 +299,46 @@ If there are only two routes, it's pretty straightforward - the first is the sub
   <data name="points" xml:space="preserve">
     <value>points</value>
   </data>
+  <data name="hdr_DogName" xml:space="preserve">
+    <value>Dog</value>
+  </data>
+  <data name="hdr_HandlerName" xml:space="preserve">
+    <value>Handler</value>
+  </data>
+  <data name="hdr_Ranking" xml:space="preserve">
+    <value>Ranking</value>
+  </data>
+  <data name="hdr_TotalPoints" xml:space="preserve">
+    <value>Total Points</value>
+  </data>
+  <data name="hdr_RunnerFoundPoints" xml:space="preserve">
+    <value>Runner Found Points</value>
+  </data>
+  <data name="hdr_DogSpeedPoints" xml:space="preserve">
+    <value>Dog Speed Points</value>
+  </data>
+  <data name="hdr_DogAccuracyPoints" xml:space="preserve">
+    <value>Dog Accuracy Points</value>
+  </data>
+  <data name="hdr_DogReadingPoints" xml:space="preserve">
+    <value>Dog Reading Points</value>
+  </data>
+  <data name="hdr_TrailPickupPoints" xml:space="preserve">
+    <value>Trail Pickup Points</value>
+  </data>
+  <data name="hdr_AverageDeviation" xml:space="preserve">
+    <value>Average Deviation</value>
+  </data>
+  <data name="hdr_DogGrossSpeedKmh" xml:space="preserve">
+    <value>Dog Gross Speed kmh</value>
+  </data>
+  <data name="hdr_MaxTeamDistance" xml:space="preserve">
+    <value>Max Team Distance</value>
+  </data>
+  <data name="hdr_RunnerDistance" xml:space="preserve">
+    <value>Runner Distance</value>
+  </data>
+  <data name="hdr_TotalTime" xml:space="preserve">
+    <value>Total Time</value>
+  </data>
 </root>

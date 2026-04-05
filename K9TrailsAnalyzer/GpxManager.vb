@@ -3662,7 +3662,7 @@ Public Class GpxReader
                 namespaceManager.AddNamespace("opentracks", "http://opentracksapp.com/xmlschemas/v1")
                 namespaceManager.AddNamespace("gpxtpx", "http://www.garmin.com/xmlschemas/TrackPointExtension/v2")
                 namespaceManager.AddNamespace("gpxtrkx", "http://www.garmin.com/xmlschemas/TrackStatsExtension/v1")
-xmlns:          namespaceManager.AddNamespace("locus", "https://www.locusmap.app")
+                namespaceManager.AddNamespace("locus", "https://www.locusmap.app")
                 namespaceManager.AddNamespace(K9_PREFIX, K9_NAMESPACE_URI)
             Else
                 ' Soubor nemá výchozí namespace

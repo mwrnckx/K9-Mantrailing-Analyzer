@@ -64,6 +64,7 @@ Public Class OsmTileDownloader
                         Else
                             ' Stáhnout a uložit do cache
                             Dim s = subdomains(rand.Next(0, 3))
+                            'Dim url = $"https://tile.openstreetmap.org/{zoom}/{x}/{y}.png" 'nebo OSM standardní server
                             Dim url = $"https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{zoom}/{x}/{y}.png"
                             Debug.WriteLine($"Stahuji: {url}")
                             tileData = Await client.GetByteArrayAsync(url)

@@ -25,7 +25,7 @@ Namespace My.Resources
     <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0"),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute()>  _
-    Friend Class Resource1
+    Public Class Resource1
         
         Private Shared resourceMan As Global.System.Resources.ResourceManager
         
@@ -40,7 +40,7 @@ Namespace My.Resources
         '''  Vrací instanci ResourceManager uloženou v mezipaměti použitou touto třídou.
         '''</summary>
         <Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>  _
-        Friend Shared ReadOnly Property ResourceManager() As Global.System.Resources.ResourceManager
+        Public Shared ReadOnly Property ResourceManager() As Global.System.Resources.ResourceManager
             Get
                 If Object.ReferenceEquals(resourceMan, Nothing) Then
                     Dim temp As Global.System.Resources.ResourceManager = New Global.System.Resources.ResourceManager("GPXTrailAnalyzer.Resource1", GetType(Resource1).Assembly)
@@ -55,7 +55,7 @@ Namespace My.Resources
         '''  vyhledání prostředků pomocí třídy prostředků se silnými typy.
         '''</summary>
         <Global.System.ComponentModel.EditorBrowsableAttribute(Global.System.ComponentModel.EditorBrowsableState.Advanced)>  _
-        Friend Shared Property Culture() As Global.System.Globalization.CultureInfo
+        Public Shared Property Culture() As Global.System.Globalization.CultureInfo
             Get
                 Return resourceCulture
             End Get
@@ -67,7 +67,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Checkpoint.
         '''</summary>
-        Friend Shared ReadOnly Property article() As String
+        Public Shared ReadOnly Property article() As String
             Get
                 Return ResourceManager.GetString("article", resourceCulture)
             End Get
@@ -76,7 +76,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Remember the &apos;No&apos; decision for this couple.
         '''</summary>
-        Friend Shared ReadOnly Property chbRemembDecisQ() As String
+        Public Shared ReadOnly Property chbRemembDecisQ() As String
             Get
                 Return ResourceManager.GetString("chbRemembDecisQ", resourceCulture)
             End Get
@@ -85,7 +85,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Crossing trail.
         '''</summary>
-        Friend Shared ReadOnly Property CrossingTrail() As String
+        Public Shared ReadOnly Property CrossingTrail() As String
             Get
                 Return ResourceManager.GetString("CrossingTrail", resourceCulture)
             End Get
@@ -99,7 +99,7 @@ Namespace My.Resources
         '''-&gt; other persons crossing.
         '''If there are only two routes, it&apos;s pretty straightforward - the first is the subject trail, the second is the dog route. But if there is only one track or more than two you have to decide..
         '''</summary>
-        Friend Shared ReadOnly Property CrossTrail_IntroText() As String
+        Public Shared ReadOnly Property CrossTrail_IntroText() As String
             Get
                 Return ResourceManager.GetString("CrossTrail_IntroText", resourceCulture)
             End Get
@@ -108,16 +108,142 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Dog.
         '''</summary>
-        Friend Shared ReadOnly Property dogTrack() As String
+        Public Shared ReadOnly Property dogTrack() As String
             Get
                 Return ResourceManager.GetString("dogTrack", resourceCulture)
             End Get
         End Property
         
         '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Average Deviation.
+        '''</summary>
+        Public Shared ReadOnly Property hdr_AverageDeviation() As String
+            Get
+                Return ResourceManager.GetString("hdr_AverageDeviation", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Dog Accuracy Points.
+        '''</summary>
+        Public Shared ReadOnly Property hdr_DogAccuracyPoints() As String
+            Get
+                Return ResourceManager.GetString("hdr_DogAccuracyPoints", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Dog Gross Speed kmh.
+        '''</summary>
+        Public Shared ReadOnly Property hdr_DogGrossSpeedKmh() As String
+            Get
+                Return ResourceManager.GetString("hdr_DogGrossSpeedKmh", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Dog.
+        '''</summary>
+        Public Shared ReadOnly Property hdr_DogName() As String
+            Get
+                Return ResourceManager.GetString("hdr_DogName", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Dog Reading Points.
+        '''</summary>
+        Public Shared ReadOnly Property hdr_DogReadingPoints() As String
+            Get
+                Return ResourceManager.GetString("hdr_DogReadingPoints", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Dog Speed Points.
+        '''</summary>
+        Public Shared ReadOnly Property hdr_DogSpeedPoints() As String
+            Get
+                Return ResourceManager.GetString("hdr_DogSpeedPoints", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Handler.
+        '''</summary>
+        Public Shared ReadOnly Property hdr_HandlerName() As String
+            Get
+                Return ResourceManager.GetString("hdr_HandlerName", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Max Team Distance.
+        '''</summary>
+        Public Shared ReadOnly Property hdr_MaxTeamDistance() As String
+            Get
+                Return ResourceManager.GetString("hdr_MaxTeamDistance", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Ranking.
+        '''</summary>
+        Public Shared ReadOnly Property hdr_Ranking() As String
+            Get
+                Return ResourceManager.GetString("hdr_Ranking", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Runner Distance.
+        '''</summary>
+        Public Shared ReadOnly Property hdr_RunnerDistance() As String
+            Get
+                Return ResourceManager.GetString("hdr_RunnerDistance", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Runner Found Points.
+        '''</summary>
+        Public Shared ReadOnly Property hdr_RunnerFoundPoints() As String
+            Get
+                Return ResourceManager.GetString("hdr_RunnerFoundPoints", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Total Points.
+        '''</summary>
+        Public Shared ReadOnly Property hdr_TotalPoints() As String
+            Get
+                Return ResourceManager.GetString("hdr_TotalPoints", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Total Time.
+        '''</summary>
+        Public Shared ReadOnly Property hdr_TotalTime() As String
+            Get
+                Return ResourceManager.GetString("hdr_TotalTime", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Trail Pickup Points.
+        '''</summary>
+        Public Shared ReadOnly Property hdr_TrailPickupPoints() As String
+            Get
+                Return ResourceManager.GetString("hdr_TrailPickupPoints", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný From: .
         '''</summary>
-        Friend Shared ReadOnly Property lblFrom() As String
+        Public Shared ReadOnly Property lblFrom() As String
             Get
                 Return ResourceManager.GetString("lblFrom", resourceCulture)
             End Get
@@ -126,7 +252,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný First file.
         '''</summary>
-        Friend Shared ReadOnly Property lblIsThisRunnerQ() As String
+        Public Shared ReadOnly Property lblIsThisRunnerQ() As String
             Get
                 Return ResourceManager.GetString("lblIsThisRunnerQ", resourceCulture)
             End Get
@@ -135,7 +261,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Second file.
         '''</summary>
-        Friend Shared ReadOnly Property lblIsThisTrackOfTheDog() As String
+        Public Shared ReadOnly Property lblIsThisTrackOfTheDog() As String
             Get
                 Return ResourceManager.GetString("lblIsThisTrackOfTheDog", resourceCulture)
             End Get
@@ -144,7 +270,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Merge GPX files?.
         '''</summary>
-        Friend Shared ReadOnly Property lblMergeGPXtracksQ() As String
+        Public Shared ReadOnly Property lblMergeGPXtracksQ() As String
             Get
                 Return ResourceManager.GetString("lblMergeGPXtracksQ", resourceCulture)
             End Get
@@ -153,7 +279,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Decide whether these two files are related as the track-Runner and dog track..
         '''</summary>
-        Friend Shared ReadOnly Property lblMergeTwoToOneQ() As String
+        Public Shared ReadOnly Property lblMergeTwoToOneQ() As String
             Get
                 Return ResourceManager.GetString("lblMergeTwoToOneQ", resourceCulture)
             End Get
@@ -162,7 +288,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný By merging them, you will get a single gpx file that contains the tracks of both the Runner and the dog..
         '''</summary>
-        Friend Shared ReadOnly Property lblMergingYouGet() As String
+        Public Shared ReadOnly Property lblMergingYouGet() As String
             Get
                 Return ResourceManager.GetString("lblMergingYouGet", resourceCulture)
             End Get
@@ -171,7 +297,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný To: .
         '''</summary>
-        Friend Shared ReadOnly Property lblTo() As String
+        Public Shared ReadOnly Property lblTo() As String
             Get
                 Return ResourceManager.GetString("lblTo", resourceCulture)
             End Get
@@ -180,7 +306,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný The gpx files were successfully backed up to the directory:.
         '''</summary>
-        Friend Shared ReadOnly Property logBackupOfFiles() As String
+        Public Shared ReadOnly Property logBackupOfFiles() As String
             Get
                 Return ResourceManager.GetString("logBackupOfFiles", resourceCulture)
             End Get
@@ -189,7 +315,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný The backup directory is the same as the main directory - it can&apos;t be!.
         '''</summary>
-        Friend Shared ReadOnly Property mBoxBackupDirectorySameAsGpxDirectory() As String
+        Public Shared ReadOnly Property mBoxBackupDirectorySameAsGpxDirectory() As String
             Get
                 Return ResourceManager.GetString("mBoxBackupDirectorySameAsGpxDirectory", resourceCulture)
             End Get
@@ -198,7 +324,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Could not find any gpx file in the time interval selected!.
         '''</summary>
-        Friend Shared ReadOnly Property mBoxDataRetrievalFailed() As String
+        Public Shared ReadOnly Property mBoxDataRetrievalFailed() As String
             Get
                 Return ResourceManager.GetString("mBoxDataRetrievalFailed", resourceCulture)
             End Get
@@ -207,7 +333,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Error Creating CSV.
         '''</summary>
-        Friend Shared ReadOnly Property mBoxErrorCreatingCSV() As String
+        Public Shared ReadOnly Property mBoxErrorCreatingCSV() As String
             Get
                 Return ResourceManager.GetString("mBoxErrorCreatingCSV", resourceCulture)
             End Get
@@ -216,7 +342,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Set conditions for merging tracks.
         '''</summary>
-        Friend Shared ReadOnly Property mBoxMergingTracksText() As String
+        Public Shared ReadOnly Property mBoxMergingTracksText() As String
             Get
                 Return ResourceManager.GetString("mBoxMergingTracksText", resourceCulture)
             End Get
@@ -225,7 +351,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný In order to save data read from gpx files, you must first load the gpx files. Use the button on the form..
         '''</summary>
-        Friend Shared ReadOnly Property mBoxMissingData() As String
+        Public Shared ReadOnly Property mBoxMissingData() As String
             Get
                 Return ResourceManager.GetString("mBoxMissingData", resourceCulture)
             End Get
@@ -234,7 +360,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný No gpx file was found.
         '''</summary>
-        Friend Shared ReadOnly Property mBoxNo_gpx_file_was_found() As String
+        Public Shared ReadOnly Property mBoxNo_gpx_file_was_found() As String
             Get
                 Return ResourceManager.GetString("mBoxNo_gpx_file_was_found", resourceCulture)
             End Get
@@ -243,7 +369,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Age.
         '''</summary>
-        Friend Shared ReadOnly Property outAge() As String
+        Public Shared ReadOnly Property outAge() As String
             Get
                 Return ResourceManager.GetString("outAge", resourceCulture)
             End Get
@@ -252,7 +378,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Processed all gpx files from the directory: .
         '''</summary>
-        Friend Shared ReadOnly Property outAll_gpx_files_from_directory() As String
+        Public Shared ReadOnly Property outAll_gpx_files_from_directory() As String
             Get
                 Return ResourceManager.GetString("outAll_gpx_files_from_directory", resourceCulture)
             End Get
@@ -261,7 +387,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Average age of trails.
         '''</summary>
-        Friend Shared ReadOnly Property outAverageAge() As String
+        Public Shared ReadOnly Property outAverageAge() As String
             Get
                 Return ResourceManager.GetString("outAverageAge", resourceCulture)
             End Get
@@ -270,7 +396,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Average effective length of trails.
         '''</summary>
-        Friend Shared ReadOnly Property outAverageDistance() As String
+        Public Shared ReadOnly Property outAverageDistance() As String
             Get
                 Return ResourceManager.GetString("outAverageDistance", resourceCulture)
             End Get
@@ -279,7 +405,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Average net speed of dog.
         '''</summary>
-        Friend Shared ReadOnly Property outAverageSpeed() As String
+        Public Shared ReadOnly Property outAverageSpeed() As String
             Get
                 Return ResourceManager.GetString("outAverageSpeed", resourceCulture)
             End Get
@@ -288,7 +414,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Description.
         '''</summary>
-        Friend Shared ReadOnly Property outDescription() As String
+        Public Shared ReadOnly Property outDescription() As String
             Get
                 Return ResourceManager.GetString("outDescription", resourceCulture)
             End Get
@@ -297,7 +423,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný   to .
         '''</summary>
-        Friend Shared ReadOnly Property outDo() As String
+        Public Shared ReadOnly Property outDo() As String
             Get
                 Return ResourceManager.GetString("outDo", resourceCulture)
             End Get
@@ -306,7 +432,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný GPX file name.
         '''</summary>
-        Friend Shared ReadOnly Property outgpxFileName() As String
+        Public Shared ReadOnly Property outgpxFileName() As String
             Get
                 Return ResourceManager.GetString("outgpxFileName", resourceCulture)
             End Get
@@ -315,7 +441,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Length.
         '''</summary>
-        Friend Shared ReadOnly Property outLength() As String
+        Public Shared ReadOnly Property outLength() As String
             Get
                 Return ResourceManager.GetString("outLength", resourceCulture)
             End Get
@@ -324,7 +450,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Processed period: from  .
         '''</summary>
-        Friend Shared ReadOnly Property outProcessed_period_from() As String
+        Public Shared ReadOnly Property outProcessed_period_from() As String
             Get
                 Return ResourceManager.GetString("outProcessed_period_from", resourceCulture)
             End Get
@@ -333,7 +459,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Speed.
         '''</summary>
-        Friend Shared ReadOnly Property outSpeed() As String
+        Public Shared ReadOnly Property outSpeed() As String
             Get
                 Return ResourceManager.GetString("outSpeed", resourceCulture)
             End Get
@@ -342,7 +468,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Total Effective Length of all trails.
         '''</summary>
-        Friend Shared ReadOnly Property outTotalLength() As String
+        Public Shared ReadOnly Property outTotalLength() As String
             Get
                 Return ResourceManager.GetString("outTotalLength", resourceCulture)
             End Get
@@ -351,7 +477,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Total number of track/trails.
         '''</summary>
-        Friend Shared ReadOnly Property outTotalNumberOfGPXFiles() As String
+        Public Shared ReadOnly Property outTotalNumberOfGPXFiles() As String
             Get
                 Return ResourceManager.GetString("outTotalNumberOfGPXFiles", resourceCulture)
             End Get
@@ -360,7 +486,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný points.
         '''</summary>
-        Friend Shared ReadOnly Property points() As String
+        Public Shared ReadOnly Property points() As String
             Get
                 Return ResourceManager.GetString("points", resourceCulture)
             End Get
@@ -369,7 +495,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Next time ask again.
         '''</summary>
-        Friend Shared ReadOnly Property rbAskAgein() As String
+        Public Shared ReadOnly Property rbAskAgein() As String
             Get
                 Return ResourceManager.GetString("rbAskAgein", resourceCulture)
             End Get
@@ -378,7 +504,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný For the other pairs, don&apos;t ask any more  and don&apos;t merge..
         '''</summary>
-        Friend Shared ReadOnly Property rbDontAskDontMerge() As String
+        Public Shared ReadOnly Property rbDontAskDontMerge() As String
             Get
                 Return ResourceManager.GetString("rbDontAskDontMerge", resourceCulture)
             End Get
@@ -387,7 +513,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný For the other pairs, don&apos;t ask any more  and join straight away (carefully!).
         '''</summary>
-        Friend Shared ReadOnly Property rbDontAskMergeQ() As String
+        Public Shared ReadOnly Property rbDontAskMergeQ() As String
             Get
                 Return ResourceManager.GetString("rbDontAskMergeQ", resourceCulture)
             End Get
@@ -396,7 +522,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Runner.
         '''</summary>
-        Friend Shared ReadOnly Property RunnerTrail() As String
+        Public Shared ReadOnly Property RunnerTrail() As String
             Get
                 Return ResourceManager.GetString("RunnerTrail", resourceCulture)
             End Get
@@ -405,7 +531,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný This is the end of the period within which the trails are to be processed..
         '''</summary>
-        Friend Shared ReadOnly Property Tooltip_dtpEnd() As String
+        Public Shared ReadOnly Property Tooltip_dtpEnd() As String
             Get
                 Return ResourceManager.GetString("Tooltip_dtpEnd", resourceCulture)
             End Get
@@ -414,7 +540,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný This is the beginning of the period within which the trails are to be processed..
         '''</summary>
-        Friend Shared ReadOnly Property Tooltip_dtpStart() As String
+        Public Shared ReadOnly Property Tooltip_dtpStart() As String
             Get
                 Return ResourceManager.GetString("Tooltip_dtpStart", resourceCulture)
             End Get
@@ -423,7 +549,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Export as file  (rtf, txt, csv).
         '''</summary>
-        Friend Shared ReadOnly Property Tooltip_ExportAs() As String
+        Public Shared ReadOnly Property Tooltip_ExportAs() As String
             Get
                 Return ResourceManager.GetString("Tooltip_ExportAs", resourceCulture)
             End Get
@@ -432,7 +558,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Directory for backing up gpx files before processing.
         '''</summary>
-        Friend Shared ReadOnly Property Tooltip_mnuBackupDirectory() As String
+        Public Shared ReadOnly Property Tooltip_mnuBackupDirectory() As String
             Get
                 Return ResourceManager.GetString("Tooltip_mnuBackupDirectory", resourceCulture)
             End Get
@@ -441,7 +567,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Navigate to the directory containing the GPX files you wish to process..
         '''</summary>
-        Friend Shared ReadOnly Property Tooltip_mnuDirectory() As String
+        Public Shared ReadOnly Property Tooltip_mnuDirectory() As String
             Get
                 Return ResourceManager.GetString("Tooltip_mnuDirectory", resourceCulture)
             End Get
@@ -450,7 +576,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Set the maximum time difference (in hours) between two track records that should be considered related and merged into one gpx file as a track of the Runner and a track of the dog. The value therefore indicates the maximum age of the trail you are using. A value of 0 disables automatic merging..
         '''</summary>
-        Friend Shared ReadOnly Property Tooltip_mnuMergingTracks() As String
+        Public Shared ReadOnly Property Tooltip_mnuMergingTracks() As String
             Get
                 Return ResourceManager.GetString("Tooltip_mnuMergingTracks", resourceCulture)
             End Get
@@ -459,7 +585,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Prepend date to file names during processing. Useful for sorting files etc..
         '''</summary>
-        Friend Shared ReadOnly Property Tooltip_mnuPrependDate() As String
+        Public Shared ReadOnly Property Tooltip_mnuPrependDate() As String
             Get
                 Return ResourceManager.GetString("Tooltip_mnuPrependDate", resourceCulture)
             End Get
@@ -468,7 +594,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný At the start of the trail, before you set off, and at the end, before you stop recording, \nthe GPS device often captures inaccurate or erroneous data. \nIf this option is enabled, the program will attempt to automatically remove these inaccuracies..
         '''</summary>
-        Friend Shared ReadOnly Property Tooltip_mnuTrim() As String
+        Public Shared ReadOnly Property Tooltip_mnuTrim() As String
             Get
                 Return ResourceManager.GetString("Tooltip_mnuTrim", resourceCulture)
             End Get
@@ -477,7 +603,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Edit the comments to the training sesion. These comments will be saved in the GPX file and displayed in applications such as gpxsee.org and overlay videos. If you are writing the comments in your GPS app, add &apos;g:&apos; before the description of the goal, &apos;t:&apos; before the description of the trail and &apos;d:&apos; before the description of the team work. You can write an English translation in the second row if you wish..
         '''</summary>
-        Friend Shared ReadOnly Property txtEditDescLabel() As String
+        Public Shared ReadOnly Property txtEditDescLabel() As String
             Get
                 Return ResourceManager.GetString("txtEditDescLabel", resourceCulture)
             End Get
@@ -486,7 +612,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Training goal.
         '''</summary>
-        Friend Shared ReadOnly Property txtGoalLabel() As String
+        Public Shared ReadOnly Property txtGoalLabel() As String
             Get
                 Return ResourceManager.GetString("txtGoalLabel", resourceCulture)
             End Get
@@ -495,7 +621,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný K9 Team Performance.
         '''</summary>
-        Friend Shared ReadOnly Property txtperformanceLabel() As String
+        Public Shared ReadOnly Property txtperformanceLabel() As String
             Get
                 Return ResourceManager.GetString("txtperformanceLabel", resourceCulture)
             End Get
@@ -504,7 +630,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný runner.
         '''</summary>
-        Friend Shared ReadOnly Property txtRunner() As String
+        Public Shared ReadOnly Property txtRunner() As String
             Get
                 Return ResourceManager.GetString("txtRunner", resourceCulture)
             End Get
@@ -513,7 +639,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Trail.
         '''</summary>
-        Friend Shared ReadOnly Property txtTrailLabel() As String
+        Public Shared ReadOnly Property txtTrailLabel() As String
             Get
                 Return ResourceManager.GetString("txtTrailLabel", resourceCulture)
             End Get
@@ -522,7 +648,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Unknown.
         '''</summary>
-        Friend Shared ReadOnly Property txtUnknown() As String
+        Public Shared ReadOnly Property txtUnknown() As String
             Get
                 Return ResourceManager.GetString("txtUnknown", resourceCulture)
             End Get
@@ -531,7 +657,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Date  .
         '''</summary>
-        Friend Shared ReadOnly Property X_AxisLabel() As String
+        Public Shared ReadOnly Property X_AxisLabel() As String
             Get
                 Return ResourceManager.GetString("X_AxisLabel", resourceCulture)
             End Get
@@ -540,7 +666,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Age of trails (hours).
         '''</summary>
-        Friend Shared ReadOnly Property Y_AxisLabelAge() As String
+        Public Shared ReadOnly Property Y_AxisLabelAge() As String
             Get
                 Return ResourceManager.GetString("Y-AxisLabelAge", resourceCulture)
             End Get
@@ -549,7 +675,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Dog deviation (m).
         '''</summary>
-        Friend Shared ReadOnly Property Y_AxisLabelDeviation() As String
+        Public Shared ReadOnly Property Y_AxisLabelDeviation() As String
             Get
                 Return ResourceManager.GetString("Y-AxisLabelDeviation", resourceCulture)
             End Get
@@ -558,7 +684,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Length of trails (km).
         '''</summary>
-        Friend Shared ReadOnly Property Y_AxisLabelLength() As String
+        Public Shared ReadOnly Property Y_AxisLabelLength() As String
             Get
                 Return ResourceManager.GetString("Y-AxisLabelLength", resourceCulture)
             End Get
@@ -567,7 +693,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Weighted trail length (km).
         '''</summary>
-        Friend Shared ReadOnly Property Y_AxisLabelLengthAge() As String
+        Public Shared ReadOnly Property Y_AxisLabelLengthAge() As String
             Get
                 Return ResourceManager.GetString("Y-AxisLabelLengthAge", resourceCulture)
             End Get
@@ -576,7 +702,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Sniffed per month (km).
         '''</summary>
-        Friend Shared ReadOnly Property Y_AxisLabelMonthly() As String
+        Public Shared ReadOnly Property Y_AxisLabelMonthly() As String
             Get
                 Return ResourceManager.GetString("Y-AxisLabelMonthly", resourceCulture)
             End Get
@@ -585,7 +711,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Speed of the dog on the trails (km/h).
         '''</summary>
-        Friend Shared ReadOnly Property Y_AxisLabelSpeed() As String
+        Public Shared ReadOnly Property Y_AxisLabelSpeed() As String
             Get
                 Return ResourceManager.GetString("Y-AxisLabelSpeed", resourceCulture)
             End Get
@@ -594,7 +720,7 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Sniffed Kilometers .
         '''</summary>
-        Friend Shared ReadOnly Property Y_AxisLabelTotalLength() As String
+        Public Shared ReadOnly Property Y_AxisLabelTotalLength() As String
             Get
                 Return ResourceManager.GetString("Y-AxisLabelTotalLength", resourceCulture)
             End Get

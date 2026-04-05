@@ -291,11 +291,35 @@ Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče
   <data name="article" xml:space="preserve">
     <value>Checkpoint</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="points" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
   <data name="points" xml:space="preserve">
     <value>bodů</value>
+  </data>
+  <data name="hdr_DogName" xml:space="preserve">
+    <value>Pes</value>
+  </data>
+  <data name="hdr_HandlerName" xml:space="preserve">
+    <value>Psovod</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="hdr_Ranking" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="hdr_TotalPoints" xml:space="preserve">
+    <value>Celkový počet bodů</value>
+  </data>
+  <data name="hdr_DogAccuracyPoints" xml:space="preserve">
+    <value>Body přesnosti psa</value>
+  </data>
+  <data name="hdr_DogReadingPoints" xml:space="preserve">
+    <value>Body čtení psů</value>
+  </data>
+  <data name="hdr_AverageDeviation" xml:space="preserve">
+    <value>Průměrná odchylka</value>
+  </data>
+  <data name="hdr_DogGrossSpeedKmh" xml:space="preserve">
+    <value>Pes Hrubá rychlost kmh</value>
+  </data>
+  <data name="hdr_TotalTime" xml:space="preserve">
+    <value>Celkový čas</value>
   </data>
 </root>

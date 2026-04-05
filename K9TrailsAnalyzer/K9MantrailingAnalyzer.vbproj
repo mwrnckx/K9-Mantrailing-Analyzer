@@ -492,7 +492,7 @@
   <ItemGroup>
     <!-- Hlavní resx soubor, který generuje Resource1.Designer.vb -->
     <EmbeddedResource Update="Resources\Resource1.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <LastGenOutput>Resource1.Designer.vb</LastGenOutput>
     </EmbeddedResource>

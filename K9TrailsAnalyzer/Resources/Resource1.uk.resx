@@ -290,11 +290,31 @@
   <data name="article" xml:space="preserve">
     <value>контрольна точка</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="points" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
   <data name="points" xml:space="preserve">
     <value>балів</value>
+  </data>
+  <data name="hdr_AverageDeviation" xml:space="preserve">
+    <value>Середнє відхилення</value>
+  </data>
+  <data name="hdr_DogAccuracyPoints" xml:space="preserve">
+    <value>Очки точності собак</value>
+  </data>
+  <data name="hdr_DogGrossSpeedKmh" xml:space="preserve">
+    <value>Велика швидкість собаки, км/год</value>
+  </data>
+  <data name="hdr_DogReadingPoints" xml:space="preserve">
+    <value>Пункти читання собак</value>
+  </data>
+  <data name="hdr_RunnerDistance" xml:space="preserve">
+    <value>Дистанція бігуна</value>
+  </data>
+  <data name="hdr_TotalPoints" xml:space="preserve">
+    <value>Загальна кількість балів</value>
+  </data>
+  <data name="hdr_TotalTime" xml:space="preserve">
+    <value>Загальний час</value>
+  </data>
+  <data name="hdr_TrailPickupPoints" xml:space="preserve">
+    <value>Пункти підбору маршруту</value>
   </data>
 </root>

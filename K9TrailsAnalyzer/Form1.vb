@@ -280,17 +280,18 @@ Partial Public Class Form1
 
         ' Krok 3: Projít sloupce, lokalizovat, vynutit zalomení a nastavit Autosize
         For Each column As DataGridViewColumn In dgvCompetition.Columns
-            'If column.Name = "IsSelected" Then
-            '    dgvCompetition.Columns("IsSelected").DisplayIndex = 0
-            '    dgvCompetition.Columns("IsSelected").HeaderText = ""
-            '    dgvCompetition.Columns("IsSelected").Width = 20
-            '    Continue For
-            'End If
-            ' Příklad získání lokalizovaného textu 
-            Dim propertyName As String = column.DataPropertyName
-            Dim resourceKey As String = "Header_" & propertyName
-            Dim localizedText As String = My.Resources.ResourceManager.GetString(resourceKey, My.Resources.Culture)
 
+            ' získání lokalizovaného textu 
+            Dim propertyName As String = column.DataPropertyName
+            Dim resourceKey As String = "hdr_" & propertyName
+            'Dim localizedText As String = My.Resources.Resource1.hdr_DogName 'My.Resources.ResourceManager.GetString(resourceKey, Resource1.Culture)
+            ' Načtení textu pomocí stringového klíče
+            Dim localizedText As String = My.Resources.Resource1.ResourceManager.GetString(resourceKey)
+
+            ' Kontrola, zda klíč existuje (GetString vrátí Nothing, pokud klíč nenajde)
+            If String.IsNullOrEmpty(localizedText) Then
+                localizedText = column.HeaderText ' Záložní řešení, když překlad chybí
+            End If
             ' ZAJIŠTĚNÍ JEDNOTNÉ FORMÁTU HLAVIČKY:
             If Not String.IsNullOrEmpty(localizedText) Then
                 ' 1. Aplikovat zalomení: "Successful Find Points" -> "Runner" & vbCrLf & "Found" & vbCrLf & "Points"
@@ -304,7 +305,7 @@ Partial Public Class Form1
             ' Tímto zajistíte, že se sloupec přizpůsobí pouze nejdelšímu slovu.
             column.Width = 10
             column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
-
+            column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
             column.DefaultCellStyle.Font = New Font("Cascadia Code", 12.0F, FontStyle.Regular, GraphicsUnit.Point, 238)
             column.HeaderCell.Style.ForeColor = Color.Black
         Next
