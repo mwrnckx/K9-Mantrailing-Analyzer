@@ -96,17 +96,21 @@ Namespace TrackVideoExporter
             Dim tracksAsGeoPoints As List(Of TrackAsGeoPoints) = converter.ConvertTracksTrkPtsToGeoPoints(_tracksAsTrkPts)
 
             'vyhlazení GPS šumu!!!
-            For Each _track In tracksAsGeoPoints
+            Dim purifiedTracksAsGeoPoints As New List(Of TrackAsGeoPoints)
+            For Each _track As TrackAsGeoPoints In tracksAsGeoPoints
 
                 If _track.TrackGeoPoints.Count > 30 Then ' vyhlazují se jen delší trasy 
                     Dim purifiedTrack As TrackAsGeoPoints
                     purifiedTrack = TrackConverter.PurifyTrackAsGeoPoints(_track, 10) ' Filtr pro maximální rychlost 10 km/h
-                    _track = purifiedTrack
+                    '_track = purifiedTrack
+                    purifiedTracksAsGeoPoints.Add(purifiedTrack)
                 End If
+
             Next
+
             'Dim maxDevPointsAsGeoPoints As TrackAsGeoPoints = converter.ConvertTrackTrkPtsToGeoPoints(maxDeviation)
             Me.LocalisedReports = LocalisedReports
-            Return Await CreateVideoFromGeoPoints(tracksAsGeoPoints, maxDevPointsAsGeoPoints, wayPointsAsGeoPoints, lastConfirmedIndex)
+            Return Await CreateVideoFromGeoPoints(purifiedTracksAsGeoPoints, maxDevPointsAsGeoPoints, wayPointsAsGeoPoints, lastConfirmedIndex)
         End Function
 
         ''' <summary>

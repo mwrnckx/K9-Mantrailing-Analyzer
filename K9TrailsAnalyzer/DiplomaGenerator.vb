@@ -1,7 +1,9 @@
 ﻿Imports System.IO
-Imports DocumentFormat.OpenXml
+'Imports DocumentFormat.OpenXml
 Imports DocumentFormat.OpenXml.Packaging
-Imports DocumentFormat.OpenXml.Wordprocessing
+
+' Aliasy zabraňují konfliktu s System.Drawing.Color, Font, Table atd.
+Imports OXW = DocumentFormat.OpenXml.Wordprocessing
 Imports A = DocumentFormat.OpenXml.Drawing
 Imports DW = DocumentFormat.OpenXml.Drawing.Wordprocessing
 Imports PIC = DocumentFormat.OpenXml.Drawing.Pictures
@@ -15,15 +17,6 @@ Public Class DiplomaGenerator
     ''' <summary>
     ''' Main entry point — call this from your button/menu handler.
     ''' </summary>
-    ''' <param name="category">Category name, e.g. "Advanced"</param>
-    ''' <param name="dogName">Name of the dog</param>
-    ''' <param name="handlerName">Name of the handler</param>
-    ''' <param name="totalScore">Total score (points)</param>
-    ''' <param name="bonusScore">Bonus points total</param>
-    ''' <param name="eventDate">Date of the event</param>
-    ''' <param name="placement">Placement, e.g. 1</param>
-    ''' <param name="workingDirectory">Base working directory of the application (for logo lookup)</param>
-    ''' <param name="language">Language code: "cs" for Czech, "en" for English</param>
     Public Shared Sub GenerateDiploma(
             category As String,
             dogName As String,
@@ -35,16 +28,23 @@ Public Class DiplomaGenerator
             workingDirectory As String,
             language As String)
 
-        ' --- Save dialog ---
+        If language <> "cs" AndAlso language <> "en" Then
+            language = "en" ' fallback to English if unsupported language code is given
+        End If
+
         Using dlg As New SaveFileDialog()
             dlg.Title = If(language = "cs", "Uložit diplom", "Save diploma")
             dlg.Filter = "Word Document (*.docx)|*.docx"
-            dlg.FileName = $"diploma_{category}_{dogName}_{eventDate:yyyy-MM-dd}.docx"
+            Dim _fileName As String = $"diploma_{category}_{dogName}_{eventDate:yyyy-MM-dd}.docx"
+            ' odstraní nepovolené znaky z názvu souboru, které by mohly způsobit chybu při ukládání
+            ' Příkaz pro odstranění nepovolených znaků:
+            dlg.FileName = String.Join("_", _fileName.Split(Path.GetInvalidFileNameChars()))
+            ' Složka Downloads — čteme z registrů, fallback na UserProfile\Downloads
             Dim downloads As String = Convert.ToString(
-    My.Computer.Registry.GetValue(
-        "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders",
-        "{374DE290-123F-4565-9164-39C4925E467B}",
-        Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) & "\Downloads"))
+                My.Computer.Registry.GetValue(
+                    "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders",
+                    "{374DE290-123F-4565-9164-39C4925E467B}",
+                    Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads")))
             dlg.InitialDirectory = downloads
 
             If dlg.ShowDialog() <> DialogResult.OK Then Return
@@ -53,7 +53,6 @@ Public Class DiplomaGenerator
             BuildDocx(outputPath, category, dogName, handlerName, totalScore, bonusScore,
                       eventDate, placement, workingDirectory, language)
 
-            ' Offer to open the file
             Dim msg As String = If(language = "cs",
                 $"Diplom byl uložen:{Environment.NewLine}{outputPath}{Environment.NewLine}{Environment.NewLine}Otevřít nyní?",
                 $"Diploma saved:{Environment.NewLine}{outputPath}{Environment.NewLine}{Environment.NewLine}Open now?")
@@ -64,9 +63,9 @@ Public Class DiplomaGenerator
         End Using
     End Sub
 
-    ' -------------------------------------------------------------------------
+    ' =========================================================================
     ' Internal document builder
-    ' -------------------------------------------------------------------------
+    ' =========================================================================
     Private Shared Sub BuildDocx(
             outputPath As String,
             category As String,
@@ -79,7 +78,6 @@ Public Class DiplomaGenerator
             workingDirectory As String,
             language As String)
 
-        ' Localised strings
         Dim lblTitle As String = If(language = "cs", "DIPLOM", "DIPLOMA")
         Dim lblSubtitle As String = If(language = "cs", "Mantrailing – soutěžní výsledky", "Mantrailing – Competition Results")
         Dim lblPlacement As String = If(language = "cs", OrdinalCzech(placement), OrdinalEnglish(placement))
@@ -90,95 +88,63 @@ Public Class DiplomaGenerator
         Dim lblBonus As String = If(language = "cs", "Bonusové body", "Bonus points")
         Dim lblDate As String = If(language = "cs", "Datum konání", "Event date")
         Dim lblSignature As String = If(language = "cs", "Podpis organizátora", "Organiser signature")
-        Dim dateStr As String = eventDate.ToString(If(language = "cs", "d. MMMM yyyy",
-                                                            "MMMM d, yyyy"),
-                                                         New Globalization.CultureInfo(
-                                                             If(language = "cs", "cs-CZ", "en-GB")))
+        Dim dateStr As String = eventDate.ToString(
+            If(language = "cs", "d. MMMM yyyy", "MMMM d, yyyy"),
+            New Globalization.CultureInfo(If(language = "cs", "cs-CZ", "en-GB")))
 
-        ' Gold accent colour (hex without #)
         Const gold As String = "C8960C"
         Const darkGray As String = "2C2C2C"
         Const lightGold As String = "FFF3CC"
 
-        ' A4 landscape in DXA  (1 inch = 1440 DXA)
-        ' Short edge = 11906, long edge = 16838
-        Const pageW As UInt32 = 16838UI   ' long edge becomes width in landscape
+        ' A4 landscape (DXA: 1440 = 1 inch)
+        Const pageW As UInt32 = 16838UI
         Const pageH As UInt32 = 11906UI
-        Const marginLR As UInt32 = 1080UI  ' ~1.9 cm margins left/right
-        Const marginTB As UInt32 = 720UI   ' ~1.3 cm margins top/bottom
-        Dim contentW As Integer = CInt(pageW) - CInt(marginLR) * 2  ' ≈ 14678 DXA
+        Const marginLR As UInt32 = 1080UI
+        Const marginTB As UInt32 = 720UI
+        Dim contentW As Integer = CInt(pageW) - CInt(marginLR) * 2
 
         Using doc As WordprocessingDocument =
-                WordprocessingDocument.Create(outputPath, WordprocessingDocumentType.Document)
+                WordprocessingDocument.Create(outputPath, DocumentFormat.OpenXml.WordprocessingDocumentType.Document)
 
             Dim mainPart As MainDocumentPart = doc.AddMainDocumentPart()
-            mainPart.Document = New Document()
-            Dim body As New Body()
+            mainPart.Document = New OXW.Document()
+            Dim body As New OXW.Body()
 
-            ' ── Page layout (landscape A4) ──────────────────────────────────
-            Dim sectPr As New SectionProperties(
-                New PageSize() With {
+            Dim sectPr As New OXW.SectionProperties(
+                New OXW.PageSize() With {
                     .Width = pageW,
                     .Height = pageH,
-                    .Orient = PageOrientationValues.Landscape
-                },
-                New PageMargin() With {
+                    .Orient = OXW.PageOrientationValues.Landscape},
+                New OXW.PageMargin() With {
                     .Top = CInt(marginTB),
                     .Bottom = CInt(marginTB),
                     .Left = marginLR,
-                    .Right = marginLR
-                }
-            )
+                    .Right = marginLR})
 
-            ' ── Helper: create a styled paragraph ───────────────────────────
-            ' (defined as local lambdas for conciseness)
-
-            ' Gold top border line
-            body.AppendChild(BorderParagraph(gold, contentW))
-
-            ' ── Logo + Title row (table with 2 columns) ─────────────────────
-            Dim logoPath As String = FindLogo(workingDirectory)
-            Dim headerTable As Table = BuildHeaderTable(mainPart, logoPath, lblTitle,
-                                                        lblSubtitle, gold, darkGray, contentW)
-            body.AppendChild(headerTable)
-
-            ' Spacing
+            body.AppendChild(BorderParagraph(gold))
+            body.AppendChild(BuildHeaderTable(mainPart, FindLogo(workingDirectory),
+                                              lblTitle, lblSubtitle, gold, darkGray, contentW))
             body.AppendChild(SpacerParagraph(160))
-
-            ' ── Gold banner: placement ───────────────────────────────────────
             body.AppendChild(BannerParagraph(lblPlacement, gold, 52))
-
-            ' Spacing
             body.AppendChild(SpacerParagraph(120))
-
-            ' ── Info table ──────────────────────────────────────────────────
-            Dim infoTable As Table = BuildInfoTable(
-                contentW, gold, lightGold, darkGray, language,
-                lblCategory, category,
-                lblDog, dogName,
-                lblHandler, handlerName,
-                lblScore, totalScore.ToString(),
-                lblBonus, bonusScore.ToString(),
-                lblDate, dateStr)
-            body.AppendChild(infoTable)
-
-            ' Spacing
+            body.AppendChild(BuildInfoTable(contentW, gold, lightGold, darkGray,
+                                            lblCategory, category,
+                                            lblDog, dogName,
+                                            lblHandler, handlerName,
+                                            lblScore, totalScore.ToString(),
+                                            lblBonus, bonusScore.ToString(),
+                                            lblDate, dateStr))
             body.AppendChild(SpacerParagraph(400))
-
-            ' ── Signature line ──────────────────────────────────────────────
-            body.AppendChild(SignatureParagraph(lblSignature, darkGray, contentW))
-
-            ' Gold bottom border line
-            body.AppendChild(BorderParagraph(gold, contentW))
-
-            ' Attach section properties
+            body.AppendChild(SignatureParagraph(lblSignature, darkGray))
+            body.AppendChild(BorderParagraph(gold))
             body.AppendChild(sectPr)
+
             mainPart.Document.AppendChild(body)
             mainPart.Document.Save()
         End Using
     End Sub
 
-    ' ── Logo lookup ──────────────────────────────────────────────────────────
+    ' ── Logo lookup ───────────────────────────────────────────────────────────
     Private Shared Function FindLogo(workingDirectory As String) As String
         For Each ext In {"png", "jpg", "jpeg"}
             Dim p As String = Path.Combine(workingDirectory, "Resources", "images", $"logo.{ext}")
@@ -187,7 +153,7 @@ Public Class DiplomaGenerator
         Return Nothing
     End Function
 
-    ' ── Ordinal helpers ──────────────────────────────────────────────────────
+    ' ── Ordinals ─────────────────────────────────────────────────────────────
     Private Shared Function OrdinalCzech(n As Integer) As String
         Return $"{n}. místo"
     End Function
@@ -197,52 +163,50 @@ Public Class DiplomaGenerator
         Return $"{n}{suffix} place"
     End Function
 
-    ' ── Gold border paragraph ────────────────────────────────────────────────
-    Private Shared Function BorderParagraph(color As String, contentW As Integer) As Paragraph
-        Dim p As New Paragraph()
-        Dim pPr As New ParagraphProperties()
-        pPr.AppendChild(New SpacingBetweenLines() With {.Before = "0", .After = "0"})
-        pPr.AppendChild(New ParagraphBorders(
-            New BottomBorder() With {
-                .Val = BorderValues.Single,
+    ' ── Gold border paragraph ─────────────────────────────────────────────────
+    Private Shared Function BorderParagraph(color As String) As OXW.Paragraph
+        Dim p As New OXW.Paragraph()
+        Dim pPr As New OXW.ParagraphProperties()
+        pPr.AppendChild(New OXW.SpacingBetweenLines() With {.Before = "0", .After = "0"})
+        pPr.AppendChild(New OXW.ParagraphBorders(
+            New OXW.BottomBorder() With {
+                .Val = OXW.BorderValues.Single,
                 .Size = 12UI,
                 .Color = color,
-                .Space = 1UI
-            }))
+                .Space = 1UI}))
         p.AppendChild(pPr)
         Return p
     End Function
 
-    ' ── Spacer paragraph ────────────────────────────────────────────────────
-    Private Shared Function SpacerParagraph(twips As Integer) As Paragraph
-        Dim p As New Paragraph()
-        Dim pPr As New ParagraphProperties()
-        pPr.AppendChild(New SpacingBetweenLines() With {
-            .Before = twips.ToString(), .After = "0"})
+    ' ── Spacer paragraph ──────────────────────────────────────────────────────
+    Private Shared Function SpacerParagraph(twips As Integer) As OXW.Paragraph
+        Dim p As New OXW.Paragraph()
+        Dim pPr As New OXW.ParagraphProperties()
+        pPr.AppendChild(New OXW.SpacingBetweenLines() With {.Before = twips.ToString(), .After = "0"})
         p.AppendChild(pPr)
         Return p
     End Function
 
-    ' ── Banner paragraph (placement) ────────────────────────────────────────
-    Private Shared Function BannerParagraph(text As String, color As String, fontSize As Integer) As Paragraph
-        Dim p As New Paragraph()
-        Dim pPr As New ParagraphProperties()
-        pPr.AppendChild(New Justification() With {.Val = JustificationValues.Center})
-        pPr.AppendChild(New SpacingBetweenLines() With {.Before = "0", .After = "0"})
+    ' ── Banner paragraph (placement) ──────────────────────────────────────────
+    Private Shared Function BannerParagraph(text As String, color As String, fontSize As Integer) As OXW.Paragraph
+        Dim p As New OXW.Paragraph()
+        Dim pPr As New OXW.ParagraphProperties()
+        pPr.AppendChild(New OXW.Justification() With {.Val = OXW.JustificationValues.Center})
+        pPr.AppendChild(New OXW.SpacingBetweenLines() With {.Before = "0", .After = "0"})
         p.AppendChild(pPr)
-        Dim r As New Run()
-        Dim rPr As New RunProperties()
-        rPr.AppendChild(New Bold())
-        rPr.AppendChild(New Color() With {.Val = color})
-        rPr.AppendChild(New FontSize() With {.Val = (fontSize * 2).ToString()})
-        rPr.AppendChild(New RunFonts() With {.Ascii = "Georgia", .HighAnsi = "Georgia"})
+        Dim r As New OXW.Run()
+        Dim rPr As New OXW.RunProperties()
+        rPr.AppendChild(New OXW.Bold())
+        rPr.AppendChild(New OXW.Color() With {.Val = color})
+        rPr.AppendChild(New OXW.FontSize() With {.Val = (fontSize * 2).ToString()})
+        rPr.AppendChild(New OXW.RunFonts() With {.Ascii = "Georgia", .HighAnsi = "Georgia"})
         r.AppendChild(rPr)
-        r.AppendChild(New Text(text))
+        r.AppendChild(New OXW.Text(text))
         p.AppendChild(r)
         Return p
     End Function
 
-    ' ── Header table (logo left, title right) ────────────────────────────────
+    ' ── Header table (logo left, title right) ─────────────────────────────────
     Private Shared Function BuildHeaderTable(
             mainPart As MainDocumentPart,
             logoPath As String,
@@ -250,79 +214,80 @@ Public Class DiplomaGenerator
             subtitle As String,
             gold As String,
             darkGray As String,
-            contentW As Integer) As Table
+            contentW As Integer) As OXW.Table
 
-        Dim tbl As New Table()
-        Dim tblPr As New TableProperties()
-        tblPr.AppendChild(New TableStyle() With {.Val = "TableGrid"})
-        tblPr.AppendChild(New TableWidth() With {
-            .Width = contentW.ToString(), .Type = TableWidthUnitValues.Dxa})
-        tblPr.AppendChild(New TableBorders(
-            New TopBorder() With {.Val = BorderValues.None},
-            New BottomBorder() With {.Val = BorderValues.None},
-            New LeftBorder() With {.Val = BorderValues.None},
-            New RightBorder() With {.Val = BorderValues.None},
-            New InsideHorizontalBorder() With {.Val = BorderValues.None},
-            New InsideVerticalBorder() With {.Val = BorderValues.None}))
+        Dim tbl As New OXW.Table()
+        Dim tblPr As New OXW.TableProperties()
+        tblPr.AppendChild(New OXW.TableWidth() With {
+            .Width = contentW.ToString(), .Type = OXW.TableWidthUnitValues.Dxa})
+        tblPr.AppendChild(New OXW.TableBorders(
+            New OXW.TopBorder() With {.Val = OXW.BorderValues.None},
+            New OXW.BottomBorder() With {.Val = OXW.BorderValues.None},
+            New OXW.LeftBorder() With {.Val = OXW.BorderValues.None},
+            New OXW.RightBorder() With {.Val = OXW.BorderValues.None},
+            New OXW.InsideHorizontalBorder() With {.Val = OXW.BorderValues.None},
+            New OXW.InsideVerticalBorder() With {.Val = OXW.BorderValues.None}))
         tbl.AppendChild(tblPr)
-        tbl.AppendChild(New TableGrid(
-            New GridColumn() With {.Width = "1800"},
-            New GridColumn() With {.Width = (contentW - 1800).ToString()}))
+        tbl.AppendChild(New OXW.TableGrid(
+            New OXW.GridColumn() With {.Width = "1800"},
+            New OXW.GridColumn() With {.Width = (contentW - 1800).ToString()}))
 
-        Dim row As New TableRow()
+        Dim row As New OXW.TableRow()
 
         ' Left cell: logo
-        Dim logoCell As New TableCell()
-        Dim logoCellPr As New TableCellProperties()
-        logoCellPr.AppendChild(New TableCellWidth() With {.Width = "1800", .Type = TableWidthUnitValues.Dxa})
-        logoCellPr.AppendChild(New TableCellVerticalAlignment() With {.Val = TableVerticalAlignmentValues.Center})
+        Dim logoCell As New OXW.TableCell()
+        Dim logoCellPr As New OXW.TableCellProperties()
+        logoCellPr.AppendChild(New OXW.TableCellWidth() With {
+            .Width = "1800", .Type = OXW.TableWidthUnitValues.Dxa})
+        logoCellPr.AppendChild(New OXW.TableCellVerticalAlignment() With {
+            .Val = OXW.TableVerticalAlignmentValues.Center})
         logoCell.AppendChild(logoCellPr)
-
         If logoPath IsNot Nothing Then
             logoCell.AppendChild(BuildLogoParagraph(mainPart, logoPath))
         Else
-            logoCell.AppendChild(New Paragraph())
+            logoCell.AppendChild(New OXW.Paragraph())
         End If
 
         ' Right cell: title text
-        Dim titleCell As New TableCell()
-        Dim titleCellPr As New TableCellProperties()
-        titleCellPr.AppendChild(New TableCellWidth() With {
-            .Width = (contentW - 1800).ToString(), .Type = TableWidthUnitValues.Dxa})
-        titleCellPr.AppendChild(New TableCellVerticalAlignment() With {.Val = TableVerticalAlignmentValues.Center})
+        Dim titleCell As New OXW.TableCell()
+        Dim titleCellPr As New OXW.TableCellProperties()
+        titleCellPr.AppendChild(New OXW.TableCellWidth() With {
+            .Width = (contentW - 1800).ToString(), .Type = OXW.TableWidthUnitValues.Dxa})
+        titleCellPr.AppendChild(New OXW.TableCellVerticalAlignment() With {
+            .Val = OXW.TableVerticalAlignmentValues.Center})
         titleCell.AppendChild(titleCellPr)
 
         ' Title
-        Dim pTitle As New Paragraph()
-        Dim pTitlePr As New ParagraphProperties()
-        pTitlePr.AppendChild(New Justification() With {.Val = JustificationValues.Center})
-        pTitlePr.AppendChild(New SpacingBetweenLines() With {.Before = "0", .After = "60"})
+        Dim pTitle As New OXW.Paragraph()
+        Dim pTitlePr As New OXW.ParagraphProperties()
+        pTitlePr.AppendChild(New OXW.Justification() With {.Val = OXW.JustificationValues.Center})
+        pTitlePr.AppendChild(New OXW.SpacingBetweenLines() With {.Before = "0", .After = "60"})
         pTitle.AppendChild(pTitlePr)
-        Dim rTitle As New Run()
-        Dim rTitlePr As New RunProperties()
-        rTitlePr.AppendChild(New Bold())
-        rTitlePr.AppendChild(New Color() With {.Val = gold})
-        rTitlePr.AppendChild(New FontSize() With {.Val = "80"})  ' 40pt
-        rTitlePr.AppendChild(New RunFonts() With {.Ascii = "Georgia", .HighAnsi = "Georgia"})
+        Dim rTitle As New OXW.Run()
+        Dim rTitlePr As New OXW.RunProperties()
+        rTitlePr.AppendChild(New OXW.Bold())
+        rTitlePr.AppendChild(New OXW.Color() With {.Val = gold})
+        rTitlePr.AppendChild(New OXW.FontSize() With {.Val = "80"})
+        rTitlePr.AppendChild(New OXW.RunFonts() With {.Ascii = "Georgia", .HighAnsi = "Georgia"})
         rTitle.AppendChild(rTitlePr)
-        rTitle.AppendChild(New Text(title))
+        rTitle.AppendChild(New OXW.Text(title))
         pTitle.AppendChild(rTitle)
         titleCell.AppendChild(pTitle)
 
         ' Subtitle
-        Dim pSub As New Paragraph()
-        Dim pSubPr As New ParagraphProperties()
-        pSubPr.AppendChild(New Justification() With {.Val = JustificationValues.Center})
-        pSubPr.AppendChild(New SpacingBetweenLines() With {.Before = "0", .After = "0"})
+        Dim pSub As New OXW.Paragraph()
+        Dim pSubPr As New OXW.ParagraphProperties()
+        pSubPr.AppendChild(New OXW.Justification() With {.Val = OXW.JustificationValues.Center})
+        pSubPr.AppendChild(New OXW.SpacingBetweenLines() With {.Before = "0", .After = "0"})
         pSub.AppendChild(pSubPr)
-        Dim rSub As New Run()
-        Dim rSubPr As New RunProperties()
-        rSubPr.AppendChild(New Color() With {.Val = darkGray})
-        rSubPr.AppendChild(New FontSize() With {.Val = "28"})  ' 14pt
-        rSubPr.AppendChild(New Italic())
-        rSubPr.AppendChild(New RunFonts() With {.Ascii = "Georgia", .HighAnsi = "Georgia"})
+        Dim rSub As New OXW.Run()
+        Dim rSubPr As New OXW.RunProperties()
+        rSubPr.AppendChild(New OXW.Color() With {.Val = darkGray})
+        rSubPr.AppendChild(New OXW.FontSize() With {.Val = "28"})
+        rSubPr.AppendChild(New OXW.Italic())
+        rSubPr.AppendChild(New OXW.RunFonts() With {.Ascii = "Georgia", .HighAnsi = "Georgia"})
         rSub.AppendChild(rSubPr)
-        rSub.AppendChild(New Text(subtitle))
+        rSub.AppendChild(New OXW.Text(subtitle))
         pSub.AppendChild(rSub)
         titleCell.AppendChild(pSub)
 
@@ -332,30 +297,27 @@ Public Class DiplomaGenerator
         Return tbl
     End Function
 
-    ' ── Logo image paragraph ─────────────────────────────────────────────────
-    Private Shared Function BuildLogoParagraph(mainPart As MainDocumentPart, logoPath As String) As Paragraph
-        Dim imgPart As ImagePart
+    ' ── Logo image paragraph ──────────────────────────────────────────────────
+    Private Shared Function BuildLogoParagraph(mainPart As MainDocumentPart, logoPath As String) As OXW.Paragraph
         Dim ext As String = Path.GetExtension(logoPath).ToLower()
         Dim contentType As String = If(ext = ".png", "image/png", "image/jpeg")
-        imgPart = mainPart.AddImagePart(contentType)
+        Dim imgPart As ImagePart = mainPart.AddImagePart(contentType)
         Using fs As New FileStream(logoPath, FileMode.Open, FileAccess.Read)
             imgPart.FeedData(fs)
         End Using
         Dim relId As String = mainPart.GetIdOfPart(imgPart)
+        Dim emuW As Long = 1200000L
+        Dim emuH As Long = 1200000L
 
-        ' 1700 DXA wide ≈ 3 cm, preserve aspect ratio approximately
-        Dim emuW As Long = 1200000  ' ~1.3 cm in EMU
-        Dim emuH As Long = 1200000
-
-        Dim p As New Paragraph()
-        Dim pPr As New ParagraphProperties()
-        pPr.AppendChild(New Justification() With {.Val = JustificationValues.Center})
-        pPr.AppendChild(New SpacingBetweenLines() With {.Before = "0", .After = "0"})
+        Dim p As New OXW.Paragraph()
+        Dim pPr As New OXW.ParagraphProperties()
+        pPr.AppendChild(New OXW.Justification() With {.Val = OXW.JustificationValues.Center})
+        pPr.AppendChild(New OXW.SpacingBetweenLines() With {.Before = "0", .After = "0"})
         p.AppendChild(pPr)
 
-        Dim r As New Run()
-        r.AppendChild(New RunProperties())
-        r.AppendChild(New Drawing(
+        Dim r As New OXW.Run()
+        r.AppendChild(New OXW.RunProperties())
+        r.AppendChild(New OXW.Drawing(
             New DW.Inline(
                 New DW.Extent() With {.Cx = emuW, .Cy = emuH},
                 New DW.EffectExtent() With {.LeftEdge = 0, .TopEdge = 0, .RightEdge = 0, .BottomEdge = 0},
@@ -376,7 +338,8 @@ Public Class DiplomaGenerator
                                     New A.Offset() With {.X = 0, .Y = 0},
                                     New A.Extents() With {.Cx = emuW, .Cy = emuH}),
                                 New A.PresetGeometry(
-                                    New A.AdjustValueList()) With {.Preset = A.ShapeTypeValues.Rectangle})
+                                    New A.AdjustValueList()) With {
+                                    .Preset = A.ShapeTypeValues.Rectangle})
                         )
                     ) With {.Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture"}
                 )
@@ -387,34 +350,32 @@ Public Class DiplomaGenerator
         Return p
     End Function
 
-    ' ── Info table (category, dog, handler, score, bonus, date) ─────────────
+    ' ── Info table (category, dog, handler, score, bonus, date) ──────────────
     Private Shared Function BuildInfoTable(
             contentW As Integer,
             gold As String,
             lightGold As String,
             darkGray As String,
-            language As String,
-            ParamArray pairs() As String) As Table
+            ParamArray pairs() As String) As OXW.Table
 
-        ' pairs: label0, value0, label1, value1, ...
         Dim colLabel As Integer = CInt(contentW * 0.35)
         Dim colValue As Integer = contentW - colLabel
 
-        Dim tbl As New Table()
-        Dim tblPr As New TableProperties()
-        tblPr.AppendChild(New TableWidth() With {
-            .Width = contentW.ToString(), .Type = TableWidthUnitValues.Dxa})
-        tblPr.AppendChild(New TableBorders(
-            New TopBorder() With {.Val = BorderValues.None},
-            New BottomBorder() With {.Val = BorderValues.None},
-            New LeftBorder() With {.Val = BorderValues.None},
-            New RightBorder() With {.Val = BorderValues.None},
-            New InsideHorizontalBorder() With {.Val = BorderValues.Single, .Size = 4UI, .Color = gold},
-            New InsideVerticalBorder() With {.Val = BorderValues.None}))
+        Dim tbl As New OXW.Table()
+        Dim tblPr As New OXW.TableProperties()
+        tblPr.AppendChild(New OXW.TableWidth() With {
+            .Width = contentW.ToString(), .Type = OXW.TableWidthUnitValues.Dxa})
+        tblPr.AppendChild(New OXW.TableBorders(
+            New OXW.TopBorder() With {.Val = OXW.BorderValues.None},
+            New OXW.BottomBorder() With {.Val = OXW.BorderValues.None},
+            New OXW.LeftBorder() With {.Val = OXW.BorderValues.None},
+            New OXW.RightBorder() With {.Val = OXW.BorderValues.None},
+            New OXW.InsideHorizontalBorder() With {.Val = OXW.BorderValues.Single, .Size = 4UI, .Color = gold},
+            New OXW.InsideVerticalBorder() With {.Val = OXW.BorderValues.None}))
         tbl.AppendChild(tblPr)
-        tbl.AppendChild(New TableGrid(
-            New GridColumn() With {.Width = colLabel.ToString()},
-            New GridColumn() With {.Width = colValue.ToString()}))
+        tbl.AppendChild(New OXW.TableGrid(
+            New OXW.GridColumn() With {.Width = colLabel.ToString()},
+            New OXW.GridColumn() With {.Width = colValue.ToString()}))
 
         Dim i As Integer = 0
         While i < pairs.Length - 1
@@ -422,68 +383,68 @@ Public Class DiplomaGenerator
             Dim val As String = pairs(i + 1)
             Dim isAlt As Boolean = (i \ 2) Mod 2 = 1
 
-            Dim row As New TableRow()
+            Dim row As New OXW.TableRow()
 
             ' Label cell
-            Dim lblCell As New TableCell()
-            Dim lblCellPr As New TableCellProperties()
-            lblCellPr.AppendChild(New TableCellWidth() With {
-                .Width = colLabel.ToString(), .Type = TableWidthUnitValues.Dxa})
-            lblCellPr.AppendChild(New TableCellVerticalAlignment() With {
-                .Val = TableVerticalAlignmentValues.Center})
+            Dim lblCell As New OXW.TableCell()
+            Dim lblCellPr As New OXW.TableCellProperties()
+            lblCellPr.AppendChild(New OXW.TableCellWidth() With {
+                .Width = colLabel.ToString(), .Type = OXW.TableWidthUnitValues.Dxa})
+            lblCellPr.AppendChild(New OXW.TableCellVerticalAlignment() With {
+                .Val = OXW.TableVerticalAlignmentValues.Center})
             If isAlt Then
-                lblCellPr.AppendChild(New Shading() With {
-                    .Fill = lightGold, .Val = ShadingPatternValues.Clear})
+                lblCellPr.AppendChild(New OXW.Shading() With {
+                    .Fill = lightGold, .Val = OXW.ShadingPatternValues.Clear})
             End If
-            lblCellPr.AppendChild(New TableCellMargin() With {
-                .TopMargin = New TopMargin() With {.Width = "80", .Type = TableWidthUnitValues.Dxa},
-                .BottomMargin = New BottomMargin() With {.Width = "80", .Type = TableWidthUnitValues.Dxa},
-                .LeftMargin = New LeftMargin() With {.Width = "160", .Type = TableWidthUnitValues.Dxa},
-                .RightMargin = New RightMargin() With {.Width = "160", .Type = TableWidthUnitValues.Dxa}})
+            lblCellPr.AppendChild(New OXW.TableCellMargin() With {
+                .TopMargin = New OXW.TopMargin() With {.Width = "80", .Type = OXW.TableWidthUnitValues.Dxa},
+                .BottomMargin = New OXW.BottomMargin() With {.Width = "80", .Type = OXW.TableWidthUnitValues.Dxa},
+                .LeftMargin = New OXW.LeftMargin() With {.Width = "160", .Type = OXW.TableWidthUnitValues.Dxa},
+                .RightMargin = New OXW.RightMargin() With {.Width = "160", .Type = OXW.TableWidthUnitValues.Dxa}})
             lblCell.AppendChild(lblCellPr)
-            Dim pLbl As New Paragraph()
-            Dim pLblPr As New ParagraphProperties()
-            pLblPr.AppendChild(New SpacingBetweenLines() With {.Before = "0", .After = "0"})
+            Dim pLbl As New OXW.Paragraph()
+            Dim pLblPr As New OXW.ParagraphProperties()
+            pLblPr.AppendChild(New OXW.SpacingBetweenLines() With {.Before = "0", .After = "0"})
             pLbl.AppendChild(pLblPr)
-            Dim rLbl As New Run()
-            Dim rLblPr As New RunProperties()
-            rLblPr.AppendChild(New Bold())
-            rLblPr.AppendChild(New Color() With {.Val = gold})
-            rLblPr.AppendChild(New FontSize() With {.Val = "28"})
-            rLblPr.AppendChild(New RunFonts() With {.Ascii = "Arial", .HighAnsi = "Arial"})
+            Dim rLbl As New OXW.Run()
+            Dim rLblPr As New OXW.RunProperties()
+            rLblPr.AppendChild(New OXW.Bold())
+            rLblPr.AppendChild(New OXW.Color() With {.Val = gold})
+            rLblPr.AppendChild(New OXW.FontSize() With {.Val = "28"})
+            rLblPr.AppendChild(New OXW.RunFonts() With {.Ascii = "Arial", .HighAnsi = "Arial"})
             rLbl.AppendChild(rLblPr)
-            rLbl.AppendChild(New Text(lbl))
+            rLbl.AppendChild(New OXW.Text(lbl))
             pLbl.AppendChild(rLbl)
             lblCell.AppendChild(pLbl)
 
             ' Value cell
-            Dim valCell As New TableCell()
-            Dim valCellPr As New TableCellProperties()
-            valCellPr.AppendChild(New TableCellWidth() With {
-                .Width = colValue.ToString(), .Type = TableWidthUnitValues.Dxa})
-            valCellPr.AppendChild(New TableCellVerticalAlignment() With {
-                .Val = TableVerticalAlignmentValues.Center})
+            Dim valCell As New OXW.TableCell()
+            Dim valCellPr As New OXW.TableCellProperties()
+            valCellPr.AppendChild(New OXW.TableCellWidth() With {
+                .Width = colValue.ToString(), .Type = OXW.TableWidthUnitValues.Dxa})
+            valCellPr.AppendChild(New OXW.TableCellVerticalAlignment() With {
+                .Val = OXW.TableVerticalAlignmentValues.Center})
             If isAlt Then
-                valCellPr.AppendChild(New Shading() With {
-                    .Fill = lightGold, .Val = ShadingPatternValues.Clear})
+                valCellPr.AppendChild(New OXW.Shading() With {
+                    .Fill = lightGold, .Val = OXW.ShadingPatternValues.Clear})
             End If
-            valCellPr.AppendChild(New TableCellMargin() With {
-                .TopMargin = New TopMargin() With {.Width = "80", .Type = TableWidthUnitValues.Dxa},
-                .BottomMargin = New BottomMargin() With {.Width = "80", .Type = TableWidthUnitValues.Dxa},
-                .LeftMargin = New LeftMargin() With {.Width = "160", .Type = TableWidthUnitValues.Dxa},
-                .RightMargin = New RightMargin() With {.Width = "160", .Type = TableWidthUnitValues.Dxa}})
+            valCellPr.AppendChild(New OXW.TableCellMargin() With {
+                .TopMargin = New OXW.TopMargin() With {.Width = "80", .Type = OXW.TableWidthUnitValues.Dxa},
+                .BottomMargin = New OXW.BottomMargin() With {.Width = "80", .Type = OXW.TableWidthUnitValues.Dxa},
+                .LeftMargin = New OXW.LeftMargin() With {.Width = "160", .Type = OXW.TableWidthUnitValues.Dxa},
+                .RightMargin = New OXW.RightMargin() With {.Width = "160", .Type = OXW.TableWidthUnitValues.Dxa}})
             valCell.AppendChild(valCellPr)
-            Dim pVal As New Paragraph()
-            Dim pValPr As New ParagraphProperties()
-            pValPr.AppendChild(New SpacingBetweenLines() With {.Before = "0", .After = "0"})
+            Dim pVal As New OXW.Paragraph()
+            Dim pValPr As New OXW.ParagraphProperties()
+            pValPr.AppendChild(New OXW.SpacingBetweenLines() With {.Before = "0", .After = "0"})
             pVal.AppendChild(pValPr)
-            Dim rVal As New Run()
-            Dim rValPr As New RunProperties()
-            rValPr.AppendChild(New Color() With {.Val = darkGray})
-            rValPr.AppendChild(New FontSize() With {.Val = "28"})
-            rValPr.AppendChild(New RunFonts() With {.Ascii = "Arial", .HighAnsi = "Arial"})
+            Dim rVal As New OXW.Run()
+            Dim rValPr As New OXW.RunProperties()
+            rValPr.AppendChild(New OXW.Color() With {.Val = darkGray})
+            rValPr.AppendChild(New OXW.FontSize() With {.Val = "28"})
+            rValPr.AppendChild(New OXW.RunFonts() With {.Ascii = "Arial", .HighAnsi = "Arial"})
             rVal.AppendChild(rValPr)
-            rVal.AppendChild(New Text(val))
+            rVal.AppendChild(New OXW.Text(val))
             pVal.AppendChild(rVal)
             valCell.AppendChild(pVal)
 
@@ -496,26 +457,21 @@ Public Class DiplomaGenerator
         Return tbl
     End Function
 
-    ' ── Signature line ───────────────────────────────────────────────────────
-    Private Shared Function SignatureParagraph(label As String, darkGray As String, contentW As Integer) As Paragraph
-        ' A centred line with underscores and the label below
-        Dim p As New Paragraph()
-        Dim pPr As New ParagraphProperties()
-        pPr.AppendChild(New Justification() With {.Val = JustificationValues.Center})
-        pPr.AppendChild(New SpacingBetweenLines() With {.Before = "0", .After = "60"})
-        ' Bottom border as signature line
-        pPr.AppendChild(New ParagraphBorders(
-            New BottomBorder() With {
-                .Val = BorderValues.Single,
+    ' ── Signature line ────────────────────────────────────────────────────────
+    Private Shared Function SignatureParagraph(label As String, darkGray As String) As OXW.Paragraph
+        Dim p As New OXW.Paragraph()
+        Dim pPr As New OXW.ParagraphProperties()
+        pPr.AppendChild(New OXW.Justification() With {.Val = OXW.JustificationValues.Center})
+        pPr.AppendChild(New OXW.SpacingBetweenLines() With {.Before = "0", .After = "60"})
+        pPr.AppendChild(New OXW.ParagraphBorders(
+            New OXW.BottomBorder() With {
+                .Val = OXW.BorderValues.Single,
                 .Size = 6UI,
                 .Color = darkGray,
-                .Space = 1UI
-            }))
+                .Space = 1UI}))
         p.AppendChild(pPr)
-        ' Empty run — the border acts as the line
-        p.AppendChild(New Run(New RunProperties(
-            New FontSize() With {.Val = "48"})))   ' tall enough for the border to show
-
+        p.AppendChild(New OXW.Run(New OXW.RunProperties(
+            New OXW.FontSize() With {.Val = "48"})))
         Return p
     End Function
 

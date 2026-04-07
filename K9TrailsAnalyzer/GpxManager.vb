@@ -345,7 +345,7 @@ Public Class GpxFileManager
                             Dim localProcessedFilePath As String = Path.Combine(CategoryInfo.ProcessedDirectory, fileNameWithDate)
 
                             If File.Exists(localProcessedFilePath) Then
-                                Dim dialogResult = mboxQEx($"File {fileNameWithDate} already exists in localProcessed directory!" & vbCrLf & "It's probably a duplicate trail. Do you still want to add it?")
+                                Dim dialogResult = mboxQEx($"File {fileNameWithDate} already exists in localProcessed directory!" & vbCrLf & "It's probably a duplicate trail. Do you still want to add it?", MessageBoxDefaultButton.Button2)
                                 If dialogResult = DialogResult.No Then
                                     RaiseEvent WarningOccurred($"File {fileNameWithDate} was skipped because it is duplicate", Color.DarkOrange)
                                     Continue For 'přejde na další soubor

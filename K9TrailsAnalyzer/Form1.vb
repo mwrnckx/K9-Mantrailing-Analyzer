@@ -7,10 +7,14 @@ Imports System.Text.Json
 Imports System.Text.Json.Serialization
 Imports System.Threading
 Imports System.Windows.Forms.DataVisualization.Charting
-Imports System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel
+'Imports System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel
+'Imports DocumentFormat.OpenXml.Math
+'Imports DocumentFormat.OpenXml.Spreadsheet
 Imports GPXTrailAnalyzer.My.Resources
 Imports TrackVideoExporter
 Imports TrackVideoExporter.TrackVideoExporter
+'Imports System.Drawing.Font
+'Imports System.Drawing.Color
 
 
 
@@ -1074,16 +1078,6 @@ Partial Public Class Form1
     End Sub
 
 
-    Private Sub chbTrimGpxFile(sender As Object, e As EventArgs) Handles mnuTrimGPSNoise.CheckedChanged
-        My.Settings.TrimGPSnoise = mnuTrimGPSNoise.Checked
-    End Sub
-
-
-    Private Sub chbDateToName_CheckedChanged(sender As Object, e As EventArgs) Handles mnuPrependDateToFileName.CheckedChanged
-        My.Settings.PrependDateToName = mnuPrependDateToFileName.Checked
-    End Sub
-
-
 
     Private Sub mnuSelect_directory_gpx_files_Click(sender As Object, e As EventArgs) Handles mnuSelect_directory_gpx_files.Click, mnuSelectADirectoryToSaveVideo.Click
         Dim folderDialog As New FolderBrowserDialog
@@ -2005,6 +1999,15 @@ Partial Public Class Form1
     End Sub
 
     Private Sub btnCreateDiploma_Click(sender As Object, e As EventArgs) Handles btnCreateDiploma.Click
+        Dim fastestIndex As Integer = -1
+        Dim mostAccurateIndex As Integer = -1
+        Dim bestReaderIndex As Integer = -1
+        Dim bestPickUpIndex As Integer = -1
+        Dim speedPoints As Integer = 0
+        Dim accuracyPoints As Integer = 0
+        Dim readingPoints As Integer = 0
+        Dim pickupPoints As Integer = 0
+
         For Each _row In dgvCompetition.Rows
             Dim ranking As String = _row.Cells("Ranking").Value?.ToString()?.TrimEnd("."c)
 
@@ -2023,7 +2026,61 @@ Partial Public Class Form1
                   )
 
             End Select
+
+            ' další podmínky pro umístění, např. nejrychlejší tým, nejlepší čtení psa,nejpřesnější stopa, atd. - a podle toho generovat různé diplomy!
+            If speedPoints < _row.Cells("DogSpeedPoints").Value?.ToString() Then
+                speedPoints = _row.Cells("DogSpeedPoints").Value?.ToString()
+                fastestIndex = _row.index
+            End If
+
+            If accuracyPoints < _row.Cells("DogAccuracyPoints").Value?.ToString() Then
+                accuracyPoints = _row.Cells("DogAccuracyPoints").Value?.ToString()
+                mostAccurateIndex = _row.index
+            End If
+
+            If readingPoints < _row.Cells("DogReadingPoints").Value?.ToString() Then
+                readingPoints = _row.Cells("DogReadingPoints").Value?.ToString()
+                bestReaderIndex = _row.index
+            End If
+
+
+            'pickupPoints As Integer = _row.Cells("TrailPickupPoints").Value?.ToString()
         Next
+        Dim _language As String = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName
+        DiplomaGenerator.GenerateDiploma(
+                category:=Me.ActiveCategoryInfo.Name & "Fastest Team",
+                      dogName:=dgvCompetition.Rows(fastestIndex).Cells("DogName").Value.ToString(),
+                handlerName:=dgvCompetition.Rows(fastestIndex).Cells("HandlerName").Value.ToString(),
+                totalScore:=dgvCompetition.Rows(fastestIndex).Cells("TotalPoints").Value.ToString,
+                bonusScore:=666,
+                eventDate:=New Date.Today,
+                placement:=1,
+                workingDirectory:=Application.StartupPath,
+                language:=_language  ' "cs" nebo "en"
+                )
+
+        DiplomaGenerator.GenerateDiploma(
+             category:=Me.ActiveCategoryInfo.Name & "Best Reading of The Dog",
+                   dogName:=dgvCompetition.Rows(bestReaderIndex).Cells("DogName").Value.ToString(),
+             handlerName:=dgvCompetition.Rows(bestReaderIndex).Cells("HandlerName").Value.ToString(),
+             totalScore:=dgvCompetition.Rows(bestReaderIndex).Cells("TotalPoints").Value.ToString,
+             bonusScore:=666,
+             eventDate:=New Date.Today,
+             placement:=1,
+             workingDirectory:=Application.StartupPath,
+             language:=_language ' "cs" nebo "en"
+             )
+        DiplomaGenerator.GenerateDiploma(
+           category:=Me.ActiveCategoryInfo.Name & "Most Accurate Team",
+                 dogName:=dgvCompetition.Rows(mostAccurateIndex).Cells("DogName").Value.ToString(),
+           handlerName:=dgvCompetition.Rows(mostAccurateIndex).Cells("HandlerName").Value.ToString(),
+           totalScore:=dgvCompetition.Rows(mostAccurateIndex).Cells("TotalPoints").Value.ToString,
+           bonusScore:=666,
+           eventDate:=New Date.Today,
+           placement:=1,
+           workingDirectory:=Application.StartupPath,
+           language:=_language ' "cs" nebo "en"
+           )
     End Sub
 End Class
 

@@ -1,4 +1,5 @@
-﻿Imports System.Drawing
+﻿Imports System.DirectoryServices.ActiveDirectory
+Imports System.Drawing
 Imports System.Reflection
 Imports System.Resources.ResXFileRef
 Imports System.Runtime.CompilerServices.RuntimeHelpers
@@ -136,15 +137,22 @@ Public Class TrackConverter
         ' Projdeme zbytek a vyhážeme "teleportace"
         For i As Integer = 2 To rawPoints.TrackGeoPoints.Count - 1
             Dim current = rawPoints.TrackGeoPoints(i)
-            Dim timeDiffHours As Double = (current.Time - lastValidPoint.Time).TotalSeconds / 3600.0
+            'výpočet rychlosti od posledního validního bodu
+            Dim timeDiffHours As Double = (current.Time - lastValidPoint.Time).TotalHours
             ' Ošetření bodů ve stejném čase (ignore) nebo příliš blízko u sebe
             If timeDiffHours <= 0 Then Continue For
             Dim distKm As Double = TrackConverter.HaversineDistance(lastValidPoint.Location.Lat, lastValidPoint.Location.Lon, current.Location.Lat, current.Location.Lon, "km")
             Dim speed As Double = If(timeDiffHours > 0, distKm / timeDiffHours, 0)
+            'výpočet rychlosti od předchozího bodu (i-1) 
+            Dim timeDiffHoursLast As Double = (current.Time - rawPoints.TrackGeoPoints(i - 1).Time).TotalHours
+            ' Ošetření bodů ve stejném čase (ignore) nebo příliš blízko u sebe
+            If timeDiffHoursLast <= 0 Then Continue For
+            Dim distKmLast As Double = TrackConverter.HaversineDistance(rawPoints.TrackGeoPoints(i - 1).Location.Lat, rawPoints.TrackGeoPoints(i - 1).Location.Lon, current.Location.Lat, current.Location.Lon, "km")
+            Dim speedLast As Double = If(timeDiffHoursLast > 0, distKmLast / timeDiffHoursLast, 0)
 
             ' Filtrujeme jen nesmysly (např. víc než 40 km/h) a příliš krátké pohyby (drift)
-            If distKm > 0.001 Then ' 1 metr práh (pro psy stačí méně než 2m)
-                If speed <= maxSpeedKmh Then
+            If distKm > 0.001 AndAlso distKmLast > 0.001 Then ' 1 metr práh (pro psy stačí méně než 2m)
+                If (speed <= maxSpeedKmh) AndAlso (speedLast <= maxSpeedKmh) Then
                     cleanedPoints.Add(current)
                     lastValidPoint = current
                 End If

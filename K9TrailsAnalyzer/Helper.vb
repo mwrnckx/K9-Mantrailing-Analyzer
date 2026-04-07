@@ -31,8 +31,8 @@ Public Module Helper
 	Public Sub mboxEx(ByVal message_ As String)
 		MessageBox.Show(message_, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1)
 	End Sub
-	Public Function mboxQEx(ByVal message_ As String) As System.Windows.Forms.DialogResult
-		Return MessageBox.Show(message_, Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1)
+	Public Function mboxQEx(ByVal message_ As String, Optional defaultBtn As MessageBoxDefaultButton = MessageBoxDefaultButton.Button1) As System.Windows.Forms.DialogResult
+		Return MessageBox.Show(message_, Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, defaultBtn)
 	End Function
 	Public Sub mboxErr(ByVal message_ As String)
 		MessageBox.Show(message_, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1)
