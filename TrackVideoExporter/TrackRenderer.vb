@@ -8,6 +8,7 @@ Imports System.Globalization
 Imports System.IO
 Imports System.Reflection.Metadata
 Imports System.Resources
+Imports System.Runtime.Intrinsics.X86
 Imports System.Text.RegularExpressions
 Imports System.Windows.Forms
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar
@@ -62,7 +63,7 @@ Public Class PngSequenceCreator
             staticbgMap.Save(filename, ImageFormat.Png)
         End If
 
-        Const minFrameInterval As Double = 3.0 'minimální interval mezi snímky v sekundách, aby video nebylo moc velké a rychlé, defaultně 3 sekundy
+        'Const minFrameInterval As Double = 3.0 'minimální interval mezi snímky v sekundách, aby video nebylo moc velké a rychlé, defaultně 3 sekundy
         Dim pngDir = outputDir.CreateSubdirectory("png")
         Try
             'úklidíme staré PNG obrázky, pokud existují
@@ -73,14 +74,14 @@ Public Class PngSequenceCreator
         Dim startTime = pngTimes.First()
         Dim endTime = pngTimes.Last()
         Dim durationSeconds = (endTime - startTime).TotalSeconds
-        frameInterval = durationSeconds 'výchozí hodnota, skutečná hodnota bude nalezena v cyklu
-        For i = 0 To pngTimes.Count - 2
-            'hledám minimální rozdíl kvůli maximální plynulosti
-            frameInterval = Math.Max(1, frameInterval) 'minimální interval 1 sekunda
-            frameInterval = Math.Min(frameInterval, (pngTimes(i + 1) - pngTimes(i)).TotalSeconds)
-            Debug.WriteLine($"{i} {(pngTimes(i + 1) - pngTimes(i)).TotalSeconds}")
-        Next
-        frameInterval = Math.Max(minFrameInterval, frameInterval) 'minimální interval 3 sekundy, aby nebyl nulový nebo záporný a video nebylo moc velké
+        'frameInterval = durationSeconds 'výchozí hodnota, skutečná hodnota bude nalezena v cyklu
+        'For i = 0 To pngTimes.Count - 2
+        '    'hledám minimální rozdíl kvůli maximální plynulosti
+        '    frameInterval = Math.Max(1, frameInterval) 'minimální interval 1 sekunda
+        '    frameInterval = Math.Min(frameInterval, (pngTimes(i + 1) - pngTimes(i)).TotalSeconds)
+        '    Debug.WriteLine($"{i} {(pngTimes(i + 1) - pngTimes(i)).TotalSeconds}")
+        'Next
+        'frameInterval = Math.Max(minFrameInterval, frameInterval) 'minimální interval 3 sekundy, aby nebyl nulový nebo záporný a video nebylo moc velké
         frameInterval = 1 'pro testování, aby bylo video rychlé a krátké
         Dim initialFrames As Integer = 0 'nakonec nepoužito
         Dim _dogTrail As New List(Of PointF)
@@ -129,6 +130,7 @@ Public Class PngRenderer
     Dim latitude As Double ' pro přepočet šířky pera z metrů na pixely, protože se mění s latitudou
     Dim emSize As Single '
     Dim font As Font
+    Dim pixelsPerMeter As Single ' pro přepočet z metrů na pixely, protože se mění s latitudou
 
     ''' <summary>
     ''' Initializes a new instance of the <see cref="PngRenderer"/> class.
@@ -144,7 +146,7 @@ Public Class PngRenderer
         Me.latitude = latitude
         Me.trackBounds = bgTiles.bgmap.GetBounds(GraphicsUnit.Pixel) 'přepočítá obdélník na souřadnice v pixelech
         diagonal = Math.Sqrt(Me.videoSize.Width ^ 2 + Me.videoSize.Height ^ 2)
-        Dim pixelsPerMeter As Single = (OsmTileDownloader.TileSize * Math.Pow(2.0, OsmTileDownloader.zoom)) / (Math.Cos(TrackConverter.DegToRad(latitude)) * 2 * Math.PI * TrackConverter.EarthRadiusM) 'přepočet z metrů na pixely, protože se mění s latitudou
+        pixelsPerMeter = (OsmTileDownloader.TileSize * Math.Pow(2.0, OsmTileDownloader.zoom)) / (Math.Cos(TrackConverter.DegToRad(latitude)) * 2 * Math.PI * TrackConverter.EarthRadiusM) 'přepočet z metrů na pixely, protože se mění s latitudou
         Me.radius = 4 * VideoSettings.TrailWidth * pixelsPerMeter '0.015 * diagonal ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
         Me.penWidth = VideoSettings.TrailWidth * pixelsPerMeter '0.008 * diagonal ' šířka pera pro kreslení čar, 1% šířky obrázku
         Me.emSize = 4 * VideoSettings.TrailWidth * pixelsPerMeter '2 * radius '0.015 * diagonal '
@@ -206,12 +208,33 @@ Public Class PngRenderer
                     End Using
 
                     ' --- 2. KROK: HLAVNÍ ČÁRA ---
-                    Using myPen As New Pen(drawColor, penWidth)
-                        myPen.LineJoin = LineJoin.Round
-                        myPen.StartCap = LineCap.Round
-                        myPen.EndCap = LineCap.Round
-                        g.DrawLines(myPen, TrackPoints.ToArray())
-                    End Using
+                    If track.IsMoving Then
+                        For i As Integer = 0 To track.TrackPointsF.Count - 2
+                            Dim p1 = track.TrackPointsF(i).Location
+                            Dim p2 = track.TrackPointsF(i + 1).Location
+                            Dim distance As Double = Math.Sqrt((p1.X - p2.X) ^ 2 + (p1.Y - p2.Y) ^ 2) / pixelsPerMeter ' Vzdálenost mezi dvěma body v m
+                            Dim timeDiff As Double = (track.TrackPointsF(i + 1).Time - track.TrackPointsF(i).Time).TotalSeconds
+                            Dim speed As Double = If(timeDiff > 0, distance / timeDiff, 0) ' Rychlost mezi dvěma body v m/s, ošetření dělení nulou
+                            Debug.WriteLine($"render:  {speed}")
+                            Dim maxExpectedSpeed As Double = 1.666 'm/s = 6 km/h, rychlost, která odpovídá přibližně rychlosti pohybu psa na stopě, použijeme ji pro určení barevné škály, kde rychlejší pohyb bude červenější a pomalejší zelenější
+                            ' Použijeme Using, aby se Pen (pero) správně uvolnilo z paměti
+                            Using pen As New Pen(GetColorBySpeed(speed, maxExpectedSpeed), penWidth)
+                                ' Zakulacení konců čar, aby na sebe plynule navazovaly
+                                pen.StartCap = Drawing2D.LineCap.Round
+                                pen.EndCap = Drawing2D.LineCap.Round
+                                pen.LineJoin = Drawing2D.LineJoin.Round
+
+                                g.DrawLine(pen, p1, p2)
+                            End Using
+                        Next
+                    Else 'is not moving (kladeč)
+                        Using myPen As New Pen(drawColor, penWidth)
+                            myPen.LineJoin = LineJoin.Round
+                            myPen.StartCap = LineCap.Round
+                            myPen.EndCap = LineCap.Round
+                            g.DrawLines(myPen, TrackPoints.ToArray())
+                        End Using
+                    End If
                 End If
 
 
@@ -431,21 +454,50 @@ Public Class PngRenderer
 
                     Dim p As PointF = InterpolatedDogPosition(track, frameTime)
                     _dogTrail.Add(p)
-
+                    Dim maxExpectedSpeed As Double = 1.666 'm/s = 6 km/h
+                    Dim speed As Double = 0
                     If _dogTrail.Count > 1 Then
-                        ' 2. Vytvoř pero a nastav mu kulaté spoje a zakončení
-                        Using myPen As New Pen(track.Color, penWidth)
-                            myPen.LineJoin = Drawing2D.LineJoin.Round  ' Tohle uřízne ty dlouhé hroty/bodliny
-                            myPen.StartCap = Drawing2D.LineCap.Round  ' Zakulatí začátek čáry
-                            myPen.EndCap = Drawing2D.LineCap.Round    ' Zakulatí konec čáry
+                        ' --- 1. KROK: HALO (OBRYS) ---
+                        ' Pro obrys zvolíme černou barvu s nižší průhledností než má hlavní čára
+                        Dim haloAlpha As Integer = 140
+                        Dim haloColor As Color = Color.FromArgb(haloAlpha, Color.Black)
 
-                            ' 3. Vykresli od začátku až do pozice psa
-                            g.DrawLines(myPen, _dogTrail.ToArray)
+                        ' Halo pero musí být o něco tlustší (cca 1.4x až 1.6x)
+                        Using haloPen As New Pen(haloColor, penWidth * 1.5)
+                            haloPen.LineJoin = LineJoin.Round
+                            haloPen.StartCap = LineCap.Round
+                            haloPen.EndCap = LineCap.Round
+                            g.DrawLines(haloPen, _dogTrail.ToArray())
                         End Using
 
+                        Dim startIndex As Integer = Math.Max(0, _dogTrail.Count - 180) ' omezíme počet bodů na tři minuty
+
+                        ' Cyklus končí u Count - 2, protože bereme vždy bod a ten následující
+                        For i As Integer = startIndex To _dogTrail.Count - 2
+                            Dim p1 = _dogTrail(i)
+                            Dim p2 = _dogTrail(i + 1)
+                            speed = Math.Sqrt((p1.X - p2.X) ^ 2 + (p1.Y - p2.Y) ^ 2) / pixelsPerMeter ' Rychlost mezi dvěma body v m/s předpokládá frameinterval = 1 s
+                            'Debug.WriteLine($"render:  {speed}")
+                            ' Použijeme Using, aby se Pen (pero) správně uvolnilo z paměti
+                            Using pen As New Pen(GetColorBySpeed(speed, maxExpectedSpeed), penWidth)
+                                ' Zakulacení konců čar, aby na sebe plynule navazovaly
+                                pen.StartCap = Drawing2D.LineCap.Round
+                                pen.EndCap = Drawing2D.LineCap.Round
+                                pen.LineJoin = Drawing2D.LineJoin.Round
+
+                                g.DrawLine(pen, p1, p2)
+                            End Using
+                        Next
+
+
+
+
                     End If
-                    g.FillEllipse(Brushes.Red, p.X - radius / 2, p.Y - radius / 2, radius, radius)
-                    ' popis, poslední bod atd.
+                    'Using pen As New Pen(GetColorBySpeed(speed, maxExpectedSpeed), penWidth)
+                    Using brush As New SolidBrush(GetColorBySpeed(speed, maxExpectedSpeed))
+                        g.FillEllipse(brush, p.X - radius / 2, p.Y - radius / 2, radius, radius)
+                    End Using
+
 
                     'Dim font As New Font("Cascadia Code", emSize, FontStyle.Bold)
                     Dim popis As String = "Dog " & frameTime.ToString("HH:mm:ss")
@@ -470,6 +522,19 @@ Public Class PngRenderer
         Return bmp
 
 
+    End Function
+
+    Private Function GetColorBySpeed(speed As Double, maxSpeed As Double) As Color
+        ' Normalizace rychlosti na hodnotu 0.0 až 1.0
+        Dim ratio As Single = CSng(Math.Min(speed / maxSpeed, 1.0))
+
+        ' Výpočet barevných složek (přechod Modrá -> Zelená -> Červená)
+        Dim r As Integer = CInt(255 * ratio)
+        Dim g As Integer = CInt(255 * (1 - Math.Abs(ratio - 0.5) * 2)) ' Nejvíc zelené uprostřed
+        Dim b As Integer = CInt(255 * (1 - ratio))
+
+        ' 200 je průhlednost (Alpha) - ideální pro video overlay
+        Return Color.FromArgb(200, r, g, b)
     End Function
 
 
@@ -1011,11 +1076,12 @@ Public Class PngRenderer
                 Dim totalSeconds = (t2 - t1).TotalSeconds
                 Dim elapsedSeconds = (frameTime - t1).TotalSeconds
                 Dim ratio As Double = elapsedSeconds / totalSeconds
-
+                Dim totalDistance = Math.Sqrt((p2.X - p1.X) ^ 2 + (p2.Y - p1.Y) ^ 2) / pixelsPerMeter
+                Dim speed = totalDistance / totalSeconds
+                Debug.WriteLine($"interpolate:  {speed}")
                 ' Lineární interpolace
                 Dim x As Single = CSng(p1.X + (p2.X - p1.X) * ratio)
                 Dim y As Single = CSng(p1.Y + (p2.Y - p1.Y) * ratio)
-
                 Return New PointF(x, y)
             End If
         Next

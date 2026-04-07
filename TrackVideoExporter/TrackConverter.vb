@@ -166,6 +166,7 @@ Public Class TrackConverter
         ' Čím větší číslo, tím "rovnější" čáry, ale lomy zůstanou.
         Dim simplifiedPoints = DouglasPeucker(cleanedPoints, 0.002)
         Dim finalPoints = RedensifyTrackAsGeopoints(simplifiedPoints, 2) ' Redensifikace pro vložení bodů každé 2 metry
+        'Dim finalpoints = cleanedPoints 'todo - jen pro test!!!
         Return New TrackAsGeoPoints(rawPoints.TrackType, finalPoints)
     End Function
 
@@ -255,7 +256,7 @@ Public Class TrackConverter
     End Function
 
     ' Výpočet kolmé vzdálenosti bodu od úsečky (zjednodušeně pro malé vzdálenosti)
-    Private Shared Function PerpendicularDistancekm(p As TrackGeoPoint, lineStart As TrackGeoPoint, lineEnd As TrackGeoPoint) As Double
+    Private Shared Function PerpendicularDistancekm_old(p As TrackGeoPoint, lineStart As TrackGeoPoint, lineEnd As TrackGeoPoint) As Double
         ' Použijeme Haversine pro převod na km, aby epsilon odpovídalo metrům
         Dim l2 As Double = TrackConverter.HaversineDistance(lineStart.Location.Lat, lineStart.Location.Lon, lineEnd.Location.Lat, lineEnd.Location.Lon, "km")
         If l2 = 0 Then Return TrackConverter.HaversineDistance(p.Location.Lat, p.Location.Lon, lineStart.Location.Lat, lineStart.Location.Lon, "km")
@@ -264,6 +265,66 @@ Public Class TrackConverter
         ' Pro kynologii na ploše pár set metrů je tato aproximace naprosto v pořádku
         Return Math.Abs((lineEnd.Location.Lat - lineStart.Location.Lat) * (lineStart.Location.Lon - p.Location.Lon) - (lineStart.Location.Lat - p.Location.Lat) * (lineEnd.Location.Lon - lineStart.Location.Lon)) /
            Math.Sqrt(Math.Pow(lineEnd.Location.Lat - lineStart.Location.Lat, 2) + Math.Pow(lineEnd.Location.Lon - lineStart.Location.Lon, 2)) * 111.32 ' Převod stupňů na km cca
+    End Function
+
+    Private Shared Function PerpendicularDistanceKm(
+    p As TrackGeoPoint,
+    lineStart As TrackGeoPoint,
+    lineEnd As TrackGeoPoint) As Double
+
+        ' --- 1) Referenční bod (kvůli numerické stabilitě)
+        Dim lat0 As Double = lineStart.Location.Lat
+        Dim lon0 As Double = lineStart.Location.Lon
+
+        ' --- 2) Přepočet stupňů → km
+        Dim latToKm As Double = 111.32
+        Dim latRef As Double = (lineStart.Location.Lat + lineEnd.Location.Lat) / 2.0
+        Dim lonToKm As Double = 111.32 * Math.Cos(latRef * Math.PI / 180.0)
+
+        ' --- 3) Lokální kartézské souřadnice (relativní vůči startu)
+        Dim xS As Double = 0
+        Dim yS As Double = 0
+
+        Dim xE As Double = (lineEnd.Location.Lon - lon0) * lonToKm
+        Dim yE As Double = (lineEnd.Location.Lat - lat0) * latToKm
+
+        Dim xP As Double = (p.Location.Lon - lon0) * lonToKm
+        Dim yP As Double = (p.Location.Lat - lat0) * latToKm
+
+        ' --- 4) Vektor úsečky
+        Dim dx As Double = xE - xS
+        Dim dy As Double = yE - yS
+
+        Dim lengthSquared As Double = dx * dx + dy * dy
+
+        ' Degenerovaný případ (start = end)
+        If lengthSquared = 0 Then
+            Return Math.Sqrt(xP * xP + yP * yP)
+        End If
+
+        ' --- 5) Projekce bodu na úsečku (parametr t)
+        Dim t As Double = (xP * dx + yP * dy) / lengthSquared
+
+        ' --- 6) Omezení na úsečku <0,1>
+        If t < 0 Then
+            ' Nejbližší bod je start
+            Return Math.Sqrt(xP * xP + yP * yP)
+        ElseIf t > 1 Then
+            ' Nejbližší bod je end
+            Dim dxEnd As Double = xP - xE
+            Dim dyEnd As Double = yP - yE
+            Return Math.Sqrt(dxEnd * dxEnd + dyEnd * dyEnd)
+        End If
+
+        ' --- 7) Kolmá vzdálenost k projekci
+        Dim xProj As Double = t * dx
+        Dim yProj As Double = t * dy
+
+        Dim distX As Double = xP - xProj
+        Dim distY As Double = yP - yProj
+
+        Return Math.Sqrt(distX * distX + distY * distY)
+
     End Function
 
     ''' <summary>
