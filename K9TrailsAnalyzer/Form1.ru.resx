@@ -393,4 +393,10 @@
   <data name="btnQuickGPXPreview.Text" xml:space="preserve">
     <value>Быстрый просмотр выбранного маршрута</value>
   </data>
+  <data name="btnEditComments.ToolTip" xml:space="preserve">
+    <value>Создать видео из выбранных файлов</value>
+  </data>
+  <data name="btnEditComments.Text" xml:space="preserve">
+    <value>Редактировать заметки</value>
+  </data>
 </root>

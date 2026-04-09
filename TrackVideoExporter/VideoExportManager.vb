@@ -178,10 +178,10 @@ Namespace TrackVideoExporter
                                pngCreator = New PngSequenceCreator(renderer, videoSettings)
 
                                Dim pngTimes = pngCreator.GetPngTimes(_tracksAsPointsF)
-
+                               pngCreator.CreateReports(outputDir, Me.LocalisedReports)
                                pngCreator.CreateFrames(_tracksAsPointsF,
                                         staticBgTransparent, staticBgMap,
-                                        outputDir, pngTimes, Me.LocalisedReports)
+                                        outputDir, pngTimes)
 
                            End Sub)
 

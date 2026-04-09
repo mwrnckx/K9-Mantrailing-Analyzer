@@ -405,4 +405,13 @@
   <data name="mnuAbout.Text" xml:space="preserve">
     <value>Über den K9 Mantrailing-Analysator</value>
   </data>
+  <data name="btnCreateDiploma.Text" xml:space="preserve">
+    <value>Erstellen Sie Diplome</value>
+  </data>
+  <data name="btnEditComments.ToolTip" xml:space="preserve">
+    <value>Erstellen Sie Videos aus ausgewählten Dateien</value>
+  </data>
+  <data name="btnEditComments.Text" xml:space="preserve">
+    <value>Notizen bearbeiten</value>
+  </data>
 </root>

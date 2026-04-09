@@ -390,4 +390,10 @@
   <data name="mnuAbout.Text" xml:space="preserve">
     <value>Про K9 Mantrailing Analyzer</value>
   </data>
+  <data name="btnEditComments.ToolTip" xml:space="preserve">
+    <value>Створіть відео з вибраних файлів</value>
+  </data>
+  <data name="btnEditComments.Text" xml:space="preserve">
+    <value>Редагувати нотатки</value>
+  </data>
 </root>

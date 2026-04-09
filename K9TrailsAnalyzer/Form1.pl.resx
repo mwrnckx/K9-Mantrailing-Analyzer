@@ -460,4 +460,13 @@
   <data name="btnQuickGPXPreview.Text" xml:space="preserve">
     <value>Szybki podgląd wybranego szlaku</value>
   </data>
+  <data name="btnCreateDiploma.Text" xml:space="preserve">
+    <value>Twórz dyplomy</value>
+  </data>
+  <data name="btnEditComments.ToolTip" xml:space="preserve">
+    <value>Utwórz filmy z wybranych plików</value>
+  </data>
+  <data name="btnEditComments.Text" xml:space="preserve">
+    <value>Edytuj notatki</value>
+  </data>
 </root>

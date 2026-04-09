@@ -407,7 +407,7 @@
     <value>Vytvářejte videa z vybraných souborů</value>
   </data>
   <data name="btnGPXView.Text" xml:space="preserve">
-    <value>Rychlý náhled vybraného trailu</value>
+    <value>Rychlý náhled trailu</value>
   </data>
   <data name="btnGPXView.ToolTip" xml:space="preserve">
     <value>Vytvářejte videa z vybraných souborů</value>
@@ -420,5 +420,14 @@
   </data>
   <data name="mnuAbout.Text" xml:space="preserve">
     <value>O programu</value>
+  </data>
+  <data name="btnCreateDiploma.Text" xml:space="preserve">
+    <value>Vytvářejte diplomy</value>
+  </data>
+  <data name="btnEditComments.ToolTip" xml:space="preserve">
+    <value>Vytvářejte videa z vybraných souborů</value>
+  </data>
+  <data name="btnEditComments.Text" xml:space="preserve">
+    <value>Upravit poznámky</value>
   </data>
 </root>

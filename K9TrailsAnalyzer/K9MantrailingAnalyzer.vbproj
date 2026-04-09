@@ -24,6 +24,7 @@
   <ItemGroup>
     <None Remove="gpx_viewer.html" />
     <None Remove="Resources\Competition_Rules.pdf" />
+    <None Remove="Resources\images\logo-transparent.png" />
     <None Remove="Resources\images\logo.png" />
     <None Remove="Resources\Pravidla_zavodu.pdf" />
     <None Remove="Resources\Wettkampfregeln.pdf" />
@@ -32,6 +33,9 @@
 
   <ItemGroup>
     <Content Include="gpx_viewer.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\images\logo-transparent.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\images\logo.png">

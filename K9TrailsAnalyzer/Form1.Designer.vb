@@ -35,6 +35,7 @@ Partial Class Form1
         lblRemoteDirectory = New Label()
         btnVideoSettings = New Button()
         btnGPXView = New Button()
+        btnEditComments = New Button()
         MenuStrip1 = New MenuStrip()
         mnuGPXprocessing = New ToolStripMenuItem()
         mnuPrependDateToFileName = New ToolStripMenuItem()
@@ -94,12 +95,12 @@ Partial Class Form1
         btnEditPoints = New ToolStripButton()
         ToolStripSeparator3 = New ToolStripSeparator()
         btnQuickGPXPreview = New ToolStripButton()
+        ToolStripSeparator4 = New ToolStripSeparator()
+        btnCreateDiploma = New ToolStripButton()
         dgvCompetition = New DataGridView()
         bsCompetitions = New BindingSource(components)
         pnlCategory = New Panel()
         cbActiveCategory = New ComboBox()
-        ToolStripSeparator4 = New ToolStripSeparator()
-        btnCreateDiploma = New ToolStripButton()
         MenuStrip1.SuspendLayout()
         TabControl1.SuspendLayout()
         TabStats.SuspendLayout()
@@ -148,6 +149,14 @@ Partial Class Form1
         btnGPXView.Name = "btnGPXView"
         ToolTip1.SetToolTip(btnGPXView, resources.GetString("btnGPXView.ToolTip"))
         btnGPXView.UseVisualStyleBackColor = False
+        ' 
+        ' btnEditComments
+        ' 
+        resources.ApplyResources(btnEditComments, "btnEditComments")
+        btnEditComments.BackColor = Color.Goldenrod
+        btnEditComments.Name = "btnEditComments"
+        ToolTip1.SetToolTip(btnEditComments, resources.GetString("btnEditComments.ToolTip"))
+        btnEditComments.UseVisualStyleBackColor = False
         ' 
         ' MenuStrip1
         ' 
@@ -437,6 +446,7 @@ Partial Class Form1
         ' TabVideoExport
         ' 
         TabVideoExport.BackColor = Color.LightYellow
+        TabVideoExport.Controls.Add(btnEditComments)
         TabVideoExport.Controls.Add(btnGPXView)
         TabVideoExport.Controls.Add(btnVideoSettings)
         TabVideoExport.Controls.Add(btnCreateVideos)
@@ -517,6 +527,18 @@ Partial Class Form1
         resources.ApplyResources(btnQuickGPXPreview, "btnQuickGPXPreview")
         btnQuickGPXPreview.Name = "btnQuickGPXPreview"
         ' 
+        ' ToolStripSeparator4
+        ' 
+        ToolStripSeparator4.Name = "ToolStripSeparator4"
+        resources.ApplyResources(ToolStripSeparator4, "ToolStripSeparator4")
+        ' 
+        ' btnCreateDiploma
+        ' 
+        btnCreateDiploma.BackColor = Color.Gold
+        btnCreateDiploma.DisplayStyle = ToolStripItemDisplayStyle.Text
+        resources.ApplyResources(btnCreateDiploma, "btnCreateDiploma")
+        btnCreateDiploma.Name = "btnCreateDiploma"
+        ' 
         ' dgvCompetition
         ' 
         dgvCompetition.AllowUserToAddRows = False
@@ -558,18 +580,6 @@ Partial Class Form1
         resources.ApplyResources(cbActiveCategory, "cbActiveCategory")
         cbActiveCategory.FormattingEnabled = True
         cbActiveCategory.Name = "cbActiveCategory"
-        ' 
-        ' ToolStripSeparator4
-        ' 
-        ToolStripSeparator4.Name = "ToolStripSeparator4"
-        resources.ApplyResources(ToolStripSeparator4, "ToolStripSeparator4")
-        ' 
-        ' btnCreateDiploma
-        ' 
-        btnCreateDiploma.BackColor = Color.Gold
-        btnCreateDiploma.DisplayStyle = ToolStripItemDisplayStyle.Text
-        resources.ApplyResources(btnCreateDiploma, "btnCreateDiploma")
-        btnCreateDiploma.Name = "btnCreateDiploma"
         ' 
         ' Form1
         ' 
@@ -779,6 +789,7 @@ Partial Class Form1
     Friend WithEvents ToolStripSeparator3 As ToolStripSeparator
     Friend WithEvents ToolStripSeparator4 As ToolStripSeparator
     Friend WithEvents btnCreateDiploma As ToolStripButton
+    Private WithEvents btnEditComments As Button
 
 
 End Class

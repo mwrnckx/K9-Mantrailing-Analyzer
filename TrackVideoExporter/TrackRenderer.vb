@@ -34,7 +34,7 @@ Public Class PngSequenceCreator
         Me.mode = videoSettings.VideoMode '
     End Sub
 
-    Public Sub CreateFrames(tracks As List(Of TrackAsPointsF), staticBgTransparent As Bitmap, staticbgMap As Bitmap, outputDir As DirectoryInfo, pngTimes As List(Of DateTime), LocalisedReports As Dictionary(Of String, TrailReport))
+    Public Sub CreateReports(outputDir As DirectoryInfo, LocalisedReports As Dictionary(Of String, TrailReport))
         'static pngs first:
         ' Vytvoříme statický obrázek s textem
         Dim keys = LocalisedReports.Keys.ToList()
@@ -55,7 +55,8 @@ Public Class PngSequenceCreator
             Dim filenamePoints = IO.Path.Combine(outputDir.FullName, key & "-" & "Points.png")
             staticTextbmpPoints.Save(filenamePoints, ImageFormat.Png)
         Next key
-        '
+    End Sub
+    Public Sub CreateFrames(tracks As List(Of TrackAsPointsF), staticBgTransparent As Bitmap, staticbgMap As Bitmap, outputDir As DirectoryInfo, pngTimes As List(Of DateTime))
 
         ' Vytvoříme statický obrázek s mapou 
         If staticbgMap IsNot Nothing Then
@@ -74,22 +75,14 @@ Public Class PngSequenceCreator
         Dim startTime = pngTimes.First()
         Dim endTime = pngTimes.Last()
         Dim durationSeconds = (endTime - startTime).TotalSeconds
-        'frameInterval = durationSeconds 'výchozí hodnota, skutečná hodnota bude nalezena v cyklu
-        'For i = 0 To pngTimes.Count - 2
-        '    'hledám minimální rozdíl kvůli maximální plynulosti
-        '    frameInterval = Math.Max(1, frameInterval) 'minimální interval 1 sekunda
-        '    frameInterval = Math.Min(frameInterval, (pngTimes(i + 1) - pngTimes(i)).TotalSeconds)
-        '    Debug.WriteLine($"{i} {(pngTimes(i + 1) - pngTimes(i)).TotalSeconds}")
-        'Next
-        'frameInterval = Math.Max(minFrameInterval, frameInterval) 'minimální interval 3 sekundy, aby nebyl nulový nebo záporný a video nebylo moc velké
-        frameInterval = 1 'pro testování, aby bylo video rychlé a krátké
-        Dim initialFrames As Integer = 0 'nakonec nepoužito
+        frameInterval = 1 '
+
         Dim _dogTrail As New List(Of PointF)
         Dim frameCount = CInt(Math.Ceiling(durationSeconds / frameInterval)) 'počet dynamických snímků
         For frameindex As Integer = 0 To frameCount - 1
             Dim frameTime = pngTimes.First().AddSeconds((frameindex) * frameInterval)
             Dim frame = renderer.RenderFrame(tracks, staticBgTransparent, frameTime, _dogTrail)
-            Dim frameNumber As String = (frameindex + initialFrames).ToString("D4")
+            Dim frameNumber As String = (frameindex).ToString("D4")
             Dim filename = IO.Path.Combine(pngDir.FullName, $"frame_{frameNumber}.png")
             frame.Save(filename, ImageFormat.Png)
             frame.Dispose()
@@ -124,7 +117,7 @@ Public Class PngRenderer
     Private myWindArrow As Bitmap
     Private videoSize As Size
 
-    Dim diagonal As Single
+    'Dim diagonal As Single
     Dim radius As Single ' poloměr kruhu pro poslední bod, ideálně 5m v pixelech, ale protože se mění s latitudou, bude se přepočítávat v konstruktoru
     Dim penWidth As Single ' šířka pera pro kreslení čar, ideálně 2 m v pixelech, ale protože se mění s latitudou, bude se přepočítávat v konstruktoru
     Dim latitude As Double ' pro přepočet šířky pera z metrů na pixely, protože se mění s latitudou
@@ -145,11 +138,21 @@ Public Class PngRenderer
 
         Me.latitude = latitude
         Me.trackBounds = bgTiles.bgmap.GetBounds(GraphicsUnit.Pixel) 'přepočítá obdélník na souřadnice v pixelech
-        diagonal = Math.Sqrt(Me.videoSize.Width ^ 2 + Me.videoSize.Height ^ 2)
+        Dim videoRatio = videoSize.Width / videoSize.Height
+        Dim bgRatio = trackBounds.Width / trackBounds.Height
+        Dim fontScale As Single
+        If bgRatio > videoRatio Then
+            'background je širší než video, vypočteme poměr šířek
+            fontScale = trackBounds.Width / videoSize.Width 'zmenší se výška backgroundu, aby se vešel do videa, proto zvětšíme výšku textu aby zůstal čitelný
+        Else
+            fontScale = 1 'výška pozadí se nemění - výšku písma ponecháme jak je
+        End If
+        'Dim videoDiagonal = Math.Sqrt(Me.videoSize.Width ^ 2 + Me.videoSize.Height ^ 2)
+        'Dim bgmapDiagonal = Math.Sqrt(bgTiles.bgmap.Width ^ 2 + bgTiles.bgmap.Height ^ 2)
         pixelsPerMeter = (OsmTileDownloader.TileSize * Math.Pow(2.0, OsmTileDownloader.zoom)) / (Math.Cos(TrackConverter.DegToRad(latitude)) * 2 * Math.PI * TrackConverter.EarthRadiusM) 'přepočet z metrů na pixely, protože se mění s latitudou
         Me.radius = 4 * VideoSettings.TrailWidth * pixelsPerMeter '0.015 * diagonal ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
         Me.penWidth = VideoSettings.TrailWidth * pixelsPerMeter '0.008 * diagonal ' šířka pera pro kreslení čar, 1% šířky obrázku
-        Me.emSize = 4 * VideoSettings.TrailWidth * pixelsPerMeter '2 * radius '0.015 * diagonal '
+        Me.emSize = 0.02 * trackBounds.Height * fontScale '
         Me.font = New Font("Cascadia Code", emSize, FontStyle.Bold)
     End Sub
 
@@ -273,7 +276,7 @@ Public Class PngRenderer
                 deviationPen.StartCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor
                 g.DrawLines(deviationPen, TrackPoints.ToArray)
 
-                Dim description As String = "max. deviation (" & maxDeviationMetres.ToString("0") & " m)"
+                Dim description As String = "max. dev. (" & maxDeviationMetres.ToString("0") & " m)"
                 Dim textSize = g.MeasureString(description, font)
                 Dim textoffsetX As Single
                 If TrackPoints(0).X - textSize.Width - radius < 0 Then
@@ -488,12 +491,9 @@ Public Class PngRenderer
                                 g.DrawLine(pen, p1, p2)
                             End Using
                         Next
-
-
-
-
                     End If
                     'Using pen As New Pen(GetColorBySpeed(speed, maxExpectedSpeed), penWidth)
+                    'Debug.WriteLine($"ellipse----:  {speed}")
                     Using brush As New SolidBrush(GetColorBySpeed(speed, maxExpectedSpeed))
                         g.FillEllipse(brush, p.X - radius / 2, p.Y - radius / 2, radius, radius)
                     End Using
@@ -667,12 +667,34 @@ Public Class PngRenderer
     Public Sub SaveWindArrowOverlay(outputDir As DirectoryInfo, Optional width As Integer = 1920, Optional height As Integer = 1440, Optional scale As Single = 0.12)
         ' Create a transparent bitmap of the requested size
         Dim overlayBmp As New Bitmap(width, height, PixelFormat.Format32bppArgb)
+        ' Cesta k vašemu logu (upravte dle potřeby)
+        Dim logoPath As String = IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources\images\logo-transparent.png")
+
+
         Using g As Graphics = Graphics.FromImage(overlayBmp)
+            g.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
+            g.InterpolationMode = Drawing2D.InterpolationMode.HighQualityBicubic
             g.Clear(Color.Transparent)
             If myWindArrow IsNot Nothing Then
                 ' Position: top-right corner
                 Dim position As New PointF(width, 0)
                 DrawWindArrow(g, position, scale, myWindArrow)
+            End If
+            ' 2. Přidání loga do levého dolního rohu
+            If IO.File.Exists(logoPath) Then
+                Using logo As Image = Image.FromFile(logoPath)
+                    ' Volitelný padding (odsazení od krajů), např. 20 pixelů
+                    Dim padding As Integer = 20
+
+                    ' Výpočet pozice: 
+                    ' X = padding (levá strana)
+                    ' Y = výška plátna - výška loga - padding (spodní strana)
+                    Dim x As Integer = padding
+                    Dim y As Integer = height - logo.Height - padding
+                    Dim position As New PointF(0, height)
+                    'g.DrawImage(logo, x, y, logo.Width, logo.Height)
+                    DrawWindArrow(g, position, 1.5 * scale, logo)
+                End Using
             End If
         End Using
         Dim filename = IO.Path.Combine(outputDir.FullName, "WindArrowOverlay.png")
@@ -686,8 +708,8 @@ Public Class PngRenderer
     ''' </summary>
     ''' <param name="g">The Graphics object to draw on.</param>
     ''' <param name="position">The top-right position of the wind arrow widget.</param>
-    ''' <param name="windArrowBitmap">The pre-rendered bitmap of the wind arrow.</param>
-    Public Sub DrawWindArrow(ByVal g As Graphics, ByVal position As PointF, scale As Single, ByVal windArrowBitmap As Bitmap)
+    ''' <param name="overlayBitmap">The pre-rendered bitmap of the wind arrow.</param>
+    Public Sub DrawWindArrow(ByVal g As Graphics, ByVal position As PointF, scale As Single, ByVal overlayBitmap As Bitmap)
         ' Získejte šířku grafického kontextu
         Dim graphicsDiagonal As Single = Math.Sqrt(g.VisibleClipBounds.Height ^ 2 + g.VisibleClipBounds.Width ^ 2)
 
@@ -696,16 +718,21 @@ Public Class PngRenderer
 
 
         ' Vypočítejte cílovou výšku s ohledem na zachování poměru stran
-        Dim aspectRatio As Single = CSng(windArrowBitmap.Height) / CSng(windArrowBitmap.Width)
+        Dim aspectRatio As Single = CSng(overlayBitmap.Height) / CSng(overlayBitmap.Width)
         ' Vypočítejte cílovou šířku a výšku z diagonály a aspect ratio
         Dim targetWidth As Single = targetDiagonal / Math.Sqrt(1 + Math.Pow(aspectRatio, 2))
         Dim targetHeight As Single = targetWidth * aspectRatio
 
         ' Vytvořte cílový obdélník pro vykreslení
         Dim targetRect As New RectangleF(position.X - targetWidth, position.Y, targetWidth, targetHeight)
+        If position.Y = 0 Then
+            targetRect = New RectangleF(position.X - targetWidth, position.Y, targetWidth, targetHeight)
+        ElseIf position.X = 0 Then
+            targetRect = New RectangleF(position.X, position.Y - targetHeight, targetWidth, targetHeight)
+        End If
 
         ' Vykreslete bitmapu do hlavního grafického kontextu s novou velikostí
-        g.DrawImage(windArrowBitmap, targetRect)
+        g.DrawImage(overlayBitmap, targetRect)
     End Sub
 
 
@@ -1078,7 +1105,7 @@ Public Class PngRenderer
                 Dim ratio As Double = elapsedSeconds / totalSeconds
                 Dim totalDistance = Math.Sqrt((p2.X - p1.X) ^ 2 + (p2.Y - p1.Y) ^ 2) / pixelsPerMeter
                 Dim speed = totalDistance / totalSeconds
-                Debug.WriteLine($"interpolate:  {speed}")
+                'Debug.WriteLine($"interpolate:  {speed}")
                 ' Lineární interpolace
                 Dim x As Single = CSng(p1.X + (p2.X - p1.X) * ratio)
                 Dim y As Single = CSng(p1.Y + (p2.Y - p1.Y) * ratio)

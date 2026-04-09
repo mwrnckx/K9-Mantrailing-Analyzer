@@ -164,7 +164,7 @@
     <value>TabVideoExport</value>
   </data>
   <data name="&gt;&gt;btnCreateVideos.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="lblRemoteDirectory.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 31</value>
@@ -236,7 +236,7 @@
     <value>TabVideoExport</value>
   </data>
   <data name="&gt;&gt;btnVideoSettings.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="btnGPXView.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
@@ -254,19 +254,19 @@
     <value>NoControl</value>
   </data>
   <data name="btnGPXView.Location" type="System.Drawing.Point, System.Drawing">
-    <value>723, 199</value>
+    <value>779, 129</value>
   </data>
   <data name="btnGPXView.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
   <data name="btnGPXView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>244, 42</value>
+    <value>188, 42</value>
   </data>
   <data name="btnGPXView.TabIndex" type="System.Int32, mscorlib">
     <value>36</value>
   </data>
   <data name="btnGPXView.Text" xml:space="preserve">
-    <value>Selected Trail Quick Preview</value>
+    <value>Trail Quick Preview</value>
   </data>
   <data name="btnGPXView.ToolTip" xml:space="preserve">
     <value>Create videos from selected files</value>
@@ -281,6 +281,51 @@
     <value>TabVideoExport</value>
   </data>
   <data name="&gt;&gt;btnGPXView.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="btnEditComments.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
+  </data>
+  <data name="btnEditComments.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="btnEditComments.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Flat</value>
+  </data>
+  <data name="btnEditComments.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Cascadia Code, 10pt, style=Bold</value>
+  </data>
+  <data name="btnEditComments.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="btnEditComments.Location" type="System.Drawing.Point, System.Drawing">
+    <value>779, 197</value>
+  </data>
+  <data name="btnEditComments.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="btnEditComments.Size" type="System.Drawing.Size, System.Drawing">
+    <value>188, 42</value>
+  </data>
+  <data name="btnEditComments.TabIndex" type="System.Int32, mscorlib">
+    <value>37</value>
+  </data>
+  <data name="btnEditComments.Text" xml:space="preserve">
+    <value>Edit notes</value>
+  </data>
+  <data name="btnEditComments.ToolTip" xml:space="preserve">
+    <value>Create videos from selected files</value>
+  </data>
+  <data name="&gt;&gt;btnEditComments.Name" xml:space="preserve">
+    <value>btnEditComments</value>
+  </data>
+  <data name="&gt;&gt;btnEditComments.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnEditComments.Parent" xml:space="preserve">
+    <value>TabVideoExport</value>
+  </data>
+  <data name="&gt;&gt;btnEditComments.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="MenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -917,7 +962,7 @@
     <value>TabVideoExport</value>
   </data>
   <data name="&gt;&gt;lvGpxFiles.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="TabVideoExport.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 30</value>
@@ -1486,12 +1531,6 @@
   <data name="&gt;&gt;btnQuickGPXPreview.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;bsCompetitions.Name" xml:space="preserve">
-    <value>bsCompetitions</value>
-  </data>
-  <data name="&gt;&gt;bsCompetitions.Type" xml:space="preserve">
-    <value>System.Windows.Forms.BindingSource, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;ToolStripSeparator4.Name" xml:space="preserve">
     <value>ToolStripSeparator4</value>
   </data>
@@ -1503,6 +1542,12 @@
   </data>
   <data name="&gt;&gt;btnCreateDiploma.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;bsCompetitions.Name" xml:space="preserve">
+    <value>bsCompetitions</value>
+  </data>
+  <data name="&gt;&gt;bsCompetitions.Type" xml:space="preserve">
+    <value>System.Windows.Forms.BindingSource, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>Form1</value>

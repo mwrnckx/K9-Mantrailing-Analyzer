@@ -1519,8 +1519,8 @@ Partial Public Class Form1
             ' Pro test: vypiš vybrané cesty
             Debug.WriteLine(record)
             Try
-                record.Description = record.BuildLocalisedDescAndReports(record.Description) 'async kvůli počasí!
-                record.WriteDescription() 'zapíše agregovaný popis do tracku Runner
+                'record.Description = record.BuildLocalisedDescAndReports(record.Description) 'async kvůli počasí!
+                'record.WriteDescription() 'zapíše agregovaný popis do tracku Runner
                 record.BuildLocalisedPerformancePoints()
                 record.WriteLocalizedReports() 'zapíše popis do DogTracku
                 'record.WriteTrailStatsToXml(record.TrailStats)
@@ -1931,25 +1931,18 @@ Partial Public Class Form1
 
     Private Sub btnGPXView_Click(sender As Object, e As EventArgs) Handles btnGPXView.Click
 
-        Dim selectedFiles As New List(Of GPXRecord)
         If lvGpxFiles.CheckedItems.Count = 0 Then
-            mboxEx("First, select the trail record to show!")
+            mboxEx("First, choose the trail record you want to see!")
             Return
         End If
 
         For Each item As ListViewItem In lvGpxFiles.CheckedItems
             ' Předpoklad: Tag obsahuje plnou cestu k souboru
-            Dim _gpxRecord As GPXRecord = TryCast(item.Tag, GPXRecord) 'není to zbytečný?
+            Dim _gpxRecord = TryCast(item.Tag, GPXRecord) 'není to zbytečný?
             If Not _gpxRecord Is Nothing Then
-                selectedFiles.Add(_gpxRecord)
+                ShowInBrowser(_gpxRecord, _gpxRecord.FileName, _gpxRecord.DogName, _gpxRecord.LocalisedReports.FirstOrDefault.Value.HandlerNameText)
             End If
-
         Next
-        If selectedFiles.Count > 0 Then
-            Dim selectedFile = selectedFiles(0)
-            ShowInBrowser(selectedFile, selectedFile.FileName, selectedFile.DogName, selectedFile.LocalisedReports.FirstOrDefault.Value.HandlerNameText)
-        End If
-
 
     End Sub
 
@@ -2081,6 +2074,40 @@ Partial Public Class Form1
            workingDirectory:=Application.StartupPath,
            language:=_language ' "cs" nebo "en"
            )
+    End Sub
+
+    Private Sub btnEditComments_Click(sender As Object, e As EventArgs) Handles btnEditComments.Click
+
+        If lvGpxFiles.CheckedItems.Count = 0 Then
+            mboxEx("First, choose the trail record you want to edit!")
+            Return
+        End If
+
+        Dim selectedFiles As New List(Of GPXRecord)
+        For Each item As ListViewItem In lvGpxFiles.CheckedItems
+            ' Předpoklad: Tag obsahuje plnou cestu k souboru
+            Dim _gpxRecord As GPXRecord = TryCast(item.Tag, GPXRecord) 'není to zbytečný?
+            If Not _gpxRecord Is Nothing Then
+                selectedFiles.Add(_gpxRecord)
+            End If
+        Next
+
+
+        For Each record In selectedFiles
+            ' Pro test: vypiš vybrané cesty
+            Debug.WriteLine(record)
+            Try
+                record.Description = record.BuildLocalisedDescAndReports(record.Description) 'async kvůli počasí!
+                record.WriteDescription() 'zapíše agregovaný popis do tracku Runner
+                record.BuildLocalisedPerformancePoints()
+                record.WriteLocalizedReports() 'zapíše popis do DogTracku
+                'record.WriteTrailStatsToXml(record.TrailStats)
+                record.IsAlreadyProcessed = True 'už byl soubor zpracován
+                record.Save()
+            Catch ex As Exception
+
+            End Try
+        Next record
     End Sub
 End Class
 
