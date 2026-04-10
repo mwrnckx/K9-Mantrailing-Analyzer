@@ -1537,6 +1537,46 @@ Partial Public Class Form1
         Next
     End Sub
 
+    ' Pomocná funkce pro převod List(Of StyledText) na HTML
+    Private Function ConvertReportToHtml(report As TrailReport) As String
+        Dim items = report.ToBasicList()
+        Dim sb As New StringBuilder()
+
+        For Each item In items
+            ' Předpokládám, že StyledText má vlastnosti Label a Text
+            ' Pokud je to titulek (první položka), dáme mu speciální třídu
+            If item Is items.First() Then
+                sb.AppendLine($"<div class='report-title'>{item.Text}</div>")
+            Else
+                sb.AppendLine("<div class='report-item'>")
+                sb.AppendLine($"  <span class='report-value'>{item.Label} {item.Text}</span>")
+                sb.AppendLine("</div>")
+            End If
+        Next
+
+        Return sb.ToString()
+    End Function
+    Private Sub ShowInBrowser_new(gpxRecord As GPXRecord, report As TrailReport, Optional fileName As String = "gpx_preview", Optional dogName As String = "", Optional handlerName As String = "")
+        Dim gpxPath As String = gpxRecord.Reader.FilePath
+        Dim gpxContent As String = File.ReadAllText(gpxPath, Encoding.UTF8)
+
+        ' Načti šablonu
+        Dim template As String = File.ReadAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "gpx_viewer_new.html"))
+
+        ' Generování HTML popisu
+        Dim descriptionHtml As String = ConvertReportToHtml(report)
+
+        ' Vložení dat do šablony
+        Dim html As String = template
+        html = html.Replace("%%GPX_CONTENT%%", gpxContent)
+        html = html.Replace("%%NAME_FILE%%", $"{fileName} | {dogName} | {handlerName}")
+        html = html.Replace("%%DESCRIPTION%%", descriptionHtml) ' <--- VLOŽENÍ POPISU
+
+        ' Zapiš do temp a otevři
+        Dim tempPath As String = Path.Combine(Path.GetTempPath(), fileName & ".html")
+        File.WriteAllText(tempPath, html, Encoding.UTF8)
+        Process.Start(New ProcessStartInfo(tempPath) With {.UseShellExecute = True})
+    End Sub
     Private Sub ShowInBrowser(gpxRecord As GPXRecord, Optional fileName As String = "gpx_preview", Optional dogName As String = "", Optional handlerName As String = "")
         Dim gpxPath As String = gpxRecord.Reader.FilePath
         Dim gpxContent As String = File.ReadAllText(gpxPath, Encoding.UTF8)
@@ -1940,7 +1980,8 @@ Partial Public Class Form1
             ' Předpoklad: Tag obsahuje plnou cestu k souboru
             Dim _gpxRecord = TryCast(item.Tag, GPXRecord) 'není to zbytečný?
             If Not _gpxRecord Is Nothing Then
-                ShowInBrowser(_gpxRecord, _gpxRecord.FileName, _gpxRecord.DogName, _gpxRecord.LocalisedReports.FirstOrDefault.Value.HandlerNameText)
+                'ShowInBrowser(_gpxRecord, _gpxRecord.FileName, _gpxRecord.DogName, _gpxRecord.LocalisedReports.FirstOrDefault.Value.HandlerNameText)
+                ShowInBrowser_new(_gpxRecord, _gpxRecord.LocalisedReports.FirstOrDefault.Value, _gpxRecord.FileName, _gpxRecord.DogName, _gpxRecord.LocalisedReports.FirstOrDefault.Value.HandlerNameText)
             End If
         Next
 
