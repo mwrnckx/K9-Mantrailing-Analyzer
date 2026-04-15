@@ -64,10 +64,41 @@ Public Class GpxFileManager
             If _DiffIndexes.Count > 0 Then Return _DiffIndexes
 
             For i = 0 To Me.GpxRecords.Count - 1
-                Dim diffIndex As Double = Me.GpxRecords(i).TrailStats.DogTotalDistancekm * Me.GpxRecords(i).TrailStats.TrailAge.TotalHours
-                If diffIndex > 0 Then 'když chybí age, nepřidává se
-                    Me._DiffIndexes.Add((Me.GpxRecords(i).TrailStart.Time, diffIndex))
+                Dim points As Double = 0
+                Dim blindWeight As Double = 0.2 ' Váha podle úrovně zaslepení, stáří a délky stopy 
+                Select Case Me.GpxRecords(i).LocalisedReports.FirstOrDefault.Value.LevelOfBlinding
+                    Case LevelOfBlindingType.Unknown
+                        blindWeight = 0.2
+                    Case LevelOfBlindingType.Open
+                        blindWeight = 0.2
+                    Case LevelOfBlindingType.KnownTrack
+                        blindWeight = 0.5
+                    Case LevelOfBlindingType.SingleBlind
+                        'reading points se počítají jen u neznámých stop
+                        points += Me.GpxRecords(i).TrailStats.PointsInMTCompetition.DogReadingPoints
+                        blindWeight = 0.8
+                    Case LevelOfBlindingType.DoubleBlindAssisted
+                        points += Me.GpxRecords(i).TrailStats.PointsInMTCompetition.DogReadingPoints
+                        blindWeight = 1.0
+                    Case LevelOfBlindingType.DoubleBlindSolo
+                        points += Me.GpxRecords(i).TrailStats.PointsInMTCompetition.DogReadingPoints
+                        blindWeight = 1.0
+                End Select
+
+                If Me.GpxRecords(i).TrailStats.RunnerTotalDistancekm > 0 Then
+                    Dim diffIndex As Double = Me.GpxRecords(i).TrailStats.RunnerTotalDistancekm * Me.GpxRecords(i).TrailStats.TrailAge.TotalHours * blindWeight
+                    If diffIndex > 0 Then 'když chybí, nepřidává se
+                        Me._DiffIndexes.Add((Me.GpxRecords(i).TrailStart.Time, diffIndex))
+                        With Me.GpxRecords(i).TrailStats.PointsInMTCompetition
+                            points += .RunnerFoundPoints
+                            points += .DogAccuracyPoints
+                            points += .DogSpeedPoints
+                            points += .TrailPickupPoints
+                        End With
+                        Me._TotalPoints.Add((Me.GpxRecords(i).TrailStart.Time, points * diffIndex))
+                    End If
                 End If
+
 
             Next i
             Return _DiffIndexes
@@ -77,15 +108,13 @@ Public Class GpxFileManager
     ''' <summary>
     ''' vrací kumulativní součet indexu obtížnosti
     ''' </summary>
-    Dim _TotalDiffIndexes As New List(Of (time As DateTime, DiffIndex As Double))
-    Public ReadOnly Property TotalDiffIndexes As List(Of (time As DateTime, DiffIndex As Double))
+    Dim _TotalPoints As New List(Of (time As DateTime, totalPoints As Double))
+    Public ReadOnly Property TotalPoints As List(Of (time As DateTime, totalPoints As Double))
         Get
-            If _TotalDiffIndexes.Count > 0 Then Return _TotalDiffIndexes
-            Me._TotalDiffIndexes.Add(Me.DiffIndexes(0))
-            For i = 1 To Me.DiffIndexes.Count - 1
-                Me._TotalDiffIndexes.Add((Me.DiffIndexes(i).time, Me._TotalDiffIndexes.Last.DiffIndex + Me.DiffIndexes(i).DiffIndex))
-            Next i
-            Return _TotalDiffIndexes
+            If _TotalPoints.Count > 0 Then Return _TotalPoints
+            Dim pocitej = DiffIndexes ' aby se vypočítaly DiffIndexy a zároveň se naplnil i TotalPoints
+
+            Return _TotalPoints
         End Get
     End Property
 
@@ -1538,7 +1567,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         If Me.LocalisedReports Is Nothing OrElse Me.LocalisedReports.Count = 0 Then
             Dim _localisedReport = ExtractDescriptionParts(summaryDescription)
             _localisedReport.WeatherData = Me.WeatherData
-
+            _localisedReport.WeatherText = strWeather()
 
 
             lang = CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLowerInvariant()
@@ -3193,15 +3222,16 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             For Each reportNode As XmlNode In reportNodes
                 Dim lang As String = reportNode.Attributes("lang")?.Value
                 If String.IsNullOrEmpty(lang) Then Continue For ' pokud není jazyk, přeskočíme
-
+                Dim weatherText As String = ""
                 Dim weatherNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "weather", reportNode)
-                isWeatherLoaded = ReadWeatherDataFromXml(weatherNode, Me.WeatherData)
+                isWeatherLoaded = ReadWeatherDataFromXml(weatherNode, Me.WeatherData, weatherText)
 
                 Dim scoringNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "scoring", reportNode)
                 isScoringLoaded = ReadScoringDataFromXml(scoringNode, loadedScoring)
 
                 Dim localizedReport As New TrailReport With {
-                    .WeatherData = Me.WeatherData}
+                    .WeatherData = Me.WeatherData,
+                    .WeatherText = weatherText}
 
                 isLocalisedReportLoaded = ReadLocalisedReportFromXml(reportNode, localizedReport)
                 If Not reports.ContainsKey(lang) Then reports.Add(lang, localizedReport)
@@ -3249,7 +3279,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
     End Sub
 
     ' Načte tuple z XML elementu
-    Private Shared Function ReadWeatherDataFromXml(weatherDataNode As XmlNode, ByRef _weatherData As WeatherData) As Boolean
+    Private Shared Function ReadWeatherDataFromXml(weatherDataNode As XmlNode, ByRef _weatherData As WeatherData, ByRef _weatherText As String) As Boolean
         If weatherDataNode Is Nothing Then Return False
         If weatherDataNode.Attributes.Count = 0 Then Return False
 
@@ -3260,7 +3290,11 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             .precipitation = ParseDouble(weatherDataNode, "precipitation"),
             .relHumidity = ParseDouble(weatherDataNode, "relHumidity"),
             .cloudCover = ParseDouble(weatherDataNode, "cloudCover")}
-        If weatherDataNode.InnerText = "" Then Return False
+        If weatherDataNode.InnerText = "" Then
+            Return False
+        Else
+            _weatherText = weatherDataNode.InnerText
+        End If
         Return True
     End Function
 
@@ -3350,9 +3384,9 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         Dim trailStatsNode As XmlNode = Me.Reader.CreateAndAddElement(extensionsNode, GpxReader.K9_PREFIX & ":" & "trailStats", "", True,,, GpxReader.K9_NAMESPACE_URI)
 
         ' 3. Nastavení atributů pro Double/procenta do <TrailStats>
-        SetAttributeDouble(trailStatsNode, "dogDistance", statsData.DogTotalDistancekm * 1000, "F1")
-        SetAttributeDouble(trailStatsNode, "runnerDistance", statsData.RunnerTotalDistancekm * 1000, "F1")
-        SetAttributeDouble(trailStatsNode, "distanceAlongTrailWeighted", statsData.MaxDistAlongTrailkmWeighted * 1000, "F1")
+        SetAttributeDouble(trailStatsNode, "dogDistance", statsData.DogTotalDistancekm, "F1")
+        SetAttributeDouble(trailStatsNode, "runnerDistance", statsData.RunnerTotalDistancekm, "F1")
+        SetAttributeDouble(trailStatsNode, "distanceAlongTrailWeighted", statsData.MaxDistAlongTrailkmWeighted, "F1")
         SetAttributeDouble(trailStatsNode, "distanceAlongTrail", statsData.MaxDistAlongTrailkm, "G3")
         SetAttributeDouble(trailStatsNode, "distanceAlongTrailWeightedPerCent", statsData.MaxDistAlongTrailWeightedPerCent, "F0")
         SetAttributeDouble(trailStatsNode, "averWeightOfDeviation", statsData.AverWeightOfDeviation, "F2")
@@ -3466,8 +3500,8 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         End If
 
         stats = New TrailStats With {
-         .MaxDistAlongTrailkmWeighted = ParseDouble(statsNode, "distanceAlongTrailWeighted") / 1000,
-         .MaxDistAlongTrailkm = ParseDouble(statsNode, "distanceAlongTrail") / 1000,
+         .MaxDistAlongTrailkmWeighted = ParseDouble(statsNode, "distanceAlongTrailWeighted"),
+         .MaxDistAlongTrailkm = ParseDouble(statsNode, "distanceAlongTrail"),
          .MaxDistAlongTrailWeightedPerCent = ParseDouble(statsNode, "distanceAlongTrailWeightedPerCent"),
          .AverWeightOfDeviation = ParseDouble(statsNode, "averWeightOfDeviation"),
          .DogGrossSpeedkmh = ParseDouble(statsNode, "dogGrossSpeed"),
@@ -3475,8 +3509,8 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
          .TrailPickupFactorPerCent = ParseDouble(statsNode, "TrailPickupFactorPerCent"),' --- Read TimeSpan attributes (stored as seconds) ---
          .TrailAge = ParseTimeSpan(statsNode, "trailAge"),
          .RunnerFound = ParseBoolean(statsNode, "runnerFound"),
-          .RunnerTotalDistancekm = ParseDouble(statsNode, "runnerDistance") / 1000,
-    .DogTotalDistancekm = ParseDouble(statsNode, "dogDistance") / 1000,
+          .RunnerTotalDistancekm = ParseDouble(statsNode, "runnerDistance"),
+    .DogTotalDistancekm = ParseDouble(statsNode, "dogDistance"),
     .DogTotalTime = ParseTimeSpan(statsNode, "totalTime"),
       .BestCheckPointIndex = ParseDouble(statsNode, "LastConfirmedPointIndex")
                 }

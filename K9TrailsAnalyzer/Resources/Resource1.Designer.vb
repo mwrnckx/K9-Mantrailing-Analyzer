@@ -160,7 +160,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Ranking.
+        '''  Vyhledá lokalizovaný řetězec podobný Placement.
         '''</summary>
         Friend Shared ReadOnly Property hdr_Ranking() As String
             Get
@@ -358,7 +358,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Average net speed of dog.
+        '''  Vyhledá lokalizovaný řetězec podobný Average speed of the team.
         '''</summary>
         Friend Shared ReadOnly Property outAverageSpeed() As String
             Get

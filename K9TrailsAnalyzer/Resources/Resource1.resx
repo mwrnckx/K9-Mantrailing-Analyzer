@@ -181,7 +181,7 @@
     <value>Average age of trails</value>
   </data>
   <data name="outAverageSpeed" xml:space="preserve">
-    <value>Average net speed of dog</value>
+    <value>Average speed of the team</value>
   </data>
   <data name="logBackupOfFiles" xml:space="preserve">
     <value>The gpx files were successfully backed up to the directory:</value>

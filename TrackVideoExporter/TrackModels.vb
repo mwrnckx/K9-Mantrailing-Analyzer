@@ -263,11 +263,11 @@ End Enum
 
 Public Enum LevelOfBlindingType
     Unknown = 0
-    Open
-    KnownTrack
-    SingleBlind
-    DoubleBlindAssisted
-    DoubleBlindSolo
+    Open = 1
+    KnownTrack = 2
+    SingleBlind = 3
+    DoubleBlindAssisted = 4
+    DoubleBlindSolo = 5
 End Enum
 
 

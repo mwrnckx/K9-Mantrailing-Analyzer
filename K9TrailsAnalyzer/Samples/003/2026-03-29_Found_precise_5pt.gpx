@@ -7,8 +7,8 @@
         <k9:goal>testing the application</k9:goal>
         <k9:trail>1,9 km, ⌛ 0,8 h, forest, footpaths, gravel</k9:trail>
         <k9:performance>Best work  - precise</k9:performance>
-        <k9:levelOfBlindingType>Open</k9:levelOfBlindingType>
-        <k9:levelOfBlindingText>Open</k9:levelOfBlindingText>
+        <k9:levelOfBlindingType>DoubleBlindAssisted</k9:levelOfBlindingType>
+        <k9:levelOfBlindingText>Double-blind Assisted: neither the handler nor the assistant is familiar with the track</k9:levelOfBlindingText>
         <k9:numberOfArticlesFound>5</k9:numberOfArticlesFound>
                 <k9:dogName>Jerry Lee</k9:dogName>
         <k9:handlerName>Michael Dooley</k9:handlerName>

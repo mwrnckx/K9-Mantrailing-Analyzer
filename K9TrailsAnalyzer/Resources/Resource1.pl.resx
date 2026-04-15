@@ -180,9 +180,6 @@
   <data name="outAverageAge" xml:space="preserve">
     <value>Średni wiek śladów</value>
   </data>
-  <data name="outAverageSpeed" xml:space="preserve">
-    <value>Średnia prędkość psa</value>
-  </data>
   <data name="logBackupOfFiles" xml:space="preserve">
     <value>Kopia zapasowa plików gpx została pomyślnie utworzona w katalogu:</value>
   </data>
@@ -316,5 +313,8 @@ Jeśli są tylko dwie trasy, jest to dość proste - pierwszy to szlak tematyczn
   </data>
   <data name="RunnerTrail" xml:space="preserve">
     <value>Biegacz</value>
+  </data>
+  <data name="outAverageSpeed" xml:space="preserve">
+    <value>Średnia prędkość zespołu</value>
   </data>
 </root>

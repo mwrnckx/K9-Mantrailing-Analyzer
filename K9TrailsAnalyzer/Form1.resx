@@ -136,7 +136,7 @@
     <value>Cascadia Code, 10pt, style=Bold</value>
   </data>
   <data name="btnCreateVideos.Location" type="System.Drawing.Point, System.Drawing">
-    <value>779, 334</value>
+    <value>779, 446</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="btnCreateVideos.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
@@ -209,7 +209,7 @@
     <value>NoControl</value>
   </data>
   <data name="btnVideoSettings.Location" type="System.Drawing.Point, System.Drawing">
-    <value>779, 266</value>
+    <value>779, 378</value>
   </data>
   <data name="btnVideoSettings.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
@@ -254,7 +254,7 @@
     <value>NoControl</value>
   </data>
   <data name="btnGPXView.Location" type="System.Drawing.Point, System.Drawing">
-    <value>779, 129</value>
+    <value>779, 241</value>
   </data>
   <data name="btnGPXView.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
@@ -299,7 +299,7 @@
     <value>NoControl</value>
   </data>
   <data name="btnEditComments.Location" type="System.Drawing.Point, System.Drawing">
-    <value>779, 197</value>
+    <value>779, 309</value>
   </data>
   <data name="btnEditComments.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
@@ -578,7 +578,7 @@
     <value>5, 1, 0, 1</value>
   </data>
   <data name="MenuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>984, 24</value>
+    <value>1228, 24</value>
   </data>
   <data name="MenuStrip1.TabIndex" type="System.Int32, mscorlib">
     <value>27</value>
@@ -608,13 +608,13 @@
     <value>Cascadia Code SemiBold, 10pt, style=Bold</value>
   </data>
   <data name="rtbWarnings.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 497</value>
+    <value>0, 569</value>
   </data>
   <data name="rtbWarnings.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
   <data name="rtbWarnings.Size" type="System.Drawing.Size, System.Drawing">
-    <value>984, 92</value>
+    <value>1228, 92</value>
   </data>
   <data name="rtbWarnings.TabIndex" type="System.Int32, mscorlib">
     <value>31</value>
@@ -644,7 +644,7 @@
     <value>4, 4, 4, 4</value>
   </data>
   <data name="rtbOutput.Size" type="System.Drawing.Size, System.Drawing">
-    <value>676, 363</value>
+    <value>920, 323</value>
   </data>
   <data name="rtbOutput.TabIndex" type="System.Int32, mscorlib">
     <value>34</value>
@@ -887,7 +887,7 @@
     <value>3, 2, 3, 2</value>
   </data>
   <data name="TabStats.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 472</value>
+    <value>1220, 544</value>
   </data>
   <data name="TabStats.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -947,7 +947,7 @@
     <value>3, 2, 3, 2</value>
   </data>
   <data name="lvGpxFiles.Size" type="System.Drawing.Size, System.Drawing">
-    <value>970, 468</value>
+    <value>970, 580</value>
   </data>
   <data name="lvGpxFiles.TabIndex" type="System.Int32, mscorlib">
     <value>33</value>
@@ -974,7 +974,7 @@
     <value>3, 2, 3, 2</value>
   </data>
   <data name="TabVideoExport.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 472</value>
+    <value>976, 584</value>
   </data>
   <data name="TabVideoExport.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -1124,7 +1124,7 @@
     <value>0, 0</value>
   </data>
   <data name="pnlForDgv.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 472</value>
+    <value>976, 584</value>
   </data>
   <data name="pnlForDgv.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -1145,7 +1145,7 @@
     <value>4, 30</value>
   </data>
   <data name="TabCompetition.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 472</value>
+    <value>976, 584</value>
   </data>
   <data name="TabCompetition.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -1175,7 +1175,7 @@
     <value>3, 2, 3, 2</value>
   </data>
   <data name="TabControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>984, 506</value>
+    <value>1228, 578</value>
   </data>
   <data name="TabControl1.TabIndex" type="System.Int32, mscorlib">
     <value>32</value>
@@ -1229,7 +1229,7 @@
     <value>0, 24</value>
   </data>
   <data name="pnlCategory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>984, 59</value>
+    <value>1228, 59</value>
   </data>
   <data name="pnlCategory.TabIndex" type="System.Int32, mscorlib">
     <value>35</value>
@@ -1253,7 +1253,7 @@
     <value>96, 96</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>984, 589</value>
+    <value>1228, 661</value>
   </data>
   <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
     <value>Cascadia Code, 12pt</value>

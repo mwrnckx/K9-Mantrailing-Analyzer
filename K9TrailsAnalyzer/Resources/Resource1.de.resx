@@ -180,9 +180,6 @@
   <data name="outAverageAge" xml:space="preserve">
     <value>Das durchschnittliche Alter der Spuren</value>
   </data>
-  <data name="outAverageSpeed" xml:space="preserve">
-    <value>Durchschnittliche Tempo des Hundes</value>
-  </data>
   <data name="logBackupOfFiles" xml:space="preserve">
     <value>Die gpx-Dateien wurden erfolgreich in dem Verzeichnis gesichert:</value>
   </data>
@@ -316,5 +313,8 @@ Wenn es nur zwei Routen gibt, ist es ziemlich unkompliziert - der erste ist der 
   </data>
   <data name="RunnerTrail" xml:space="preserve">
     <value>Läufer</value>
+  </data>
+  <data name="outAverageSpeed" xml:space="preserve">
+    <value>Durchschnittsgeschwindigkeit des Teams</value>
   </data>
 </root>

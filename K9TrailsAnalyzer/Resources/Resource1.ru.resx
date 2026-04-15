@@ -180,9 +180,6 @@
   <data name="outAverageAge" xml:space="preserve">
     <value>Средний возраст следoв</value>
   </data>
-  <data name="outAverageSpeed" xml:space="preserve">
-    <value>Средняя скорость собаки</value>
-  </data>
   <data name="logBackupOfFiles" xml:space="preserve">
     <value>Файлы gpx были успешно сохранены в каталоге:</value>
   </data>
@@ -313,5 +310,8 @@
   </data>
   <data name="RunnerTrail" xml:space="preserve">
     <value>бегун</value>
+  </data>
+  <data name="outAverageSpeed" xml:space="preserve">
+    <value>Средняя скорость команды</value>
   </data>
 </root>

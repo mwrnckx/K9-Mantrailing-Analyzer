@@ -596,7 +596,7 @@ Partial Public Class Form1
         rtbOutput.AppendText((My.Resources.Resource1.outAverageDistance & manydots).Substring(0, labelLength))
         rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
         rtbOutput.SelectionColor = Color.Firebrick
-        Dim averageDistance As Double = GetAverage(Of Double)(_gpxRecords, Function(r) r.TrailStats.RunnerTotalDistancekm)
+        Dim averageDistance As Double = GetAverage(Of Double)(_gpxRecords, Function(r) r.TrailStats.MaxDistAlongTrailkm)
         rtbOutput.AppendText((averageDistance).ToString("G3") & " km" & vbCrLf)
         rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
         rtbOutput.SelectionColor = Color.Maroon
@@ -816,7 +816,7 @@ Partial Public Class Form1
 
         'Total Difficulty indexes
 
-        chart1 = New frmChart(ActiveCategoryInfo.Name, GPXFilesManager.TotalDiffIndexes, "Total Trail Difficulty Index (h·km)", GPXFilesManager.dateFrom, GPXFilesManager.dateTo, "Total Trail Difficulty Index (h·km)", True, SeriesChartType.Point, currentCulture)
+        chart1 = New frmChart(ActiveCategoryInfo.Name, GPXFilesManager.TotalPoints, "Total Points Weigted by Difficulty", GPXFilesManager.dateFrom, GPXFilesManager.dateTo, "Total Points Weigted by Difficulty", True, SeriesChartType.Point, currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
@@ -2017,9 +2017,10 @@ Partial Public Class Form1
             Return
         End If
 
-        For Each selectedFile As GPXRecord In selectedrecords
+        For Each _gpxRecord As GPXRecord In selectedrecords
 
-            ShowInBrowser(selectedFile, selectedFile.FileName, selectedFile.DogName, selectedFile.LocalisedReports.FirstOrDefault.Value.HandlerNameText)
+            'ShowInBrowser(selectedFile, selectedFile.FileName, selectedFile.DogName, selectedFile.LocalisedReports.FirstOrDefault.Value.HandlerNameText)
+            ShowInBrowser_new(_gpxRecord, _gpxRecord.LocalisedReports.FirstOrDefault.Value, _gpxRecord.FileName, _gpxRecord.DogName, _gpxRecord.LocalisedReports.FirstOrDefault.Value.HandlerNameText)
 
         Next
 
@@ -2375,7 +2376,24 @@ Public Class TrailStatsDisplay
 
     Public Sub CalculateTotalPoints()
         Dim newTotal As Integer = RunnerFoundPoints + DogSpeedPoints + DogAccuracyPoints + DogReadingPoints + TrailPickupPoints
-
+        Dim weight As Double = 1.0 ' Váha podle úrovně zaslepení, stáří a délky stopy 
+        Select Case Me._originalRecord.LocalisedReports.FirstOrDefault.Value.LevelOfBlinding
+            Case LevelOfBlindingType.Unknown
+                weight = 0
+            Case LevelOfBlindingType.Open
+                weight = 0.1
+            Case LevelOfBlindingType.KnownTrack
+                weight = 0.5
+            Case LevelOfBlindingType.SingleBlind
+                weight = 0.8
+            Case LevelOfBlindingType.DoubleBlindAssisted
+                weight = 1.0
+            Case LevelOfBlindingType.DoubleBlindSolo
+                weight = 1.0
+        End Select
+        weight *= Me._originalRecord.TrailStats.TrailAge.TotalHours * Me._originalRecord.TrailStats.RunnerTotalDistancekm ' další váha podle stáří a délky stopy
+        'todo: přidat vážené body do zobrazení v dgvCompetition
+        Dim newTotalWeighted As Integer = newTotal * weight
         ' Nastavíme novou hodnotu, ale pouze pokud se liší, abychom zamezili zbytečným notifikacím
         If _totalPoints <> newTotal Then
             _totalPoints = newTotal
@@ -2385,21 +2403,6 @@ Public Class TrailStatsDisplay
         End If
     End Sub
 
-
-    'Private _isSelected As Boolean = False
-
-    '<DisplayName("")>
-    'Public Property IsSelected As Boolean
-    '    Get
-    '        Return _isSelected
-    '    End Get
-    '    Set(value As Boolean)
-    '        If _isSelected <> value Then
-    '            _isSelected = value
-    '            OnPropertyChanged(NameOf(IsSelected))
-    '        End If
-    '    End Set
-    'End Property
 
 End Class
 
