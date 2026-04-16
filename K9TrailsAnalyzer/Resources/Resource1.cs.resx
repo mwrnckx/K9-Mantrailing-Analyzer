@@ -331,24 +331,25 @@ Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče
     <value>Pes</value>
   </data>
   <data name="levelOfBlinding_DoubleAssisted" xml:space="preserve">
-    <value>Dvojité slepé asistování: psovod ani asistent neznají trať.</value>
+    <value>Dvojité zaslepení s doprovodem: psovod ani asistent stopu neznají</value>
   </data>
   <data name="levelOfBlinding_DoubleSolo" xml:space="preserve">
-    <value>Dvojité slepé sólo: psovod není obeznámen se stopou.</value>
+    <value>Dvojité zaslepení sólo: psovod není obeznámen se stopou a nemá doprovod</value>
   </data>
   <data name="levelOfBlinding_Known" xml:space="preserve">
-    <value>Známá dráha alias Modrá čára: psovod trať zná.</value>
+    <value>Známá stopa: psovod trať zná</value>
   </data>
   <data name="levelOfBlinding_Open" xml:space="preserve">
-    <value>Otevřená stopa: psovod je doprovázen svým psem na samostatně položené stopě</value>
+    <value>Otevřená stopa: psovod je doprovázen svým psem při kladení vlastní stopy
+</value>
   </data>
   <data name="levelOfBlinding_Select" xml:space="preserve">
     <value>Vyberte úroveň zaslepení.</value>
   </data>
   <data name="LevelOfBlinding_Single" xml:space="preserve">
-    <value>Jednoslepý: psovod není obeznámen se stopou. Asistent je.</value>
+    <value>Jednoduché zaslepení: psovod není obeznámen se stopou, doprovod ano</value>
   </data>
   <data name="levelOfBlinding_Unknown" xml:space="preserve">
-    <value>Neznámý</value>
+    <value>Neznámé</value>
   </data>
 </root>
