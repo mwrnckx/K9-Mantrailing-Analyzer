@@ -259,6 +259,69 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Double-blind Assisted: neither the handler nor the assistant is familiar with the track..
+        '''</summary>
+        Friend Shared ReadOnly Property levelOfBlinding_DoubleAssisted() As String
+            Get
+                Return ResourceManager.GetString("levelOfBlinding_DoubleAssisted", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Double-blind Solo: the handler  is not familiar with the track..
+        '''</summary>
+        Friend Shared ReadOnly Property levelOfBlinding_DoubleSolo() As String
+            Get
+                Return ResourceManager.GetString("levelOfBlinding_DoubleSolo", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Known track aka Blue line: the handler is familiar with the track..
+        '''</summary>
+        Friend Shared ReadOnly Property levelOfBlinding_Known() As String
+            Get
+                Return ResourceManager.GetString("levelOfBlinding_Known", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Open Track: the handler is accompanied by his dog on a self-laid track.
+        '''</summary>
+        Friend Shared ReadOnly Property levelOfBlinding_Open() As String
+            Get
+                Return ResourceManager.GetString("levelOfBlinding_Open", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Select the level of blinding..
+        '''</summary>
+        Friend Shared ReadOnly Property levelOfBlinding_Select() As String
+            Get
+                Return ResourceManager.GetString("levelOfBlinding_Select", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Single-blind: the handler is not familiar with the track. The assistant is..
+        '''</summary>
+        Friend Shared ReadOnly Property LevelOfBlinding_Single() As String
+            Get
+                Return ResourceManager.GetString("LevelOfBlinding_Single", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Uknown.
+        '''</summary>
+        Friend Shared ReadOnly Property levelOfBlinding_Unknown() As String
+            Get
+                Return ResourceManager.GetString("levelOfBlinding_Unknown", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný The gpx files were successfully backed up to the directory:.
         '''</summary>
         Friend Shared ReadOnly Property logBackupOfFiles() As String
@@ -367,11 +430,29 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Blinding.
+        '''</summary>
+        Friend Shared ReadOnly Property outBlinding() As String
+            Get
+                Return ResourceManager.GetString("outBlinding", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Description.
         '''</summary>
         Friend Shared ReadOnly Property outDescription() As String
             Get
                 Return ResourceManager.GetString("outDescription", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Deviation.
+        '''</summary>
+        Friend Shared ReadOnly Property outDeviation() As String
+            Get
+                Return ResourceManager.GetString("outDeviation", resourceCulture)
             End Get
         End Property
         

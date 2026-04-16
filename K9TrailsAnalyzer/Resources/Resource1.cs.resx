@@ -303,6 +303,9 @@ Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče
   <data name="hdr_TotalPoints" xml:space="preserve">
     <value>Body celkem</value>
   </data>
+  <data name="hdr_Ranking" xml:space="preserve">
+    <value>Pořadí</value>
+  </data>
   <data name="hdr_RunnerFoundPoints" xml:space="preserve">
     <value>Body za nalezení kladeče</value>
   </data>
@@ -318,7 +321,34 @@ Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče
   <data name="hdr_TrailPickupPoints" xml:space="preserve">
     <value>Bonus za_rychlé vyhledání stopy</value>
   </data>
-  <data name="hdr_Ranking" xml:space="preserve">
-    <value>Pořadí</value>
+  <data name="outBlinding" xml:space="preserve">
+    <value>Zaslepení</value>
+  </data>
+  <data name="outDeviation" xml:space="preserve">
+    <value>Odchylka</value>
+  </data>
+  <data name="dogTrack" xml:space="preserve">
+    <value>Pes</value>
+  </data>
+  <data name="levelOfBlinding_DoubleAssisted" xml:space="preserve">
+    <value>Dvojité slepé asistování: psovod ani asistent neznají trať.</value>
+  </data>
+  <data name="levelOfBlinding_DoubleSolo" xml:space="preserve">
+    <value>Dvojité slepé sólo: psovod není obeznámen se stopou.</value>
+  </data>
+  <data name="levelOfBlinding_Known" xml:space="preserve">
+    <value>Známá dráha alias Modrá čára: psovod trať zná.</value>
+  </data>
+  <data name="levelOfBlinding_Open" xml:space="preserve">
+    <value>Otevřená stopa: psovod je doprovázen svým psem na samostatně položené stopě</value>
+  </data>
+  <data name="levelOfBlinding_Select" xml:space="preserve">
+    <value>Vyberte úroveň zaslepení.</value>
+  </data>
+  <data name="LevelOfBlinding_Single" xml:space="preserve">
+    <value>Jednoslepý: psovod není obeznámen se stopou. Asistent je.</value>
+  </data>
+  <data name="levelOfBlinding_Unknown" xml:space="preserve">
+    <value>Neznámý</value>
   </data>
 </root>

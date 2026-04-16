@@ -180,6 +180,9 @@
   <data name="outAverageAge" xml:space="preserve">
     <value>Das durchschnittliche Alter der Spuren</value>
   </data>
+  <data name="outAverageSpeed" xml:space="preserve">
+    <value>Durchschnittsgeschwindigkeit des Teams</value>
+  </data>
   <data name="logBackupOfFiles" xml:space="preserve">
     <value>Die gpx-Dateien wurden erfolgreich in dem Verzeichnis gesichert:</value>
   </data>
@@ -284,6 +287,9 @@ Wenn es nur zwei Routen gibt, ist es ziemlich unkompliziert - der erste ist der 
   <data name="CrossingTrail" xml:space="preserve">
     <value>Spurkreuzung</value>
   </data>
+  <data name="RunnerTrail" xml:space="preserve">
+    <value>Läufer</value>
+  </data>
   <data name="article" xml:space="preserve">
     <value>Kontrollpunkt</value>
   </data>
@@ -302,19 +308,34 @@ Wenn es nur zwei Routen gibt, ist es ziemlich unkompliziert - der erste ist der 
   <data name="hdr_RunnerFoundPoints" xml:space="preserve">
     <value>Punkte für Runner Find</value>
   </data>
-  <data name="hdr_DogAccuracyPoints" xml:space="preserve">
-    <value>Bonus für Genauigkeit</value>
-  </data>
   <data name="hdr_DogSpeedPoints" xml:space="preserve">
     <value>Bonus für die Schnelligkeit</value>
+  </data>
+  <data name="hdr_DogAccuracyPoints" xml:space="preserve">
+    <value>Bonus für Genauigkeit</value>
   </data>
   <data name="hdr_DogReadingPoints" xml:space="preserve">
     <value>Bonus für gute Hundelektüre</value>
   </data>
-  <data name="RunnerTrail" xml:space="preserve">
-    <value>Läufer</value>
+  <data name="dogTrack" xml:space="preserve">
+    <value>Hund</value>
   </data>
-  <data name="outAverageSpeed" xml:space="preserve">
-    <value>Durchschnittsgeschwindigkeit des Teams</value>
+  <data name="levelOfBlinding_DoubleAssisted" xml:space="preserve">
+    <value>Doppelblind Assistiert: Weder der Hundeführer noch der Assistent sind mit der Strecke vertraut.</value>
+  </data>
+  <data name="levelOfBlinding_DoubleSolo" xml:space="preserve">
+    <value>Doppelblind-Solo: Der Hundeführer ist mit der Strecke nicht vertraut.</value>
+  </data>
+  <data name="levelOfBlinding_Known" xml:space="preserve">
+    <value>Bekannte Strecke, auch Blaue Linie genannt: Der Hundeführer ist mit der Strecke vertraut.</value>
+  </data>
+  <data name="levelOfBlinding_Open" xml:space="preserve">
+    <value>Offene Fährte: Der Hundeführer begleitet seinen Hund auf einer selbst angelegten Fährte</value>
+  </data>
+  <data name="LevelOfBlinding_Single" xml:space="preserve">
+    <value>Einfachblind: Der Hundeführer ist mit der Strecke nicht vertraut. Der Assistent ist.</value>
+  </data>
+  <data name="levelOfBlinding_Unknown" xml:space="preserve">
+    <value>Unbekannt</value>
   </data>
 </root>

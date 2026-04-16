@@ -349,8 +349,7 @@ Public Class TrailReport
     Private _performanceText As String = ""
     Private _performancePointsText As String = ""
     Private _weatherText As String = " "
-    Private _levelOfBlindingText As String = " "
-    Private _levelOfBlinding As LevelOfBlindingType = 0
+
 
 
     ' Veřejné StyledText vlastnosti (ReadOnly) - Získáte je, ale nemůžete je přímo nastavit
@@ -399,7 +398,9 @@ Public Class TrailReport
 
     Public ReadOnly Property LevelOfBlindingStyledText As StyledText
         Get
-            Return New StyledText(_levelOfBlindingText, Color.DarkGreen, mainFont, levelOfBlindingLabel)
+
+
+            Return New StyledText(LevelOfBlindingText, Color.DarkGreen, mainFont, levelOfBlindingLabel)
         End Get
     End Property
 
@@ -445,25 +446,19 @@ Public Class TrailReport
         End Set
     End Property
 
-    Public Property NumberOfArticlesFound As String
+    'Public Property NumberOfArticlesFound As String
 
-    Public Property LevelOfBlinding As LevelOfBlindingType
-        Get
-            Return _levelOfBlinding
-        End Get
-        Set(value As LevelOfBlindingType)
-            _levelOfBlinding = value
-        End Set
-    End Property
+    'Public Property LevelOfBlinding As LevelOfBlindingType
+    '    Get
+    '        Return _levelOfBlinding
+    '    End Get
+    '    Set(value As LevelOfBlindingType)
+    '        _levelOfBlinding = value
+    '    End Set
+    'End Property
 
-    Public Property LevelOfBlindingText As String
-        Get
-            Return _levelOfBlindingText
-        End Get
-        Set(value As String)
-            _levelOfBlindingText = value
-        End Set
-    End Property
+    Public Property LevelOfBlindingText As String 'todo: předělat aby se načítalo lokalizovaně dle trailstats.levelofblinding nebo to udělat při vytváření nového reportu?
+
 
     Public Property PerformanceText As String
         Get
@@ -497,18 +492,15 @@ Public Class TrailReport
 
 
     ' Konstruktor pro snadné vytvoření a nastavení
-    Public Sub New(ByVal title As String, ByVal dogName As String, ByVal goal As String, ByVal trail As String, ByVal performance As String, Optional points As String = "", Optional _weatherdata As WeatherData = Nothing, Optional weather As String = " ", Optional _levelOfBlinding As LevelOfBlindingType = 0, Optional NoOfArticklesFound As String = "0", Optional handlerName As String = "")
+    Public Sub New(ByVal title As String, ByVal goal As String, ByVal trail As String, ByVal performance As String, Optional points As String = "", Optional _weatherdata As WeatherData = Nothing, Optional weather As String = " ", Optional _levelofBlindingText As String = " ")
         Me.TitleText = title
-        Me.DogNameText = dogName
-        Me.HandlerNameText = handlerName
-        Me.LevelOfBlinding = _levelOfBlinding
         Me.GoalText = goal
         Me.TrailText = trail
         Me.PerformanceText = performance
         Me.PerformancePointsText = points
         Me.WeatherText = weather
         Me.WeatherData = _weatherdata
-        Me.NumberOfArticlesFound = NoOfArticklesFound
+        Me.LevelOfBlindingText = _levelofBlindingText
     End Sub
 
     ' Přetížený konstruktor pro new() bez argumentů
@@ -545,6 +537,10 @@ End Class
 ''' structure for returning calculation results.
 ''' </summary>
 Public Class TrailStats
+    Public Sub New()
+
+    End Sub
+
     Public Property MaxDistAlongTrailkm As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
     Public Property MaxDistAlongTrailkmWeighted As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
     Public Property MaxDistAlongTrailWeightedPerCent As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
@@ -561,8 +557,11 @@ Public Class TrailStats
     Public Property BestCheckPointIndex As Integer ' index of the checkpoint with the best score (closest to the track and most far)
     Public Property RunnerFound As Boolean ' whether dog found the runner or not
     Public Property TrailPickupFactorPerCent As Double 'whether dog found trail quickly
-    'Public Property DogName As String
-    'Public Property HandlerName As String
+    Public Property DogName As String
+    Public Property HandlerName As String
+    Public Property LevelOfBlinding As LevelOfBlindingType
+    Public Property NumberOfArticlesFound As Integer
+
 End Class
 
 ' Struktura pro data checkpointu

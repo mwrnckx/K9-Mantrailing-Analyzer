@@ -128,8 +128,8 @@ Partial Public Class Form1
             displayList.Add(New TrailStatsDisplay With {
                 .OriginalRecord = record,
                 .GPXFilename = IO.Path.GetFileNameWithoutExtension(GPXFilesManager.GpxRecords(i).Reader.FilePath),'.Substring(11),
-                .DogName = record.LocalisedReports.FirstOrDefault.Value.DogNameText,
-                .HandlerName = record.LocalisedReports.FirstOrDefault.Value.HandlerNameText,
+                .DogName = record.TrailStats.DogName,
+                .HandlerName = record.TrailStats.HandlerName,
                  .RunnerDistance = stats.RunnerTotalDistancekm,
                  .TotalTime = stats.DogTotalTime.Minutes,
                 .DogGrossSpeedKmh = stats.DogGrossSpeedkmh,
@@ -225,10 +225,10 @@ Partial Public Class Form1
                     pointsStruct.TrailPickupPoints = changedItem.TrailPickupPoints
 
                 Case NameOf(TrailStatsDisplay.DogName)
-                    firstLocalisedReport.Value.DogNameText = changedItem.DogName
+                    currentStats.DogName = changedItem.DogName
 
                 Case NameOf(TrailStatsDisplay.HandlerName)
-                    firstLocalisedReport.Value.HandlerNameText = changedItem.HandlerName
+                    currentStats.HandlerName = changedItem.HandlerName
 
                 Case Else
                     Return 'není třeba nic zapisovat, proto return
@@ -489,10 +489,11 @@ Partial Public Class Form1
         Dim manySpaces As String = "                                                 "
         rtbOutput.AppendText(("    " & My.Resources.Resource1.outgpxFileName & manySpaces).Substring(0, 35))
         'Me.rtbOutput.AppendText((My.Resources.Resource1.X_AxisLabel & manySpaces).Substring(0, 12))
-        rtbOutput.AppendText((My.Resources.Resource1.outLength & manySpaces).Substring(0, 12))
+        rtbOutput.AppendText((My.Resources.Resource1.outLength & manySpaces).Substring(0, 10))
         rtbOutput.AppendText((My.Resources.Resource1.outAge & manySpaces).Substring(0, 8))
         rtbOutput.AppendText((My.Resources.Resource1.outSpeed & manySpaces).Substring(0, 11))
-        rtbOutput.AppendText((My.Resources.Resource1.Y_AxisLabelDeviation & manySpaces).Substring(0, 12))
+        rtbOutput.AppendText((My.Resources.Resource1.outDeviation & manySpaces).Substring(0, 12))
+        rtbOutput.AppendText((My.Resources.Resource1.outBlinding & manySpaces).Substring(0, 12))
         rtbOutput.AppendText(My.Resources.Resource1.outDescription)
         rtbOutput.AppendText(vbCrLf)
 
@@ -511,20 +512,42 @@ Partial Public Class Form1
 
                 rtbOutput.SelectionColor = Color.DarkGreen ' Nastavit barvu
                 'Me.rtbOutput.AppendText(_gpxRecord.TrailStart.Time.ToString("dd.MM.yy") & "    ")
-                rtbOutput.AppendText((_gpxRecord.TrailDistancekmWeighted).ToString("F2") & " km" & "     ")
+                rtbOutput.AppendText(((_gpxRecord.TrailDistancekmWeighted).ToString("G2") & " km" & manySpaces).Substring(0, 10))
                 If _gpxRecord.TrailStats.TrailAge.TotalHours > 0 Then
-                    rtbOutput.AppendText(_gpxRecord.TrailStats.TrailAge.TotalHours.ToString("F1") & " h" & "   ")
+                    rtbOutput.AppendText((_gpxRecord.TrailStats.TrailAge.TotalHours.ToString("G2") & " h" & manySpaces).Substring(0, 8))
                 Else
-                    rtbOutput.AppendText("        ")
+                    rtbOutput.AppendText((manySpaces).Substring(0, 12))
                 End If
                 'Dim dogspeed As Double = _gpxRecord.DogSpeed
                 If _gpxRecord.TrailStats.DogGrossSpeedkmh > 0 Then
-                    rtbOutput.AppendText(_gpxRecord.TrailStats.DogGrossSpeedkmh.ToString("F1") & " km/h" & "   ")
+                    rtbOutput.AppendText((_gpxRecord.TrailStats.DogGrossSpeedkmh.ToString("G2") & " km/h" & manySpaces).Substring(0, 11))
                 Else
                     rtbOutput.AppendText("           ")
                 End If
                 If _gpxRecord.TrailStats.AverDeviation > 0 Then
-                    rtbOutput.AppendText(_gpxRecord.TrailStats.AverDeviation.ToString("F1") & " m" & "   ")
+                    rtbOutput.AppendText((_gpxRecord.TrailStats.AverDeviation.ToString("G2") & " m" & manySpaces).Substring(0, 12))
+                Else
+                    rtbOutput.AppendText("        ")
+                End If
+
+                If _gpxRecord.LocalisedReports.Count > 0 Then
+                    Dim blinding As String = "Unknown" '  
+                    Select Case _gpxRecord.TrailStats.LevelOfBlinding
+                        Case LevelOfBlindingType.Unknown
+                            blinding = "Unknown"
+                        Case LevelOfBlindingType.Open
+                            blinding = "Open"
+                        Case LevelOfBlindingType.KnownTrack
+                            blinding = "Known"
+                        Case LevelOfBlindingType.SingleBlind
+                            'reading points se počítají jen u neznámých stop
+                            blinding = "Single bl."
+                        Case LevelOfBlindingType.DoubleBlindAssisted
+                            blinding = "Double bl."
+                        Case LevelOfBlindingType.DoubleBlindSolo
+                            blinding = "Double bl."
+                    End Select
+                    rtbOutput.AppendText(blinding & " ")
                 Else
                     rtbOutput.AppendText("        ")
                 End If
@@ -1981,7 +2004,7 @@ Partial Public Class Form1
             Dim _gpxRecord = TryCast(item.Tag, GPXRecord) 'není to zbytečný?
             If Not _gpxRecord Is Nothing Then
                 'ShowInBrowser(_gpxRecord, _gpxRecord.FileName, _gpxRecord.DogName, _gpxRecord.LocalisedReports.FirstOrDefault.Value.HandlerNameText)
-                ShowInBrowser_new(_gpxRecord, _gpxRecord.LocalisedReports.FirstOrDefault.Value, _gpxRecord.FileName, _gpxRecord.DogName, _gpxRecord.LocalisedReports.FirstOrDefault.Value.HandlerNameText)
+                ShowInBrowser_new(_gpxRecord, _gpxRecord.LocalisedReports.FirstOrDefault.Value, _gpxRecord.FileName, _gpxRecord.TrailStats.DogName, _gpxRecord.TrailStats.HandlerName)
             End If
         Next
 
@@ -2020,7 +2043,7 @@ Partial Public Class Form1
         For Each _gpxRecord As GPXRecord In selectedrecords
 
             'ShowInBrowser(selectedFile, selectedFile.FileName, selectedFile.DogName, selectedFile.LocalisedReports.FirstOrDefault.Value.HandlerNameText)
-            ShowInBrowser_new(_gpxRecord, _gpxRecord.LocalisedReports.FirstOrDefault.Value, _gpxRecord.FileName, _gpxRecord.DogName, _gpxRecord.LocalisedReports.FirstOrDefault.Value.HandlerNameText)
+            ShowInBrowser_new(_gpxRecord, _gpxRecord.LocalisedReports.FirstOrDefault.Value, _gpxRecord.FileName, _gpxRecord.TrailStats.DogName, _gpxRecord.TrailStats.HandlerName)
 
         Next
 
@@ -2143,7 +2166,7 @@ Partial Public Class Form1
                 record.WriteDescription() 'zapíše agregovaný popis do tracku Runner
                 record.BuildLocalisedPerformancePoints()
                 record.WriteLocalizedReports() 'zapíše popis do DogTracku
-                'record.WriteTrailStatsToXml(record.TrailStats)
+                record.WriteTrailStatsToXml(record.TrailStats)
                 record.IsAlreadyProcessed = True 'už byl soubor zpracován
                 record.Save()
             Catch ex As Exception
@@ -2377,7 +2400,7 @@ Public Class TrailStatsDisplay
     Public Sub CalculateTotalPoints()
         Dim newTotal As Integer = RunnerFoundPoints + DogSpeedPoints + DogAccuracyPoints + DogReadingPoints + TrailPickupPoints
         Dim weight As Double = 1.0 ' Váha podle úrovně zaslepení, stáří a délky stopy 
-        Select Case Me._originalRecord.LocalisedReports.FirstOrDefault.Value.LevelOfBlinding
+        Select Case Me._originalRecord.TrailStats.LevelOfBlinding
             Case LevelOfBlindingType.Unknown
                 weight = 0
             Case LevelOfBlindingType.Open

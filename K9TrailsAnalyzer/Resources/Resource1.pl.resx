@@ -180,6 +180,9 @@
   <data name="outAverageAge" xml:space="preserve">
     <value>Średni wiek śladów</value>
   </data>
+  <data name="outAverageSpeed" xml:space="preserve">
+    <value>Średnia prędkość zespołu</value>
+  </data>
   <data name="logBackupOfFiles" xml:space="preserve">
     <value>Kopia zapasowa plików gpx została pomyślnie utworzona w katalogu:</value>
   </data>
@@ -284,6 +287,9 @@ Jeśli są tylko dwie trasy, jest to dość proste - pierwszy to szlak tematyczn
   <data name="CrossingTrail" xml:space="preserve">
     <value>przecięcie śladu</value>
   </data>
+  <data name="RunnerTrail" xml:space="preserve">
+    <value>Biegacz</value>
+  </data>
   <data name="article" xml:space="preserve">
     <value>Punkt kontrolny</value>
   </data>
@@ -299,22 +305,46 @@ Jeśli są tylko dwie trasy, jest to dość proste - pierwszy to szlak tematyczn
   <data name="hdr_TotalPoints" xml:space="preserve">
     <value>Suma punktów</value>
   </data>
-  <data name="hdr_DogAccuracyPoints" xml:space="preserve">
-    <value>Premia za dokładność</value>
-  </data>
   <data name="hdr_DogSpeedPoints" xml:space="preserve">
     <value>Bonus za bycie szybkim</value>
   </data>
-  <data name="hdr_TrailPickupPoints" xml:space="preserve">
-    <value>Premia za szybki odbiór</value>
+  <data name="hdr_DogAccuracyPoints" xml:space="preserve">
+    <value>Premia za dokładność</value>
   </data>
   <data name="hdr_DogReadingPoints" xml:space="preserve">
     <value>Premia za dobre czytanie psów</value>
   </data>
-  <data name="RunnerTrail" xml:space="preserve">
-    <value>Biegacz</value>
+  <data name="hdr_TrailPickupPoints" xml:space="preserve">
+    <value>Premia za szybki odbiór</value>
   </data>
-  <data name="outAverageSpeed" xml:space="preserve">
-    <value>Średnia prędkość zespołu</value>
+  <data name="outDeviation" xml:space="preserve">
+    <value>Odchylenie</value>
+  </data>
+  <data name="dogTrack" xml:space="preserve">
+    <value>Pies</value>
+  </data>
+  <data name="levelOfBlinding_DoubleAssisted" xml:space="preserve">
+    <value>Podwójnie ślepe wspomagane: ani przewodnik, ani asystent nie znają toru.</value>
+  </data>
+  <data name="levelOfBlinding_DoubleSolo" xml:space="preserve">
+    <value>Podwójnie ślepe solo: przewodnik nie zna toru.</value>
+  </data>
+  <data name="levelOfBlinding_Known" xml:space="preserve">
+    <value>Znany tor, czyli niebieska linia: przewodnik zna ten tor.</value>
+  </data>
+  <data name="levelOfBlinding_Open" xml:space="preserve">
+    <value>Tor otwarty: przewodnikowi towarzyszy pies na samodzielnie ułożonym torze</value>
+  </data>
+  <data name="hdr_RunnerFoundPoints" xml:space="preserve">
+    <value>Punkty za znalezienie biegacza</value>
+  </data>
+  <data name="levelOfBlinding_Select" xml:space="preserve">
+    <value>Wybierz poziom oślepienia.</value>
+  </data>
+  <data name="LevelOfBlinding_Single" xml:space="preserve">
+    <value>Pojedyncza ślepa: przewodnik nie zna toru. Asystent jest.</value>
+  </data>
+  <data name="levelOfBlinding_Unknown" xml:space="preserve">
+    <value>Nieznany</value>
   </data>
 </root>

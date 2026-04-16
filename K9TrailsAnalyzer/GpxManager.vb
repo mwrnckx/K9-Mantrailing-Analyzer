@@ -66,7 +66,7 @@ Public Class GpxFileManager
             For i = 0 To Me.GpxRecords.Count - 1
                 Dim points As Double = 0
                 Dim blindWeight As Double = 0.2 ' Váha podle úrovně zaslepení, stáří a délky stopy 
-                Select Case Me.GpxRecords(i).LocalisedReports.FirstOrDefault.Value.LevelOfBlinding
+                Select Case Me.GpxRecords(i).TrailStats.LevelOfBlinding
                     Case LevelOfBlindingType.Unknown
                         blindWeight = 0.2
                     Case LevelOfBlindingType.Open
@@ -258,13 +258,47 @@ Public Class GpxFileManager
             ' Zpracování každého GPX souboru
             For Each _gpxRecord As GPXRecord In gpxFilesSortedAndFiltered
                 Dim readData = _gpxRecord.ReadSavedDataFromXML(_gpxRecord.LocalisedReports)
+                Dim isTrackStatsCalculated As Boolean = False
                 If Not readData.isStatsLoaded Then
-                    Dim isTrackStatsCalculated = _gpxRecord.CalculateTrackStats(_gpxRecord.TrailStats)
-                    If isTrackStatsCalculated Then
-                        _gpxRecord.WriteTrailStatsToXml(_gpxRecord.TrailStats)
-                        _gpxRecord.IsSaved = False
+                    isTrackStatsCalculated = _gpxRecord.CalculateTrackStats(_gpxRecord.TrailStats)
+                End If
+
+
+                'fallback pro načtení level of blinding a number of articles 
+                Dim xmlContent As String = _gpxRecord.Reader.xmlDoc.OuterXml
+                If _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.Unknown Then
+                    If xmlContent.Contains("Single", StringComparison.OrdinalIgnoreCase) AndAlso xmlContent.Contains("Blind", StringComparison.OrdinalIgnoreCase) Then
+                        _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.SingleBlind
+                        isTrackStatsCalculated = True
+                    ElseIf xmlContent.Contains("Double", StringComparison.OrdinalIgnoreCase) Then
+                        If xmlContent.Contains("Blind", StringComparison.OrdinalIgnoreCase) Then
+                            _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.DoubleBlindAssisted
+                            isTrackStatsCalculated = True
+                        ElseIf xmlContent.Contains("knowing", StringComparison.OrdinalIgnoreCase) Then
+                            _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.Open
+                            isTrackStatsCalculated = True
+                        End If
+                    ElseIf xmlContent.Contains("known", StringComparison.OrdinalIgnoreCase) Then
+                        _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.KnownTrack
+                        isTrackStatsCalculated = True
+                    ElseIf xmlContent.Contains("Open", StringComparison.OrdinalIgnoreCase) Then
+                        _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.Open
+                        isTrackStatsCalculated = True
+                    ElseIf _gpxRecord.FileName.Contains("Samo", StringComparison.OrdinalIgnoreCase) Then
+                        _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.KnownTrack
+                        isTrackStatsCalculated = True
                     End If
                 End If
+                If _gpxRecord.TrailStats.CheckpointsEval IsNot Nothing AndAlso _gpxRecord.TrailStats.NumberOfArticlesFound = 0 Then
+                    _gpxRecord.TrailStats.NumberOfArticlesFound = _gpxRecord.TrailStats.CheckpointsEval.Count 'pokud se nenahrály z atributu, načteme počet nalezených checkpointů z jejich počtu v XML
+                    isTrackStatsCalculated = True
+                End If
+
+                If isTrackStatsCalculated Then
+                    _gpxRecord.WriteTrailStatsToXml(_gpxRecord.TrailStats)
+                    _gpxRecord.IsSaved = False
+                End If
+
                 If Not readData.isScoringLoaded Then
                     _gpxRecord.TrailStats.PointsInMTCompetition = _gpxRecord.CalculateCompetitionScore(_gpxRecord.TrailStats)
                     _gpxRecord.IsSaved = False
@@ -794,18 +828,18 @@ Public Class GPXRecord
             Return _runnerStart
         End Get
     End Property
-    Private _dogName As String
-    Public ReadOnly Property DogName As String
-        Get
-            If _dogName <> "" Then Return _dogName
-            If Me.LocalisedReports.Count > 0 AndAlso Me.LocalisedReports.First.Value.DogNameText <> "" Then
-                _dogName = Me.LocalisedReports.First.Value.DogNameText
-            Else
-                _dogName = Me.ActiveCategoryInfo.Name
-            End If
-            Return _dogName
-        End Get
-    End Property
+    'Private _dogName As String
+    'Public ReadOnly Property DogName As String
+    '    Get
+    '        If _dogName <> "" Then Return _dogName
+    '        If Me.LocalisedReports.Count > 0 AndAlso Me.LocalisedReports.First.Value.DogNameText <> "" Then
+    '            _dogName = Me.LocalisedReports.First.Value.DogNameText
+    '        Else
+    '            _dogName = Me.ActiveCategoryInfo.Name
+    '        End If
+    '        Return _dogName
+    '    End Get
+    'End Property
 
     Private _dogStart As TrackGeoPoint
     Public ReadOnly Property DogStart As TrackGeoPoint
@@ -1481,7 +1515,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
         End If
 
-        Return New TrailReport("", "", goalPart, trailPart, performancePart, "", Nothing, "", levelOfBlinding, Me.WptNodes.TrackPoints.Count - 1)
+        Return New TrailReport("", goalPart, trailPart, performancePart, "", Nothing)
     End Function
 
 
@@ -1568,7 +1602,8 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             Dim _localisedReport = ExtractDescriptionParts(summaryDescription)
             _localisedReport.WeatherData = Me.WeatherData
             _localisedReport.WeatherText = strWeather()
-
+            _localisedReport.HandlerNameText = Me.TrailStats.HandlerName
+            _localisedReport.DogNameText = Me.TrailStats.DogName
 
             lang = CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLowerInvariant()
             Me.LocalisedReports.Add(lang, _localisedReport)
@@ -1576,7 +1611,6 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         End If
 
         Dim firstLocalisedReport As KeyValuePair(Of String, TrailReport) = Me.LocalisedReports.FirstOrDefault()
-        firstLocalisedReport.Value.DogNameText = Me.DogName
         Dim keys = LocalisedReports.Keys.ToList()
         Dim totalCount = keys.Count
 
@@ -1593,22 +1627,28 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
                                                 .GpxFileName = Me.Reader.FileName,
                                                 .Language = lang}
                 If i = 0 Then
-                    frm.TrailDescription.DogNameText = firstLocalisedReport.Value.DogNameText
-                    frm.TrailDescription.NumberOfArticlesFound = Me.WptNodes.TrackPoints.Count - 1
-                    frm.TrailDescription.HandlerNameText = firstLocalisedReport.Value.HandlerNameText
-
+                    frm.NumberOfArticlesFound = Me.WptNodes.TrackPoints.Count - 1
+                    frm.LevelOfBlinding = Me.TrailStats.LevelOfBlinding
                 Else
                     frm.txtDogName.Visible = False
                     frm.lblDogName.Visible = False
                     frm.txtHandlerName.Visible = False
                     frm.lblHandlerName.Visible = False
+                    frm.cbLevelOfBlinding.Visible = False
+                    frm.cbNumberOfArticlesFound.Visible = False
+                    frm.lblLevelOfBlinding.Visible = False
+                    frm.lblNoOFArticles.Visible = False
+                    frm.LevelOfBlinding = Me.TrailStats.LevelOfBlinding
+                    frm.NumberOfArticlesFound = Me.TrailStats.NumberOfArticlesFound
                 End If
 
                 result = frm.ShowDialog()
 
                 If i = 0 Then
-                    firstLocalisedReport.Value.HandlerNameText = frm.TrailDescription.HandlerNameText
-                    firstLocalisedReport.Value.DogNameText = frm.TrailDescription.DogNameText
+                    Me.TrailStats.HandlerName = frm.TrailDescription.HandlerNameText
+                    Me.TrailStats.DogName = frm.TrailDescription.DogNameText
+                    Me.TrailStats.LevelOfBlinding = frm.LevelOfBlinding
+                    Me.TrailStats.NumberOfArticlesFound = frm.NumberOfArticlesFound
                 End If
                 newDescription = BuildDescription(frm.TrailDescription)
                 If lang <> frm.Language Then ' aktualizace jazyka
@@ -1630,18 +1670,18 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
                         Exit For
                 End Select
             Else 'přidáme nový jazyk!!!!
-                report = New TrailReport("", firstLocalisedReport.Value.DogNameText, firstLocalisedReport.Value.Goal.Text,
+                report = New TrailReport("", firstLocalisedReport.Value.Goal.Text,
                                         firstLocalisedReport.Value.Trail.Text,
-                                        firstLocalisedReport.Value.Performance.Text,
-                                        "", , , firstLocalisedReport.Value.LevelOfBlinding,
-                                         firstLocalisedReport.Value.NumberOfArticlesFound,
-                                              firstLocalisedReport.Value.HandlerNameText)
+                                        firstLocalisedReport.Value.Performance.Text)
+
                 ' Nová položka – prázdná, připravená k vyplnění
                 Debug.WriteLine($"{i + 1}. [Nový záznam]")
 
                 frm = New frmEditComments With {.TrailDescription = report,
                                                     .GpxFileName = Me.Reader.FileName,
-                                                    .Language = Nothing
+                                                    .Language = Nothing,
+                                                    .LevelOfBlinding = Me.TrailStats.LevelOfBlinding,
+                                                    .NumberOfArticlesFound = Me.TrailStats.NumberOfArticlesFound
                                               }
                 frm.txtDogName.Visible = False
                 frm.lblDogName.Visible = False
@@ -1651,6 +1691,12 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
                 frm.txtHandlerName.Visible = False
                 frm.lblHandlerName.Visible = False
+
+                frm.cbLevelOfBlinding.Visible = False
+                frm.cbNumberOfArticlesFound.Visible = False
+                frm.lblLevelOfBlinding.Visible = False
+                frm.lblNoOFArticles.Visible = False
+
                 result = frm.ShowDialog()
                 lang = frm.Language
                 If Not LocalisedReports.ContainsKey(lang) Then
@@ -2077,6 +2123,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             .RunnerFound = preparedData.RunnerFound
             .TrailPickupFactorPerCent = If(preparedData.PurifiedRunnerGeoPoints IsNot Nothing, PickupFactor(preparedData.PurifiedDogGeoPoints, preparedData.PurifiedRunnerGeoPoints) * 100, 0)
             .BestCheckPointIndex = max_index
+            .DogName = If(.DogName, Me.ActiveCategoryInfo.Name)
         End With
 
         Return True
@@ -3174,6 +3221,9 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             extensionsNode = Me.Reader.CreateElement("extensions")
             metadataNode.PrependChild(extensionsNode)
         End If
+        'Me.Reader.CreateAndAddElement(extensionsNode, GpxReader.K9_PREFIX & ":" & "levelOfBlindingType", localizedReport.LevelOfBlinding.ToString, True,,, GpxReader.K9_NAMESPACE_URI)
+        'Me.Reader.CreateAndAddElement(extensionsNode, GpxReader.K9_PREFIX & ":" & "numberOfArticlesFound", localizedReport.NumberOfArticlesFound, True,,, GpxReader.K9_NAMESPACE_URI)
+
         Dim keys As String() = LocalisedReports.Keys.ToArray()
         For Each key In keys
             Dim localizedReport As TrailReport = Me.LocalisedReports(key)
@@ -3182,11 +3232,9 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "goal", localizedReport.Goal.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "trail", localizedReport.Trail.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "performance", localizedReport.Performance.Text, True,,, GpxReader.K9_NAMESPACE_URI)
-            Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "levelOfBlindingType", localizedReport.LevelOfBlinding.ToString, True,,, GpxReader.K9_NAMESPACE_URI)
-            Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "levelOfBlindingText", localizedReport.LevelOfBlindingStyledText.Text, True,,, GpxReader.K9_NAMESPACE_URI)
-            Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "numberOfArticlesFound", localizedReport.NumberOfArticlesFound, True,,, GpxReader.K9_NAMESPACE_URI)
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "dogName", localizedReport.DogNameText, True,,, GpxReader.K9_NAMESPACE_URI)
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "handlerName", localizedReport.HandlerNameText, True,,, GpxReader.K9_NAMESPACE_URI)
+            Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "levelOfBlindingText", GPXRecord.LevelOfBlindingTypeToText(Me.TrailStats.LevelOfBlinding, key), True,,, GpxReader.K9_NAMESPACE_URI)
 
             Dim weatherNode As XmlNode = Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "weather", localizedReport.Weather.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             WriteWeatherDataToXml(weatherNode, localizedReport.WeatherData)
@@ -3205,7 +3253,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             Dim extensionsNode As XmlNode = Me.Reader.SelectSingleChildNode(Me.Reader.GPX_DEFAULT_PREFIX & ":" & "extensions", metadataNode)
             If extensionsNode Is Nothing Then Return (False, False, False, False) ' <extensions> vůbec neexistuje
 
-            Dim loadedStats As TrailStats = New TrailStats
+            Dim loadedStats As New TrailStats With {.dogName = Me.ActiveCategoryInfo.Name}
             Dim loadedScoring As ScoringData = Nothing
             ' Find the TrailStats element
             Dim statsNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "trailStats", extensionsNode)
@@ -3231,7 +3279,8 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
                 Dim localizedReport As New TrailReport With {
                     .WeatherData = Me.WeatherData,
-                    .WeatherText = weatherText}
+                    .WeatherText = weatherText,
+                    .LevelOfBlindingText = LevelOfBlindingTypeToText(loadedStats.LevelOfBlinding, lang)}
 
                 isLocalisedReportLoaded = ReadLocalisedReportFromXml(reportNode, localizedReport)
                 If Not reports.ContainsKey(lang) Then reports.Add(lang, localizedReport)
@@ -3249,6 +3298,32 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         End Try
         Return (False, False, False, False)
 
+    End Function
+
+    Public Shared Function LevelOfBlindingTypeToText(level As LevelOfBlindingType, language As String) As String
+        ' 1. Vytvoříme objekt kultury z parametru (např. "en-US", "cs-CZ")
+        Dim culture As New System.Globalization.CultureInfo(language)
+
+        ' 2. Získáme ResourceManager z tvé třídy prostředků
+        Dim rm As System.Resources.ResourceManager = Resource1.ResourceManager
+
+        ' 3. Pomocí GetString vytáhneme text pro danou kulturu
+        Select Case level
+            Case LevelOfBlindingType.Unknown
+                Return rm.GetString("levelOfBlinding_Unknown", culture)
+            Case LevelOfBlindingType.Open
+                Return rm.GetString("levelOfBlinding_Open", culture)
+            Case LevelOfBlindingType.KnownTrack
+                Return rm.GetString("levelOfBlinding_Known", culture)
+            Case LevelOfBlindingType.SingleBlind
+                Return rm.GetString("LevelOfBlinding_Single", culture)
+            Case LevelOfBlindingType.DoubleBlindAssisted
+                Return rm.GetString("levelOfBlinding_DoubleAssisted", culture)
+            Case LevelOfBlindingType.DoubleBlindSolo
+                Return rm.GetString("levelOfBlinding_DoubleSolo", culture)
+            Case Else
+                Return "Unknown"
+        End Select
     End Function
 
     ' Uloží tuple do XML elementu pomocí CreateAndAddElement
@@ -3319,12 +3394,12 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             .PerformanceText = If(performanceNode?.InnerText, "")
             Dim blindingValue As LevelOfBlindingType
             If [Enum].TryParse(levelOfBlindingTypeNode?.InnerText, blindingValue) Then
-                .LevelOfBlinding = blindingValue
+                Me.TrailStats.LevelOfBlinding = blindingValue
             Else
-                .LevelOfBlinding = LevelOfBlindingType.Unknown ' nebo jiná výchozí hodnota
+                Me.TrailStats.LevelOfBlinding = LevelOfBlindingType.Unknown ' nebo jiná výchozí hodnota
             End If
             .LevelOfBlindingText = If(levelOfBlindingTextNode?.InnerText, "")
-            .NumberOfArticlesFound = If(NumberOfArticlesFoundNode?.InnerText, "0")
+            Me.TrailStats.NumberOfArticlesFound = If(NumberOfArticlesFoundNode?.InnerText, "0")
             .DogNameText = If(dogNameNode?.InnerText, "")
             .HandlerNameText = If(handlerNameNode?.InnerText, "")
         End With
@@ -3355,7 +3430,15 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         'CType(scoringNode, XmlElement).SetAttribute("handlerName", scoringData.handlerName)
     End Sub
 
+    Private Sub SetAttributeString(node As XmlElement, attributeName As String, attributeValue As String)
+        node.SetAttribute(attributeName, attributeValue)
+    End Sub
 
+    Private Sub SetAttributeEnum(node As XmlElement, attributeName As String, attributeValue As Object, format As String)
+        ' Vytvoří formátovací řetězec jako {0:G}
+        Dim formattedValue As String = String.Format(System.Globalization.CultureInfo.InvariantCulture, "{0:" & format & "}", attributeValue)
+        node.SetAttribute(attributeName, formattedValue)
+    End Sub
     Private Sub SetAttributeDouble(node As XmlElement, attributeName As String, attributeValue As Double, format As String)
         node.SetAttribute(attributeName, attributeValue.ToString(format, System.Globalization.CultureInfo.InvariantCulture))
     End Sub
@@ -3394,6 +3477,11 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         SetAttributeDouble(trailStatsNode, "averDeviation", statsData.AverDeviation, "F1")
         SetAttributeDouble(trailStatsNode, "TrailPickupFactorPerCent", statsData.TrailPickupFactorPerCent, "F0")
         SetAttributeDouble(trailStatsNode, "LastConfirmedPointIndex", statsData.BestCheckPointIndex, "F0")
+        SetAttributeDouble(trailStatsNode, "NumberOfArticlesFound", statsData.NumberOfArticlesFound, "F0")
+        SetAttributeString(trailStatsNode, "DogName", statsData.DogName)
+        SetAttributeString(trailStatsNode, "HandlerName", statsData.HandlerName)
+        SetAttributeEnum(trailStatsNode, "LevelOfBlinding", statsData.LevelOfBlinding, "G")
+
 
         ' 4. Nastavení atributů pro TimeSpan
         SetAttributeTimeSpan(trailStatsNode, "trailAge", statsData.TrailAge, "F0")
@@ -3402,6 +3490,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
         ' 5. Nastavení atributů pro Boolean
         SetAttributeBoolean(trailStatsNode, "runnerFound", statsData.RunnerFound)
+
 
         ' --------------------------------------------------------------------------------
         ' 6. ZÁPIS CHECKPOINTŮ (CheckpointsEval)
@@ -3485,105 +3574,108 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
     ''' </summary>
     ''' <returns>True if the TrailStats node was successfully found and parsed; False otherwise.</returns>
     Public Function ReadTrailStatsFromXml(statsNode As XmlElement, ByRef stats As TrailStats) As Boolean
-
+        Dim _return As Boolean = False
         If statsNode Is Nothing Then
             ' Nenašli jsme uzel, načtení bylo neúspěšné. 
             stats = New TrailStats() ' Vratte prázdný objekt
-            Return False
-        End If
-
-        ' Find the maxDeviationPoints container
-        Dim maxDevContainerNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "maxDeviationPoints", statsNode)
-        If maxDevContainerNode Is Nothing Then
+        ElseIf Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "maxDeviationPoints", statsNode) Is Nothing Then
             stats = New TrailStats() ' Vratte prázdný objekt
-            Return False 'je třeba znovu vypočítat
+            _return = False 'je třeba znovu vypočítat
+        Else
+            'attributes pro TrailStats:
+            stats = New TrailStats With {
+             .MaxDistAlongTrailkmWeighted = ParseDouble(statsNode, "distanceAlongTrailWeighted"),
+             .MaxDistAlongTrailkm = ParseDouble(statsNode, "distanceAlongTrail"),
+             .MaxDistAlongTrailWeightedPerCent = ParseDouble(statsNode, "distanceAlongTrailWeightedPerCent"),
+             .AverWeightOfDeviation = ParseDouble(statsNode, "averWeightOfDeviation"),
+             .DogGrossSpeedkmh = ParseDouble(statsNode, "dogGrossSpeed"),
+             .AverDeviation = ParseDouble(statsNode, "averDeviation"),
+             .TrailPickupFactorPerCent = ParseDouble(statsNode, "TrailPickupFactorPerCent"),' --- Read TimeSpan attributes (stored as seconds) ---
+             .TrailAge = ParseTimeSpan(statsNode, "trailAge"),
+             .RunnerFound = ParseBoolean(statsNode, "runnerFound"),
+              .RunnerTotalDistancekm = ParseDouble(statsNode, "runnerDistance"),
+        .DogTotalDistancekm = ParseDouble(statsNode, "dogDistance"),
+        .DogTotalTime = ParseTimeSpan(statsNode, "totalTime"),
+          .BestCheckPointIndex = ParseDouble(statsNode, "LastConfirmedPointIndex"),
+            .NumberOfArticlesFound = ParseInteger(statsNode, "NumberOfArticlesFound"),
+            .DogName = If(statsNode.Attributes("DogName")?.Value, Me.ActiveCategoryInfo.Name),
+            .HandlerName = statsNode.Attributes("HandlerName")?.Value,
+            .LevelOfBlinding = If([Enum].TryParse(statsNode.Attributes("LevelOfBlinding")?.Value, LevelOfBlindingType.Unknown), CType([Enum].Parse(GetType(LevelOfBlindingType), statsNode.Attributes("LevelOfBlinding")?.Value), LevelOfBlindingType), LevelOfBlindingType.Unknown)
+                    }
+
+
+            ' --- Read CheckpointsEval (List of Tuples) ---
+            stats.CheckpointsEval = New List(Of CheckpointData) ' (distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double))()
+
+            ' Find the Checkpoints container
+            'statsNode.SelectSingleNode("checkpoints")
+            Dim checkpointsContainer As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "checkpoints", statsNode)
+            If checkpointsContainer IsNot Nothing Then
+                ' Iterate over all Checkpoint elements
+                Dim i As Integer = 0
+
+                For Each cpNode As XmlNode In checkpointsContainer.ChildNodes
+
+                    Dim distAlong As Double = ParseDouble(cpNode, "distanceAlongTrail")
+                    Dim distAlongWeighted As Double = ParseDouble(cpNode, "distanceAlongTrailWeighted")
+                    Dim devFrom As Double = ParseDouble(cpNode, "deviationFromTrail")
+                    Dim grossSpeed As Double = ParseDouble(cpNode, "dogGrossSpeed")
+
+                    ' Add the parsed tuple to the list
+                    stats.CheckpointsEval.Add(New CheckpointData With {
+                                              .distAlongTrailkm = distAlong,
+                                              .distAlongTrailkmWeighted = distAlongWeighted,
+                                              .deviationFromTrail = devFrom,
+                                              .dogGrossSpeedkmh = grossSpeed})
+                Next
+            End If
+
+
+            '  body s maximální deviací
+            Dim maxDevContainerNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "maxDeviationPoints", statsNode)
+            Dim dogGeoPointNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "dogpt", maxDevContainerNode)
+            Dim lat As Double = ParseDouble(dogGeoPointNode, "lat")
+            Dim lon As Double = ParseDouble(dogGeoPointNode, "lon")
+            Dim dogGeoPoint As New TrackGeoPoint With {
+                        .Location = New Coordinates With {.Lat = lat, .Lon = lon},
+                        .Time = Nothing
+                    }
+
+            Dim runnerGeoPointNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "runnerpt", maxDevContainerNode)
+            lat = ParseDouble(runnerGeoPointNode, "lat")
+            lon = ParseDouble(runnerGeoPointNode, "lon")
+            Dim runnergeopoint As New TrackGeoPoint With {
+                        .Location = New Coordinates With {.Lat = lat, .Lon = lon},
+                        .Time = Nothing
+                    }
+            Dim trackGeopoints As New List(Of TrackGeoPoint) From {
+                    dogGeoPoint,
+                    runnergeopoint
+                }
+            If runnergeopoint.Location.Lat = dogGeoPoint.Location.Lat And runnergeopoint.Location.Lon = dogGeoPoint.Location.Lon Then
+                Return False 'dočasně, omylem se ukládaly stejné hodnoty todo: smazat!
+            End If
+            stats.MaxDeviationGeoPoints = New TrackAsGeoPoints(TrackType.Unknown, trackGeopoints)
+
+
+            If stats.DogTotalDistancekm + stats.RunnerTotalDistancekm < 1 Then Return False
+            _return = True
         End If
 
-        stats = New TrailStats With {
-         .MaxDistAlongTrailkmWeighted = ParseDouble(statsNode, "distanceAlongTrailWeighted"),
-         .MaxDistAlongTrailkm = ParseDouble(statsNode, "distanceAlongTrail"),
-         .MaxDistAlongTrailWeightedPerCent = ParseDouble(statsNode, "distanceAlongTrailWeightedPerCent"),
-         .AverWeightOfDeviation = ParseDouble(statsNode, "averWeightOfDeviation"),
-         .DogGrossSpeedkmh = ParseDouble(statsNode, "dogGrossSpeed"),
-         .AverDeviation = ParseDouble(statsNode, "averDeviation"),
-         .TrailPickupFactorPerCent = ParseDouble(statsNode, "TrailPickupFactorPerCent"),' --- Read TimeSpan attributes (stored as seconds) ---
-         .TrailAge = ParseTimeSpan(statsNode, "trailAge"),
-         .RunnerFound = ParseBoolean(statsNode, "runnerFound"),
-          .RunnerTotalDistancekm = ParseDouble(statsNode, "runnerDistance"),
-    .DogTotalDistancekm = ParseDouble(statsNode, "dogDistance"),
-    .DogTotalTime = ParseTimeSpan(statsNode, "totalTime"),
-      .BestCheckPointIndex = ParseDouble(statsNode, "LastConfirmedPointIndex")
-                }
-
-
-        ' --- Read CheckpointsEval (List of Tuples) ---
-        stats.CheckpointsEval = New List(Of CheckpointData) ' (distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double))()
-
-        ' Find the Checkpoints container
-        'statsNode.SelectSingleNode("checkpoints")
-        Dim checkpointsContainer As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "checkpoints", statsNode)
-        If checkpointsContainer IsNot Nothing Then
-            ' Iterate over all Checkpoint elements
-            Dim i As Integer = 0
-
-            For Each cpNode As XmlNode In checkpointsContainer.ChildNodes
-
-                Dim distAlong As Double = ParseDouble(cpNode, "distanceAlongTrail")
-                Dim distAlongWeighted As Double = ParseDouble(cpNode, "distanceAlongTrailWeighted")
-                Dim devFrom As Double = ParseDouble(cpNode, "deviationFromTrail")
-                Dim grossSpeed As Double = ParseDouble(cpNode, "dogGrossSpeed")
-
-                ' Add the parsed tuple to the list
-                stats.CheckpointsEval.Add(New CheckpointData With {
-                                          .distAlongTrailkm = distAlong,
-                                          .distAlongTrailkmWeighted = distAlongWeighted,
-                                          .deviationFromTrail = devFrom,
-                                          .dogGrossSpeedkmh = grossSpeed})
-            Next
-        End If
-
-
-        '  body s maximální deviací
-        Dim dogGeoPointNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "dogpt", maxDevContainerNode)
-        Dim lat As Double = ParseDouble(dogGeoPointNode, "lat")
-        Dim lon As Double = ParseDouble(dogGeoPointNode, "lon")
-        Dim dogGeoPoint As New TrackGeoPoint With {
-                    .Location = New Coordinates With {.Lat = lat, .Lon = lon},
-                    .Time = Nothing
-                }
-
-        Dim runnerGeoPointNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "runnerpt", maxDevContainerNode)
-        lat = ParseDouble(runnerGeoPointNode, "lat")
-        lon = ParseDouble(runnerGeoPointNode, "lon")
-        Dim runnergeopoint As New TrackGeoPoint With {
-                    .Location = New Coordinates With {.Lat = lat, .Lon = lon},
-                    .Time = Nothing
-                }
-        Dim trackGeopoints As New List(Of TrackGeoPoint) From {
-                dogGeoPoint,
-                runnergeopoint
-            }
-        If runnergeopoint.Location.Lat = dogGeoPoint.Location.Lat And runnergeopoint.Location.Lon = dogGeoPoint.Location.Lon Then
-            Return False 'dočasně, omylem se ukládaly stejné hodnoty todo: smazat!
-        End If
-        stats.MaxDeviationGeoPoints = New TrackAsGeoPoints(TrackType.Unknown, trackGeopoints)
-
-
-        If stats.DogTotalDistancekm + stats.RunnerTotalDistancekm < 1 Then Return False
-        Return True
+        Return _return
     End Function
 
     ' Helper pro bezpečné parsování Double z atributu.
-    Private Shared Function ParseDouble(node As XmlNode, attributeName As String) As Double
+    Private Shared Function ParseDouble(node As XmlNode, attributeName As String, Optional defaultValue As Double = 0.0) As Double
         Dim attrValue As String = node?.Attributes(attributeName)?.Value
-        If String.IsNullOrWhiteSpace(attrValue) Then Return 0.0
+        If String.IsNullOrWhiteSpace(attrValue) Then Return defaultValue
 
         Dim result As Double
         ' Použití InvariantCulture pro parsování čísel s tečkou.
         If Double.TryParse(attrValue, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, result) Then
             Return result
         Else
-            Return 0.0
+            Return defaultValue
         End If
     End Function
 

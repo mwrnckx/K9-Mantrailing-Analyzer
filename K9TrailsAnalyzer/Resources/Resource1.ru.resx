@@ -180,6 +180,9 @@
   <data name="outAverageAge" xml:space="preserve">
     <value>Средний возраст следoв</value>
   </data>
+  <data name="outAverageSpeed" xml:space="preserve">
+    <value>Средняя скорость команды</value>
+  </data>
   <data name="logBackupOfFiles" xml:space="preserve">
     <value>Файлы gpx были успешно сохранены в каталоге:</value>
   </data>
@@ -284,6 +287,9 @@
   <data name="CrossingTrail" xml:space="preserve">
     <value>пересечение следа</value>
   </data>
+  <data name="RunnerTrail" xml:space="preserve">
+    <value>бегун</value>
+  </data>
   <data name="article" xml:space="preserve">
     <value>Контрольная точка</value>
   </data>
@@ -299,19 +305,40 @@
   <data name="hdr_TotalPoints" xml:space="preserve">
     <value>Всего очков</value>
   </data>
-  <data name="hdr_DogAccuracyPoints" xml:space="preserve">
-    <value>Бонус за точность</value>
-  </data>
   <data name="hdr_DogSpeedPoints" xml:space="preserve">
     <value>Бонус за скорость</value>
+  </data>
+  <data name="hdr_DogAccuracyPoints" xml:space="preserve">
+    <value>Бонус за точность</value>
   </data>
   <data name="hdr_DogReadingPoints" xml:space="preserve">
     <value>Бонус за хорошее чтение собаки</value>
   </data>
-  <data name="RunnerTrail" xml:space="preserve">
-    <value>бегун</value>
+  <data name="outDeviation" xml:space="preserve">
+    <value>Отклонение</value>
   </data>
-  <data name="outAverageSpeed" xml:space="preserve">
-    <value>Средняя скорость команды</value>
+  <data name="dogTrack" xml:space="preserve">
+    <value>Собака</value>
+  </data>
+  <data name="levelOfBlinding_DoubleAssisted" xml:space="preserve">
+    <value>Двойная слепая помощь: ни хендлер, ни ассистент не знакомы с трассой.</value>
+  </data>
+  <data name="levelOfBlinding_DoubleSolo" xml:space="preserve">
+    <value>Двойное слепое соло: хэндлер не знаком с трассой.</value>
+  </data>
+  <data name="levelOfBlinding_Known" xml:space="preserve">
+    <value>Известная трасса, также известная как Синяя линия: хэндлер знаком с трассой.</value>
+  </data>
+  <data name="levelOfBlinding_Open" xml:space="preserve">
+    <value>Open Track: хендлера сопровождает его собака на самостоятельно проложенной трассе.</value>
+  </data>
+  <data name="hdr_RunnerFoundPoints" xml:space="preserve">
+    <value>Очки за поиск бегуна</value>
+  </data>
+  <data name="LevelOfBlinding_Single" xml:space="preserve">
+    <value>Одинарный слепой: хэндлер не знаком с трассой. Ассистент есть.</value>
+  </data>
+  <data name="levelOfBlinding_Unknown" xml:space="preserve">
+    <value>Неизвестный</value>
   </data>
 </root>

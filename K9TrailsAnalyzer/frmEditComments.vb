@@ -1,6 +1,7 @@
 ﻿Imports System.ComponentModel
 Imports System.Globalization
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement
+Imports GPXTrailAnalyzer.My.Resources
 Imports TrackVideoExporter
 
 Public Class frmEditComments
@@ -10,8 +11,10 @@ Public Class frmEditComments
     Public Property TrailPart As String
     Public Property DogPart As String
     Public Property Language As String = CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLowerInvariant()
-    Public Property GpxFileName As String
 
+    Public Property GpxFileName As String
+    Public Property NumberOfArticlesFound As Integer
+    Public Property LevelOfBlinding As LevelOfBlindingType
 
     Dim LanguageAbbreviations As New List(Of String) From {
     "cs", ' čeština
@@ -60,7 +63,7 @@ Public Class frmEditComments
         txtGoal.Text = Me.TrailDescription.Goal.Text
         txtTrail.Text = Me.TrailDescription.Trail.Text
         txtPerformance.Text = Me.TrailDescription.Performance.Text
-        txtDogName.Text = Me.TrailDescription.DogName.Text
+        txtDogName.Text = Me.TrailDescription.DogNameText
         txtHandlerName.Text = Me.TrailDescription.HandlerNameText
 
 
@@ -84,9 +87,14 @@ Public Class frmEditComments
         UpdateBlindingComboBox(langToUse)
 
         ' Nastavení vybrané hodnoty z popisu trailu (musí být až po UpdateBlindingComboBox!)
-        cbLevelOfBlinding.SelectedValue = Me.TrailDescription.LevelOfBlinding
+        cbLevelOfBlinding.SelectedValue = Me.LevelOfBlinding
 
-        cbNumberOfArticlesFound.SelectedItem = Me.TrailDescription.NumberOfArticlesFound
+        cbNumberOfArticlesFound.Items.Clear()
+        ' Přidej integery
+        For i As Integer = 0 To 11
+            cbNumberOfArticlesFound.Items.Add(i)
+        Next
+        cbNumberOfArticlesFound.SelectedItem = Me.NumberOfArticlesFound
         ' 4. Vizuální úpravy a popisky
         lblInfo.Text = $"{Form1.mnuFile.Text} {GpxFileName}" & vbCrLf & lblInfo.Text
 
@@ -113,16 +121,24 @@ Public Class frmEditComments
         End If
 
         ' 2. Vytvoření nového seznamu položek s překlady pro danou kulturu
-        ' Použijeme přetížení GetString(key, culture)
-        Dim displayItems As New List(Of LevelOfBlindingDisplayItem) From {
-        New LevelOfBlindingDisplayItem(LevelOfBlindingType.Unknown, resources.GetString("cbLevelOfBlinding.Items", culture)),
-        New LevelOfBlindingDisplayItem(LevelOfBlindingType.Open, resources.GetString("cbLevelOfBlinding.Items1", culture)),
-        New LevelOfBlindingDisplayItem(LevelOfBlindingType.KnownTrack, resources.GetString("cbLevelOfBlinding.Items2", culture)),
-        New LevelOfBlindingDisplayItem(LevelOfBlindingType.SingleBlind, resources.GetString("cbLevelOfBlinding.Items3", culture)),
-        New LevelOfBlindingDisplayItem(LevelOfBlindingType.DoubleBlindAssisted, resources.GetString("cbLevelOfBlinding.Items4", culture)),
-                New LevelOfBlindingDisplayItem(LevelOfBlindingType.DoubleBlindSolo, resources.GetString("cbLevelOfBlinding.Items5", culture))
-    }
+        ' 2. Získáme ResourceManager z tvé třídy prostředků
+        Dim rm As System.Resources.ResourceManager = Resource1.ResourceManager
 
+        Dim displayItems As New List(Of LevelOfBlindingDisplayItem) From {
+        New LevelOfBlindingDisplayItem(LevelOfBlindingType.Unknown, rm.GetString("levelOfBlinding_Unknown", culture)),
+        New LevelOfBlindingDisplayItem(LevelOfBlindingType.Open, rm.GetString("levelOfBlinding_Open", culture)),
+        New LevelOfBlindingDisplayItem(LevelOfBlindingType.KnownTrack, rm.GetString("levelOfBlinding_Known", culture)),
+        New LevelOfBlindingDisplayItem(LevelOfBlindingType.SingleBlind, rm.GetString("LevelOfBlinding_Single", culture)),
+        New LevelOfBlindingDisplayItem(LevelOfBlindingType.DoubleBlindAssisted, rm.GetString("levelOfBlinding_DoubleAssisted", culture)),
+        New LevelOfBlindingDisplayItem(LevelOfBlindingType.DoubleBlindSolo, rm.GetString("levelOfBlinding_DoubleSolo", culture))
+    }
+        For Each type In [Enum].GetValues(GetType(LevelOfBlindingType))
+            Dim enumVal As LevelOfBlindingType = DirectCast(type, LevelOfBlindingType)
+            If Not displayItems.Any(Function(item) item.Value = enumVal) Then
+                displayItems.Add(New LevelOfBlindingDisplayItem(enumVal, GPXRecord.LevelOfBlindingTypeToText(enumVal, languageCode)))
+            End If
+        Next
+        Dim ttt = GPXRecord.LevelOfBlindingTypeToText(LevelOfBlindingType.Unknown, languageCode)
         ' 3. Re-binding dat
         ' Tip: Aby se UI "necukalo", je dobré DataSource na chvíli vynulovat
         cbLevelOfBlinding.DataSource = Nothing
@@ -139,19 +155,18 @@ Public Class frmEditComments
 
         If cbLevelOfBlinding.SelectedItem IsNot Nothing Then
             'Dim selectedLevelOfBlindingType As LevelOfBlindingType = DirectCast(cbLevelOfBlinding.SelectedValue, LevelOfBlindingType)
-            Me.TrailDescription.LevelOfBlinding = cbLevelOfBlinding.SelectedValue
+            Me.LevelOfBlinding = cbLevelOfBlinding.SelectedValue
             Me.TrailDescription.LevelOfBlindingText = cbLevelOfBlinding.SelectedItem.Text
         End If
         If cbNumberOfArticlesFound.SelectedItem IsNot Nothing Then
-            Me.TrailDescription.NumberOfArticlesFound = cbNumberOfArticlesFound.SelectedItem.ToString
+            Me.NumberOfArticlesFound = cbNumberOfArticlesFound.SelectedItem.ToString
         End If
 
         Me.TrailDescription.GoalText = txtGoal.Text
         Me.TrailDescription.TrailText = txtTrail.Text
         Me.TrailDescription.PerformanceText = txtPerformance.Text
-        Me.TrailDescription.DogNameText = txtDogName.Text ' 
         Me.TrailDescription.HandlerNameText = txtHandlerName.Text '
-        Me.TrailDescription.DogName.Text = txtDogName.Text
+        Me.TrailDescription.DogNameText = txtDogName.Text
         Me.TrailDescription.HandlerNameText = txtHandlerName.Text
         If Me.Language Is Nothing Then
             Me.Language = cbLanguage.SelectedItem?.ToString()?.ToLowerInvariant() ' Uloží vybraný jazyk

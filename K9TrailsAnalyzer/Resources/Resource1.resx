@@ -327,4 +327,31 @@ If there are only two routes, it's pretty straightforward - the first is the sub
   <data name="hdr_TrailPickupPoints" xml:space="preserve">
     <value>Bonus for_Fast Trail Pick-up</value>
   </data>
+  <data name="outBlinding" xml:space="preserve">
+    <value>Blinding</value>
+  </data>
+  <data name="outDeviation" xml:space="preserve">
+    <value>Deviation</value>
+  </data>
+  <data name="levelOfBlinding_Open" xml:space="preserve">
+    <value>Open Track: the handler is accompanied by his dog on a self-laid track</value>
+  </data>
+  <data name="levelOfBlinding_Known" xml:space="preserve">
+    <value>Known track aka Blue line: the handler is familiar with the track.</value>
+  </data>
+  <data name="LevelOfBlinding_Single" xml:space="preserve">
+    <value>Single-blind: the handler is not familiar with the track. The assistant is.</value>
+  </data>
+  <data name="levelOfBlinding_DoubleAssisted" xml:space="preserve">
+    <value>Double-blind Assisted: neither the handler nor the assistant is familiar with the track.</value>
+  </data>
+  <data name="levelOfBlinding_DoubleSolo" xml:space="preserve">
+    <value>Double-blind Solo: the handler  is not familiar with the track.</value>
+  </data>
+  <data name="levelOfBlinding_Select" xml:space="preserve">
+    <value>Select the level of blinding.</value>
+  </data>
+  <data name="levelOfBlinding_Unknown" xml:space="preserve">
+    <value>Uknown</value>
+  </data>
 </root>
