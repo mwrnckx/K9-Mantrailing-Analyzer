@@ -2,6 +2,7 @@
 Imports System.Drawing.Text
 Imports System.Globalization
 Imports System.IO
+Imports System.Linq
 Imports System.Net.Http
 Imports System.Reflection.Emit
 Imports System.Runtime.CompilerServices
@@ -14,11 +15,13 @@ Imports System.Windows.Forms.VisualStyles.VisualStyleElement
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar
 Imports System.Xml
+Imports DocumentFormat.OpenXml.EMMA
+Imports DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing
+'Imports DocumentFormat.OpenXml.Spreadsheet
 Imports GPXTrailAnalyzer.GPXRecord
 Imports GPXTrailAnalyzer.My.Resources
 Imports TrackVideoExporter
 Imports TrackVideoExporter.TrackConverter
-Imports System.Linq
 
 
 
@@ -203,7 +206,33 @@ Public Class GpxFileManager
         End Get
     End Property
 
+    Private _TrailData As List(Of (Time As DateTime, Age As Double, Length As Double, TotalScore As Integer, Deviation As Double, Speed As Double, Distancekm As Double, Blinding As LevelOfBlindingType))
 
+    Public ReadOnly Property TrailData As List(Of (Time As DateTime, Age As Double, Length As Double, TotalScore As Integer, Deviation As Double, Speed As Double, Distancekm As Double, Blinding As LevelOfBlindingType))
+        Get
+            If _TrailData IsNot Nothing Then Return _TrailData
+
+            _TrailData = New List(Of (Time As DateTime, Age As Double, Length As Double, TotalScore As Integer, Deviation As Double, Speed As Double, Distancekm As Double, Blinding As LevelOfBlindingType))
+
+            For i = 0 To Me.GpxRecords.Count - 1
+                Dim stats As TrailStats = Me.GpxRecords(i).TrailStats
+                Dim age As Double = stats.TrailAge.TotalHours
+                Dim length As Double = stats.RunnerTotalDistancekm
+                Dim scoring As ScoringData = stats.PointsInMTCompetition
+                Dim totalScore As Integer = scoring.RunnerFoundPoints + scoring.DogSpeedPoints + scoring.DogAccuracyPoints + scoring.DogReadingPoints
+                Dim Deviation As Double = Me.GpxRecords(i).TrailStats.AverDeviation
+                Dim Speed As Double = Me.GpxRecords(i).TrailStats.DogGrossSpeedkmh
+                Dim Distancekm As Double = Me.GpxRecords(i).TrailDistancekmWeighted
+
+                ' pouze záznamy kde máme smysluplná data
+                If age > 0 AndAlso length > 0 Then
+                    _TrailData.Add((Me.GpxRecords(i).TrailStart.Time, age, length, totalScore, Deviation, Speed, Distancekm, stats.LevelOfBlinding))
+                End If
+            Next i
+
+            Return _TrailData
+        End Get
+    End Property
 
 
 
@@ -267,29 +296,27 @@ Public Class GpxFileManager
                 'fallback pro načtení level of blinding a number of articles 
                 Dim xmlContent As String = _gpxRecord.Reader.xmlDoc.OuterXml
                 If _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.Unknown Then
-                    If xmlContent.Contains("Single", StringComparison.OrdinalIgnoreCase) AndAlso xmlContent.Contains("Blind", StringComparison.OrdinalIgnoreCase) Then
-                        _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.SingleBlind
+                    If _gpxRecord.FileName.Contains("Samo", StringComparison.OrdinalIgnoreCase) Then
+                        _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.KnownTrack
                         isTrackStatsCalculated = True
-                    ElseIf xmlContent.Contains("Double", StringComparison.OrdinalIgnoreCase) Then
-                        If xmlContent.Contains("Blind", StringComparison.OrdinalIgnoreCase) Then
+                    ElseIf xmlContent.Contains("Single", StringComparison.OrdinalIgnoreCase) AndAlso xmlContent.Contains("Blind", StringComparison.OrdinalIgnoreCase) Then
+                        _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.SingleBlind
+                            isTrackStatsCalculated = True
+                        ElseIf xmlContent.Contains("Double blind", StringComparison.OrdinalIgnoreCase) Then
                             _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.DoubleBlindAssisted
                             isTrackStatsCalculated = True
                         ElseIf xmlContent.Contains("knowing", StringComparison.OrdinalIgnoreCase) Then
                             _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.Open
                             isTrackStatsCalculated = True
+                        ElseIf xmlContent.Contains("known", StringComparison.OrdinalIgnoreCase) Then
+                            _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.KnownTrack
+                            isTrackStatsCalculated = True
+                        ElseIf xmlContent.Contains("Open", StringComparison.OrdinalIgnoreCase) Then
+                            _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.Open
+                            isTrackStatsCalculated = True
                         End If
-                    ElseIf xmlContent.Contains("known", StringComparison.OrdinalIgnoreCase) Then
-                        _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.KnownTrack
-                        isTrackStatsCalculated = True
-                    ElseIf xmlContent.Contains("Open", StringComparison.OrdinalIgnoreCase) Then
-                        _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.Open
-                        isTrackStatsCalculated = True
-                    ElseIf _gpxRecord.FileName.Contains("Samo", StringComparison.OrdinalIgnoreCase) Then
-                        _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.KnownTrack
-                        isTrackStatsCalculated = True
                     End If
-                End If
-                If _gpxRecord.TrailStats.CheckpointsEval IsNot Nothing AndAlso _gpxRecord.TrailStats.NumberOfArticlesFound = 0 Then
+                    If _gpxRecord.TrailStats.CheckpointsEval IsNot Nothing AndAlso _gpxRecord.TrailStats.NumberOfArticlesFound = 0 Then
                     _gpxRecord.TrailStats.NumberOfArticlesFound = _gpxRecord.TrailStats.CheckpointsEval.Count 'pokud se nenahrály z atributu, načteme počet nalezených checkpointů z jejich počtu v XML
                     isTrackStatsCalculated = True
                 End If

@@ -1,7 +1,11 @@
-
+Ôªø
 Imports System.Globalization
 Imports System.Threading
 Imports System.Windows.Forms.DataVisualization.Charting
+Imports DocumentFormat.OpenXml.Drawing.Charts
+Imports TrackVideoExporter
+Imports Chart = System.Windows.Forms.DataVisualization.Charting.Chart
+Imports Legend = System.Windows.Forms.DataVisualization.Charting.Legend
 
 Partial Class frmChart
     Inherits System.Windows.Forms.Form
@@ -13,12 +17,35 @@ Partial Class frmChart
     Private yAxisLabel As String
     Private startDate As Date
     Private endDate As Date
-    Private isIntercept As Boolean 'typ proloûenÈ p¯Ìmky
+    Private isIntercept As Boolean 'typ prolo≈æen√© p≈ô√≠mky
     Private chartType As SeriesChartType 'Typ grafu
-    Private dogName As String 'Text pro n·zev grafu
+    Private dogName As String 'Text pro n√°zev grafu
+    Private Text As String 'Text pro n√°zev grafu
+    Private scatterMode As ScatterModeEnum ' nov√Ω enum pro scatter plot
+    Private trailData As List(Of (Time As DateTime, Age As Double, Length As Double, TotalScore As Integer, Deviation As Double, Speed As Double, Distancekm As Double, Blinding As LevelOfBlindingType))
+    Private isScatterMode As Boolean ' nov√Ω p≈ô√≠znak
+    Dim blindingColors As New Dictionary(Of LevelOfBlindingType, Color) From {
+        {LevelOfBlindingType.Unknown, Color.LightGray},
+        {LevelOfBlindingType.Open, Color.Green},
+        {LevelOfBlindingType.KnownTrack, Color.Blue},
+        {LevelOfBlindingType.SingleBlind, Color.Orange},
+        {LevelOfBlindingType.DoubleBlindAssisted, Color.OrangeRed},
+        {LevelOfBlindingType.DoubleBlindSolo, Color.Red}
+    }
 
-
-    ' Konstruktor, kter˝ p¯ijme data
+    Dim blindingLabels As New Dictionary(Of LevelOfBlindingType, String) From {
+        {LevelOfBlindingType.Unknown, "Uknowv"},
+        {LevelOfBlindingType.Open, "Open"},
+        {LevelOfBlindingType.KnownTrack, "Known Track"},
+        {LevelOfBlindingType.SingleBlind, "Single Blind"},
+        {LevelOfBlindingType.DoubleBlindAssisted, "Double Blind (assisted)"},
+        {LevelOfBlindingType.DoubleBlindSolo, "Double Blind (solo)"}
+    }
+    Public Enum ScatterModeEnum
+        ScoreVsAge
+        ScoreVsTime
+    End Enum
+    ' Konstruktor, kter√Ω p≈ôijme data
     Public Sub New(dogname As String, _X_data As DateTime(), _Y_data As Double(), yAxisLabel As String, _startDate As Date, _endDate As Date, _meText As String, _isIntercept As Boolean, _chartType As SeriesChartType, _CultureInfo As CultureInfo)
         Me.X_Data = _X_data
         Me.Y_Data = _Y_data
@@ -33,9 +60,9 @@ Partial Class frmChart
         InitializeComponent()
     End Sub
 
-    ' Konstruktor, kter˝ p¯ijme data
+    ' Konstruktor, kter√Ω p≈ôijme data
     Public Sub New(dogname As String, data As List(Of (X As Date, Y As Double)), yAxisLabel As String, _startDate As Date, _endDate As Date, _meText As String, _isIntercept As Boolean, _chartType As SeriesChartType, _CultureInfo As CultureInfo)
-        ' RozdÏlenÌ na X a Y osy
+        ' Rozdƒõlen√≠ na X a Y osy
         Me.X_Data = data.Select(Function(p) p.Item1).ToArray()
         Me.Y_Data = data.Select(Function(p) p.Item2).ToArray()
         Me.yAxisLabel = yAxisLabel
@@ -50,7 +77,7 @@ Partial Class frmChart
 
     End Sub
 
-    ' Konstruktor, kter˝ p¯ijme data
+    ' Konstruktor, kter√Ω p≈ôijme data
     Public Sub New(dogname As String, _X_data As String(), _Y_data As Double(), yAxisLabel As String, _startDate As Date, _endDate As Date, _meText As String, _isIntercept As Boolean, _chartType As SeriesChartType, _CultureInfo As CultureInfo)
         Me.X_DataString = _X_data
         Me.Y_Data = _Y_data
@@ -66,14 +93,28 @@ Partial Class frmChart
 
     End Sub
 
+    ' Nov√Ω konstruktor pro scatter plot
+    Public Sub New(dogname As String,
+               _trailData As List(Of (Time As DateTime, Age As Double, Length As Double, TotalScore As Integer, Deviation As Double, Speed As Double, Distancekm As Double, Blinding As LevelOfBlindingType)),
+               _meText As String,
+               _CultureInfo As CultureInfo, _mode As ScatterModeEnum)
+        Me.dogName = dogname
+        Me.Text = _meText
+        Me.trailData = _trailData  ' nov√° private promƒõnn√°
+        Me.X_Data = _trailData.Select(Function(t) t.Time).ToArray() ' pro regresi
+        Me.Y_Data = _trailData.Select(Function(t) CDbl(t.TotalScore)).ToArray() ' pro regresi
+        Me.scatterMode = _mode ' nov√Ω enum pro scatter plot
+        Me.isScatterMode = True    ' nov√Ω p≈ô√≠znak
+        Thread.CurrentThread.CurrentCulture = _CultureInfo
+        InitializeComponent()
+    End Sub
 
-
-    ' Metoda pro v˝poËet smÏrnice p¯Ìmky proch·zejÌcÌ bodem [X_Data.First().ToOADate(), 0]
-    Private Function CalculateLinearRegression(_X_Data() As Date, _Y_data() As Double, _IsIntercept As Boolean) As Tuple(Of Double, Double)
+    ' Metoda pro v√Ωpoƒçet smƒõrnice p≈ô√≠mky proch√°zej√≠c√≠ bodem [X_Data.First().ToOADate(), 0]
+    Private Function CalculateLinearRegression(_X_Data() As Date, _Y_data() As Double, _IsIntercept As Boolean) As (slope As Double, intercept As Double)
         Dim n As Integer = _X_Data.Length
-        If n = 0 Then Return Tuple.Create(0.0, 0.0) ' Oöet¯enÌ pr·zdn˝ch dat
+        If n = 0 Then Return (0.0, 0.0) ' O≈°et≈ôen√≠ pr√°zdn√Ωch dat
 
-        Dim firstX As Double = _X_Data(0).ToOADate() ' PrvnÌ X hodnota (pro posun)
+        Dim firstX As Double = _X_Data(0).ToOADate() ' Prvn√≠ X hodnota (pro posun)
         Dim sumX As Double = 0
         Dim sumY As Double = 0
         Dim sumXY As Double = 0
@@ -82,7 +123,7 @@ Partial Class frmChart
         Dim slope As Double
         Dim intercept As Double
 
-        If isIntercept Then ' StandardnÌ line·rnÌ regrese (bez posunu)
+        If isIntercept Then ' Standardn√≠ line√°rn√≠ regrese (bez posunu)
             For i As Integer = 0 To n - 1
                 Dim x As Double = _X_Data(i).ToOADate()
                 Dim y As Double = _Y_data(i)
@@ -95,7 +136,7 @@ Partial Class frmChart
             slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX)
             intercept = (sumY - slope * sumX) / n
 
-        Else ' Line·rnÌ regrese s posunut˝m poË·tkem
+        Else ' Line√°rn√≠ regrese s posunut√Ωm poƒç√°tkem
             For i As Integer = 0 To n - 1
                 Dim x As Double = _X_Data(i).ToOADate() - firstX ' Posun X hodnot
                 Dim y As Double = _Y_data(i)
@@ -105,41 +146,126 @@ Partial Class frmChart
                 sumX2 += x * x
             Next
 
-            If sumX2 = 0 Then ' Oöet¯enÌ dÏlenÌ nulou (vöechny X hodnoty stejnÈ)
-                Return Tuple.Create(0.0, 0.0) ' Nebo vyhoÔ v˝jimku, podle pot¯eby
+            If sumX2 = 0 Then ' O≈°et≈ôen√≠ dƒõlen√≠ nulou (v≈°echny X hodnoty stejn√©)
+                Return (0.0, 0.0) ' Nebo vyhoƒè v√Ωjimku, podle pot≈ôeby
             End If
             slope = sumXY / sumX2
-            intercept = -slope * firstX ' V˝poËet interceptu v p˘vodnÌch sou¯adnicÌch
+            intercept = -slope * firstX ' V√Ωpoƒçet interceptu v p≈Øvodn√≠ch sou≈ôadnic√≠ch
         End If
 
-        Return Tuple.Create(slope, intercept)
+        Return (slope, intercept)
     End Function
 
 
-    Private Sub DistanceChart_Load(sender As Object, e As EventArgs) Handles Me.Load
-        ' NastavenÌ rozsahu osy X na z·kladÏ data
-        ' ZÌsk·nÌ rozmÏr˘ obrazovky
+    ' Polynomick√° regrese 2. stupnƒõ: y = a*x¬≤ + b*x + c
+    Private Function CalculatePolynomialRegression(data As List(Of (Age As Double, Score As Integer))) As (c As Double, b As Double, a As Double)
+        Dim n As Integer = data.Count
+        If n < 3 Then Return (0, 0, 0) ' Nebo vyhodit v√Ωjimku
+
+        Dim sumX As Double = 0, sumX2 As Double = 0, sumX3 As Double = 0, sumX4 As Double = 0
+        Dim sumY As Double = 0, sumXY As Double = 0, sumX2Y As Double = 0
+
+        For Each t In data
+            Dim x As Double = t.Age
+            Dim y As Double = t.Score
+            Dim x2 As Double = x * x
+            sumX += x
+            sumX2 += x2
+            sumX3 += x2 * x
+            sumX4 += x2 * x2
+            sumY += y
+            sumXY += x * y
+            sumX2Y += x2 * y
+        Next
+
+        ' Matice soustavy (Augmented Matrix)
+        Dim G(2, 3) As Double
+        G(0, 0) = n : G(0, 1) = sumX : G(0, 2) = sumX2 : G(0, 3) = sumY
+        G(1, 0) = sumX : G(1, 1) = sumX2 : G(1, 2) = sumX3 : G(1, 3) = sumXY
+        G(2, 0) = sumX2 : G(2, 1) = sumX3 : G(2, 2) = sumX4 : G(2, 3) = sumX2Y
+
+        ' Gaussova eliminace s velmi jednoduchou kontrolou stability
+        For col = 0 To 1
+            ' Pokud je diagon√°ln√≠ prvek p≈ô√≠li≈° mal√Ω, soustava je ≈°patnƒõ podm√≠nƒõn√°
+            If Math.Abs(G(col, col)) < 0.0000000001 Then Return (0, 0, 0)
+
+            For row = col + 1 To 2
+                Dim factor As Double = G(row, col) / G(col, col)
+                For j = col To 3
+                    G(row, j) -= factor * G(col, j)
+                Next
+            Next
+        Next
+
+        ' Zpƒõtn√° substituce s kontrolou posledn√≠ho prvku
+        If Math.Abs(G(2, 2)) < 0.0000000001 Then Return (0, 0, 0)
+
+        Dim resC As Double = G(2, 3) / G(2, 2)
+        Dim resB As Double = (G(1, 3) - G(1, 2) * resC) / G(1, 1)
+        Dim resA As Double = (G(0, 3) - G(0, 2) * resC - G(0, 1) * resB) / G(0, 0)
+
+        Return (resA, resB, resC)
+    End Function
+
+    Private Sub AddTrendLine(data As List(Of (Age As Double, Score As Integer)), color As Color, label As String)
+        If data.Count < 3 Then Return ' polynomick√° regrese pot≈ôebuje aspo≈à 3 body
+        Try
+            Dim coef = CalculatePolynomialRegression(data)
+
+            Dim trendSeries As New Series(label & " trend") With {
+            .ChartType = SeriesChartType.Line,
+            .Color = color,
+            .BorderWidth = 2,
+            .BorderDashStyle = ChartDashStyle.Dash
+        }
+
+            Dim xMin As Double = data.Min(Function(t) t.Age)
+            Dim xMax As Double = data.Max(Function(t) t.Age)
+
+            For i As Integer = 0 To 100
+                Dim x As Double = xMin + (xMax - xMin) * i / 100
+                Dim y As Double = coef.a * x * x + coef.b * x + coef.c
+                trendSeries.Points.AddXY(x, y)
+            Next
+
+            chart1.Series.Add(trendSeries)
+        Catch ex As Exception
+            Debug.WriteLine($"Trend line failed for {label}: " & ex.Message)
+        End Try
+    End Sub
+    Private Sub Chart_Load(sender As Object, e As EventArgs) Handles Me.Load
+        If isScatterMode Then
+            If Me.scatterMode = ScatterModeEnum.ScoreVsAge Then
+                PlotScoreVsAge(chart1)
+            ElseIf Me.scatterMode = ScatterModeEnum.ScoreVsTime Then
+                PlotScoreVsTime(chart1)
+            End If
+            Return
+        End If
+        ' ... st√°vaj√≠c√≠ k√≥d z≈Øst√°v√° beze zmƒõny
+        ' Nastaven√≠ rozsahu osy X na z√°kladƒõ data
+        ' Z√≠sk√°n√≠ rozmƒõr≈Ø obrazovky
         Dim screenBounds As Rectangle = Screen.PrimaryScreen.Bounds
-        Me.Size = New Size(screenBounds.Height * 0.8 / 3 * 4, screenBounds.Height * 0.8)
+        Me.Size = New Drawing.Size(screenBounds.Height * 0.8 / 3 * 4, screenBounds.Height * 0.8)
         Me.chart1.ChartAreas(0).AxisX.IsStartedFromZero = False
-        ' Form·tov·nÌ popisk˘ osy X (äIKM… POPISKY)
+        ' Form√°tov√°n√≠ popisk≈Ø osy X (≈†IKM√â POPISKY)
         chart1.ChartAreas(0).AxisX.LabelStyle.IsStaggered = True
-        chart1.ChartAreas(0).AxisX.LabelStyle.Angle = -45 ' NastavenÌ ˙hlu
+        chart1.ChartAreas(0).AxisX.LabelStyle.Angle = -45 ' Nastaven√≠ √∫hlu
 
 
 
-        ' NastavenÌ vlastnostÌ pro osu Y
+        ' Nastaven√≠ vlastnost√≠ pro osu Y
         Me.chart1.ChartAreas(0).AxisY.Title = yAxisLabel
-        ' Pokud chceme zobrazit m¯Ìûku
+        ' Pokud chceme zobrazit m≈ô√≠≈æku
         chart1.ChartAreas(0).AxisX.MajorGrid.Enabled = True
         chart1.ChartAreas(0).AxisY.MajorGrid.Enabled = True
 
-        'Styl m¯Ìûky
+        'Styl m≈ô√≠≈æky
         chart1.ChartAreas(0).AxisX.MajorGrid.LineColor = Color.LightGray
         chart1.ChartAreas(0).AxisY.MajorGrid.LineColor = Color.LightGray
         chart1.ChartAreas(0).AxisX.MajorGrid.LineWidth = 1
         chart1.ChartAreas(0).AxisY.MajorGrid.LineWidth = 1
-        chart1.ChartAreas(0).AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dash 'TeËkovan· Ë·ra
+        chart1.ChartAreas(0).AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dash 'Teƒçkovan√° ƒç√°ra
         chart1.ChartAreas(0).AxisY.MajorGrid.LineDashStyle = ChartDashStyle.Dash
         chart1.Titles(0).Text = Me.dogName & " - " & Me.Text
 
@@ -149,11 +275,11 @@ Partial Class frmChart
             .Name = "Series1",
             .ChartType = Me.chartType}
 
-        ' P¯id·nÌ dat do sÈrie
+        ' P≈ôid√°n√≠ dat do s√©rie
         If Me.chartType = SeriesChartType.Point Then
             chart1.ChartAreas(0).AxisX.LabelStyle.Format = "MMMM yy"
             With series1
-                .MarkerSize = 10 ' NastavÌ velikost bod˘ na 10 pixel˘
+                .MarkerSize = 10 ' Nastav√≠ velikost bod≈Ø na 10 pixel≈Ø
                 .MarkerStyle = MarkerStyle.Circle
                 .MarkerColor = Color.Chocolate
                 .XValueType = ChartValueType.DateTime
@@ -164,12 +290,9 @@ Partial Class frmChart
                 series1.Points.AddXY(X_Data(i), Y_Data(i))
             Next
 
-            ' V˝poËet line·rnÌ regrese
-            Dim regression = CalculateLinearRegression(X_Data, Y_Data, isIntercept)
-            Dim slope = regression.Item1
-            Dim intercept = regression.Item2
 
-            ' Vytvo¯enÌ novÈ sÈrie pro proloûenou p¯Ìmku
+
+            ' Vytvo≈ôen√≠ nov√© s√©rie pro prolo≈æenou p≈ô√≠mku
             Dim regressionSeries As New Series() With {
                 .Name = "Trend Line",
                 .ChartType = SeriesChartType.Line,
@@ -178,16 +301,20 @@ Partial Class frmChart
                 .BorderWidth = 2
             }
             Try
-                ' P¯id·nÌ dvou bod˘ do sÈrie, kterÈ reprezentujÌ p¯Ìmku
+                ' V√Ωpoƒçet line√°rn√≠ regrese
+                Dim regression = CalculateLinearRegression(X_Data, Y_Data, isIntercept)
+                Dim slope = regression.slope
+                Dim intercept = regression.intercept
+                ' P≈ôid√°n√≠ dvou bod≈Ø do s√©rie, kter√© reprezentuj√≠ p≈ô√≠mku
                 Dim xStart As Double = X_Data.First().ToOADate()
                 Dim xEnd As Double = X_Data.Last().ToOADate()
-                Dim yStart As Double = slope * xStart + intercept
-                Dim yEnd As Double = slope * xEnd + intercept
+                Dim yStart As Double = slope * xStart + Intercept
+                Dim yEnd As Double = slope * xEnd + Intercept
 
                 regressionSeries.Points.AddXY(DateTime.FromOADate(xStart), yStart)
                 regressionSeries.Points.AddXY(DateTime.FromOADate(xEnd), yEnd)
 
-                ' P¯id·nÌ regresnÌ sÈrie do grafu
+                ' P≈ôid√°n√≠ regresn√≠ s√©rie do grafu
                 chart1.Series.Add(regressionSeries)
             Catch ex As Exception
                 Debug.WriteLine("Failed to interlace a straight line")
@@ -214,19 +341,135 @@ Partial Class frmChart
 
 
 
-        ' P¯id·nÌ sÈrie do grafu
+        ' P≈ôid√°n√≠ s√©rie do grafu
         chart1.Series.Add(series1)
-        Debug.WriteLine($"PoËet bod˘: {series1.Points.Count}")
+        Debug.WriteLine($"Poƒçet bod≈Ø: {series1.Points.Count}")
         Debug.WriteLine($"ChartAreas: {chart1.ChartAreas.Count}, Series: {chart1.Series.Count}")
         Debug.WriteLine($"Nakonec: chart.Series.Count={chart1.Series.Count}, Body={series1.Points.Count}")
 
     End Sub
 
+    Public Sub PlotScoreVsAge(chart As Chart)
+        chart.Series.Clear()
+        'Me.chart1.ChartAreas(0).AxisY.Maximum = 500.0
+        chart.ChartAreas(0).AxisX.Maximum = 4.0
 
+        ' Vytvo≈ô samostatnou s√©rii pro ka≈ædou kategorii
+        Dim seriesDict As New Dictionary(Of LevelOfBlindingType, Series)
+        For Each kvp In blindingColors
+            Dim s As New Series(blindingLabels(kvp.Key))
+            s.ChartType = SeriesChartType.Point
+            s.Color = kvp.Value
+            s.MarkerStyle = MarkerStyle.Circle
+            s.MarkerSize = 10
+            chart.Series.Add(s)
+            seriesDict(kvp.Key) = s
+        Next
+
+        ' Napl≈à daty
+        For Each t In trailData
+            Dim s As Series = seriesDict(t.Blinding)
+            Dim idx As Integer = s.Points.AddXY(t.Age, t.TotalScore)
+            s.Points(idx).ToolTip = $"{t.Time:dd.MM.yyyy} | {t.Age:F1}h | {t.Length:F1}km | {t.TotalScore}b | {blindingLabels(t.Blinding)}"
+        Next
+
+        ' Popisky os
+        With chart.ChartAreas(0)
+            .AxisX.Title = "St√°≈ô√≠ stopy (hodiny)"
+            .AxisX.Minimum = 0
+            .AxisY.Title = "Sk√≥re"
+            .AxisY.Minimum = 0
+        End With
+
+        For Each kvp In blindingColors
+            Dim blinding = kvp.Key
+            Dim filtered = trailData.
+        Where(Function(t) t.Blinding = blinding).
+        Select(Function(t) (t.Age, t.TotalScore)).
+        ToList()
+            If filtered.Count >= 3 Then
+                AddTrendLine(filtered, kvp.Value, blindingLabels(blinding))
+            End If
+        Next
+
+        ' Legenda
+        chart.Legends.Clear()
+        Dim legend As New Legend("Zaslepen√≠")
+        chart.Legends.Add(legend)
+    End Sub
+
+    Private Sub PlotScoreVsTime(chart As Chart)
+        chart.Titles(0).Text = Me.dogName & " - " & Me.Text
+        chart.ChartAreas(0).AxisX.LabelStyle.Format = "MMMM yy"
+        chart.ChartAreas(0).AxisX.LabelStyle.Angle = -45
+        chart.ChartAreas(0).AxisX.Minimum = trailData.Min(Function(t) t.Time).ToOADate()
+        chart.ChartAreas(0).AxisX.Maximum = trailData.Max(Function(t) t.Time).ToOADate()
+        chart.ChartAreas(0).AxisY.Title = "Sk√≥re"
+        chart.ChartAreas(0).AxisX.MajorGrid.LineColor = Color.LightGray
+        chart.ChartAreas(0).AxisY.MajorGrid.LineColor = Color.LightGray
+        chart.ChartAreas(0).AxisX.MajorGrid.LineWidth = 1
+        chart.ChartAreas(0).AxisY.MajorGrid.LineWidth = 1
+        chart.ChartAreas(0).AxisX.MajorGrid.LineDashStyle = ChartDashStyle.Dash
+        chart.ChartAreas(0).AxisY.MajorGrid.LineDashStyle = ChartDashStyle.Dash
+
+        ' S√©rie bod≈Ø podle zaslepen√≠
+        For Each kvp In blindingColors
+            Dim blinding = kvp.Key
+            Dim filtered = trailData.Where(Function(t) t.Blinding = blinding).ToList()
+            If filtered.Count = 0 Then Continue For
+
+            Dim s As New Series(blindingLabels(blinding)) With {
+            .ChartType = SeriesChartType.Point,
+            .Color = kvp.Value,
+            .MarkerStyle = MarkerStyle.Circle,
+            .MarkerSize = 8,
+            .XValueType = ChartValueType.DateTime
+        }
+
+            For Each t In filtered
+                Dim idx As Integer = s.Points.AddXY(t.Time, t.TotalScore)
+                s.Points(idx).ToolTip = $"{t.Time:dd.MM.yyyy} | {t.Age:F1}h | {t.Length:F1}km | {t.TotalScore}b | {blindingLabels(blinding)}"
+            Next
+
+            chart.Series.Add(s)
+
+            ' Line√°rn√≠ trend
+            If filtered.Count >= 2 Then
+                Dim xVals = filtered.Select(Function(t) t.Time).ToArray()
+                Dim yVals = filtered.Select(Function(t) CDbl(t.TotalScore)).ToArray()
+
+                Dim regressionSeries As New Series(blindingLabels(blinding) & " trend") With {
+                .ChartType = SeriesChartType.Line,
+                .Color = kvp.Value,
+                .BorderWidth = 2,
+                .BorderDashStyle = ChartDashStyle.Dash,
+                .XValueType = ChartValueType.DateTime
+            }
+                ' V√Ωpoƒçet line√°rn√≠ regrese
+                Dim regression = CalculateLinearRegression(xVals, yVals, True)
+                Dim slope = regression.slope
+                Dim intercept = regression.intercept
+                ' P≈ôid√°n√≠ dvou bod≈Ø do s√©rie, kter√© reprezentuj√≠ p≈ô√≠mku
+                Dim xStart As Double = xVals.First().ToOADate()
+                Dim xEnd As Double = xVals.Last().ToOADate()
+                Dim yStart As Double = slope * xStart + intercept
+                Dim yEnd As Double = slope * xEnd + intercept
+
+                regressionSeries.Points.AddXY(DateTime.FromOADate(xStart), yStart)
+                regressionSeries.Points.AddXY(DateTime.FromOADate(xEnd), yEnd)
+
+                chart1.Series.Add(regressionSeries)
+            End If
+        Next
+
+        ' Legenda
+        chart.Legends.Clear()
+        chart.Legends.Add(New Legend("Zaslepen√≠"))
+    End Sub
     Private Sub SaveAs(sender As Object, e As EventArgs) Handles SaveAsToolStripMenuItem.Click
         Using dialog As New SaveFileDialog()
             dialog.Filter = "PNG (*.png)|*.png|JPEG (*.jpeg)|*.jpeg"
-            'dialog.CheckFileExists = True 'kdyû existuje zept· se 
+            'dialog.CheckFileExists = True 'kdy≈æ existuje zept√° se 
             dialog.AddExtension = True
             dialog.InitialDirectory = IO.Directory.GetParent(Application.StartupPath).ToString
             dialog.Title = "Save as"
@@ -235,7 +478,7 @@ Partial Class frmChart
             If dialog.ShowDialog() = DialogResult.OK Then
 
                 Debug.WriteLine($"Selected file: {dialog.FileName}")
-                'Uloû upraven˝ RTF text zpÏt do souboru
+                'Ulo≈æ upraven√Ω RTF text zpƒõt do souboru
 
                 Dim format As ChartImageFormat
                 Try

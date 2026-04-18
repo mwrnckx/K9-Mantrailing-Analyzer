@@ -516,18 +516,18 @@ Partial Public Class Form1
                 If _gpxRecord.TrailStats.TrailAge.TotalHours > 0 Then
                     rtbOutput.AppendText((_gpxRecord.TrailStats.TrailAge.TotalHours.ToString("G2") & " h" & manySpaces).Substring(0, 8))
                 Else
-                    rtbOutput.AppendText((manySpaces).Substring(0, 12))
+                    rtbOutput.AppendText((manySpaces).Substring(0, 8))
                 End If
                 'Dim dogspeed As Double = _gpxRecord.DogSpeed
                 If _gpxRecord.TrailStats.DogGrossSpeedkmh > 0 Then
                     rtbOutput.AppendText((_gpxRecord.TrailStats.DogGrossSpeedkmh.ToString("G2") & " km/h" & manySpaces).Substring(0, 11))
                 Else
-                    rtbOutput.AppendText("           ")
+                    rtbOutput.AppendText((manySpaces).Substring(0, 11))
                 End If
                 If _gpxRecord.TrailStats.AverDeviation > 0 Then
                     rtbOutput.AppendText((_gpxRecord.TrailStats.AverDeviation.ToString("G2") & " m" & manySpaces).Substring(0, 12))
                 Else
-                    rtbOutput.AppendText("        ")
+                    rtbOutput.AppendText((manySpaces).Substring(0, 12))
                 End If
 
                 If _gpxRecord.LocalisedReports.Count > 0 Then
@@ -829,17 +829,26 @@ Partial Public Class Form1
         chart1.Show()
         Charts.Add(chart1)
 
-
-
+        chart1 = New frmChart(
+    dogname:=ActiveCategoryInfo.Name,
+    _trailData:=GPXFilesManager.TrailData,
+    _meText:="Skóre vs. stáří stopy",
+    _CultureInfo:=CultureInfo.CurrentCulture, frmChart.ScatterModeEnum.ScoreVsAge
+)
+        chart1.Show()
+        Charts.Add(chart1)
 
         'Difficulty indexes
         chart1 = New frmChart(ActiveCategoryInfo.Name, GPXFilesManager.DiffIndexes, "Trail Difficulty Index (h·km)", GPXFilesManager.dateFrom, GPXFilesManager.dateTo, "Trail Difficulty Index (h·km)", True, SeriesChartType.Point, currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
-        'Total Difficulty indexes
-
-        chart1 = New frmChart(ActiveCategoryInfo.Name, GPXFilesManager.TotalPoints, "Total Points Weigted by Difficulty", GPXFilesManager.dateFrom, GPXFilesManager.dateTo, "Total Points Weigted by Difficulty", True, SeriesChartType.Point, currentCulture)
+        chart1 = New frmChart(
+    dogname:=ActiveCategoryInfo.Name,
+    _trailData:=GPXFilesManager.TrailData,
+    _meText:="Skóre vs. čas",
+    _CultureInfo:=CultureInfo.CurrentCulture, frmChart.ScatterModeEnum.ScoreVsTime
+)
         chart1.Show()
         Charts.Add(chart1)
 
