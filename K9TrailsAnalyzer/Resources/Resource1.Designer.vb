@@ -83,7 +83,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Crossing trail.
+        '''  Vyhledá lokalizovaný řetězec podobný Cross Track.
         '''</summary>
         Friend Shared ReadOnly Property CrossingTrail() As String
             Get
@@ -255,6 +255,15 @@ Namespace My.Resources
         Friend Shared ReadOnly Property lblTo() As String
             Get
                 Return ResourceManager.GetString("lblTo", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Double-blind: neither the handler nor the assistant is familiar with the track..
+        '''</summary>
+        Friend Shared ReadOnly Property LevelOfBlinding_Double() As String
+            Get
+                Return ResourceManager.GetString("LevelOfBlinding_Double", resourceCulture)
             End Get
         End Property
         
@@ -709,6 +718,15 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Number of trails.
+        '''</summary>
+        Friend Shared ReadOnly Property Y_AxisLabelCount() As String
+            Get
+                Return ResourceManager.GetString("Y-AxisLabelCount", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Dog deviation (m).
         '''</summary>
         Friend Shared ReadOnly Property Y_AxisLabelDeviation() As String
@@ -736,7 +754,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Sniffed per month (km).
+        '''  Vyhledá lokalizovaný řetězec podobný Trailed per month (km).
         '''</summary>
         Friend Shared ReadOnly Property Y_AxisLabelMonthly() As String
             Get
@@ -745,7 +763,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Speed of the dog on the trails (km/h).
+        '''  Vyhledá lokalizovaný řetězec podobný Speed of the dog (km/h).
         '''</summary>
         Friend Shared ReadOnly Property Y_AxisLabelSpeed() As String
             Get
@@ -754,7 +772,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Sniffed Kilometers .
+        '''  Vyhledá lokalizovaný řetězec podobný Total Trailed Distance.
         '''</summary>
         Friend Shared ReadOnly Property Y_AxisLabelTotalLength() As String
             Get

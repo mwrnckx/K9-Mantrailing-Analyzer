@@ -123,4 +123,28 @@
   <data name="points" xml:space="preserve">
     <value>балів</value>
   </data>
+  <data name="FinalFind" xml:space="preserve">
+    <value>Знайдення суб'єкта</value>
+  </data>
+  <data name="ofPoints" xml:space="preserve">
+    <value>з</value>
+  </data>
+  <data name="DogReading" xml:space="preserve">
+    <value>Читання собаки</value>
+  </data>
+  <data name="Scoring" xml:space="preserve">
+    <value>Оцінка</value>
+  </data>
+  <data name="Speed" xml:space="preserve">
+    <value>Швидкість</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Всього</value>
+  </data>
+  <data name="Trail_description" xml:space="preserve">
+    <value>Опис сліду</value>
+  </data>
+  <data name="TrailPickup" xml:space="preserve">
+    <value>Взяття сліду</value>
+  </data>
 </root>

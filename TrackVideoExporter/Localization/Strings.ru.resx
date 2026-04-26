@@ -121,15 +121,30 @@
     <value>Точность</value>
   </data>
   <data name="Scoring" xml:space="preserve">
-    <value>Подсчет очков</value>
+    <value>Оценка</value>
   </data>
   <data name="Speed" xml:space="preserve">
     <value>Скорость</value>
   </data>
   <data name="Total" xml:space="preserve">
-    <value>Общий</value>
+    <value>Всего</value>
   </data>
   <data name="Trail_description" xml:space="preserve">
-    <value>Описание маршрута</value>
+    <value>Описание следа</value>
+  </data>
+  <data name="FinalFind" xml:space="preserve">
+    <value>Нахождение субъекта</value>
+  </data>
+  <data name="ofPoints" xml:space="preserve">
+    <value>из</value>
+  </data>
+  <data name="points" xml:space="preserve">
+    <value>баллов</value>
+  </data>
+  <data name="DogReading" xml:space="preserve">
+    <value>Чтение собаки</value>
+  </data>
+  <data name="TrailPickup" xml:space="preserve">
+    <value>Взятие следа</value>
   </data>
 </root>

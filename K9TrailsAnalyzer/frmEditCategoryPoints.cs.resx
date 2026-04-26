@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="lblSpeed.Text" xml:space="preserve">
-    <value>Rychlost – bodů / km/h:</value>
+    <value>Tempo postupu max. bodů:</value>
   </data>
   <data name="lblAcc.Text" xml:space="preserve">
     <value>Přesnost – max bodů:</value>

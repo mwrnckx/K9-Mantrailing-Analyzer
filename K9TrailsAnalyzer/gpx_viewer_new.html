@@ -159,14 +159,16 @@ function makeMarker(latlng, color, label) {
 function render(gpxString) {
   const parser = new DOMParser();
   const doc = parser.parseFromString(gpxString, 'application/xml');
-  const tracks = doc.querySelectorAll('trk');
   const allLatLngs = [];
   let totalDist = 0;
 
+  // 1. Zpracování TRAS (TRK)
+  const tracks = doc.querySelectorAll('trk');
   tracks.forEach((trk, idx) => {
     const color = COLORS[idx % COLORS.length];
     const trkpts = trk.querySelectorAll('trkpt');
     const latlngs = Array.from(trkpts).map(pt => [parseFloat(pt.getAttribute('lat')), parseFloat(pt.getAttribute('lon'))]);
+    
     if (!latlngs.length) return;
 
     L.polyline(latlngs, { color: color, weight: 3.5 }).addTo(map);
@@ -177,7 +179,25 @@ function render(gpxString) {
     allLatLngs.push(...latlngs);
   });
 
+  // 2. Zpracování WAYPOINTŮ (WPT) - TATO ČÁST CHYBĚLA
+  const waypoints = doc.querySelectorAll('wpt');
+  waypoints.forEach(wpt => {
+    const lat = parseFloat(wpt.getAttribute('lat'));
+    const lon = parseFloat(wpt.getAttribute('lon'));
+    const name = wpt.querySelector('name')?.textContent || 'Point';
+    
+    // Určení barvy: Pokud je název "First Contact", použij fialovou, jinak černou
+    // Poznámka: Dal jsem tam .trim() pro případ, že by v GPX byly mezery navíc
+    const markerColor = (name.trim() === 'First Contact') ? '#e040fb' : 'black';
+    
+    // Vykreslení waypointu zvolenou barvou
+    makeMarker([lat, lon], markerColor, name).addTo(map);
+    allLatLngs.push([lat, lon]);
+  });
+
+  // Přizpůsobení pohledu mapy
   if (allLatLngs.length) map.fitBounds(L.latLngBounds(allLatLngs), { padding: [40, 40] });
+  
   document.getElementById('stat-tracks').textContent = tracks.length;
   document.getElementById('stat-dist').textContent = formatDist(totalDist);
 }

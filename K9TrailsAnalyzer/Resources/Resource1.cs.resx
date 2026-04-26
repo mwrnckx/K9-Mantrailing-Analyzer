@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Y-AxisLabelTotalLength" xml:space="preserve">
-    <value>Načucháno kilometrů</value>
+    <value>Namantrailováno celkem (km)</value>
   </data>
   <data name="Y-AxisLabelLength" xml:space="preserve">
-    <value>Délka jednotlivých trailů (km)</value>
+    <value>Délka trailů (km)</value>
   </data>
   <data name="Y-AxisLabelLengthAge" xml:space="preserve">
     <value>Vážená délka trailů (km)</value>
@@ -130,7 +130,7 @@
     <value>Stáří trailů (hodin)</value>
   </data>
   <data name="Y-AxisLabelSpeed" xml:space="preserve">
-    <value>Rychlost psa na trailech (km/h)</value>
+    <value>Rychlost psa (km/h)</value>
   </data>
   <data name="Y-AxisLabelDeviation" xml:space="preserve">
     <value>Odchylka psa (m)</value>
@@ -254,7 +254,7 @@
     <value>U příští dvojice se zase zeptat</value>
   </data>
   <data name="Y-AxisLabelMonthly" xml:space="preserve">
-    <value>Načucháno měsíčně (km)</value>
+    <value>Namantrailováno měsíčně (km)</value>
   </data>
   <data name="txtGoalLabel" xml:space="preserve">
     <value>Cíl tréninku</value>
@@ -286,7 +286,7 @@ Pro další zpracování je třeba rozhodnout, která trasa odpovídá
 Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče, druhá je trasa psa. Ale pokud je trasa jen jedna nebo jich je více než dvě musíte to rozhodnout vy. Aplikace se to pokusí odhadnout, ale nemusí se vždy trefit 😉!</value>
   </data>
   <data name="CrossingTrail" xml:space="preserve">
-    <value>Crossing trail</value>
+    <value>Křížení stopy</value>
   </data>
   <data name="article" xml:space="preserve">
     <value>Checkpoint</value>
@@ -310,7 +310,7 @@ Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče
     <value>Body za nalezení kladeče</value>
   </data>
   <data name="hdr_DogSpeedPoints" xml:space="preserve">
-    <value>Bonus za rychlost</value>
+    <value>Bonus za_tempo postupu</value>
   </data>
   <data name="hdr_DogAccuracyPoints" xml:space="preserve">
     <value>Bonus za přesnost</value>
@@ -326,9 +326,6 @@ Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče
   </data>
   <data name="outDeviation" xml:space="preserve">
     <value>Odchylka</value>
-  </data>
-  <data name="dogTrack" xml:space="preserve">
-    <value>Pes</value>
   </data>
   <data name="levelOfBlinding_DoubleAssisted" xml:space="preserve">
     <value>Dvojité zaslepení s doprovodem: psovod ani asistent stopu neznají</value>
@@ -347,9 +344,15 @@ Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče
     <value>Vyberte úroveň zaslepení.</value>
   </data>
   <data name="LevelOfBlinding_Single" xml:space="preserve">
-    <value>Jednoduché zaslepení: psovod není obeznámen se stopou, doprovod ano</value>
+    <value>Jednoduché zaslepení</value>
   </data>
   <data name="levelOfBlinding_Unknown" xml:space="preserve">
     <value>Neznámé</value>
+  </data>
+  <data name="Y-AxisLabelCount" xml:space="preserve">
+    <value>Počet trailů</value>
+  </data>
+  <data name="LevelOfBlinding_Double" xml:space="preserve">
+    <value>Dvojité zaslepení</value>
   </data>
 </root>

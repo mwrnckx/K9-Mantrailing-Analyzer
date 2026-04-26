@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "K9MantrailingAnalyzer": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}

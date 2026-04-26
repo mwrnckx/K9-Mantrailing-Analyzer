@@ -130,7 +130,7 @@
     <value>points</value>
   </data>
   <data name="DogReading" xml:space="preserve">
-    <value>Dog Reading</value>
+    <value>Reading K9</value>
   </data>
   <data name="Scoring" xml:space="preserve">
     <value>Scoring</value>
@@ -145,6 +145,6 @@
     <value>Trail description</value>
   </data>
   <data name="TrailPickup" xml:space="preserve">
-    <value>Trail Pick up</value>
+    <value>Trail Head / Start</value>
   </data>
 </root>

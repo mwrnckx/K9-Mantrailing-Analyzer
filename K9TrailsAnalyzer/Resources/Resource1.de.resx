@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Y-AxisLabelTotalLength" xml:space="preserve">
-    <value>Erschnüffelte Kilometer</value>
+    <value>Gesamte Trail-Distanz (km)</value>
   </data>
   <data name="Y-AxisLabelLength" xml:space="preserve">
-    <value>Länge der einzelnen Spuren (km)</value>
+    <value>Spurlänge (km)</value>
   </data>
   <data name="Y-AxisLabelLengthAge" xml:space="preserve">
     <value>Gewichtete Streckenlänge (km)</value>
@@ -130,7 +130,7 @@
     <value>Alter der Spuren (Stunden)</value>
   </data>
   <data name="Y-AxisLabelSpeed" xml:space="preserve">
-    <value>Tempo des Hundes (km/h)</value>
+    <value>Geschwindigkeit (km/h)</value>
   </data>
   <data name="Y-AxisLabelDeviation" xml:space="preserve">
     <value>Abweichung des Trails (m)</value>
@@ -253,7 +253,7 @@
     <value>Nächst noch einmal fragen</value>
   </data>
   <data name="Y-AxisLabelMonthly" xml:space="preserve">
-    <value>Pro Monat schnüffelt (km)</value>
+    <value>Monatliche Distanz (km)</value>
   </data>
   <data name="txtGoalLabel" xml:space="preserve">
     <value>Trainingsziel</value>
@@ -317,9 +317,6 @@ Wenn es nur zwei Routen gibt, ist es ziemlich unkompliziert - der erste ist der 
   <data name="hdr_DogReadingPoints" xml:space="preserve">
     <value>Bonus für gute Hundelektüre</value>
   </data>
-  <data name="dogTrack" xml:space="preserve">
-    <value>Hund</value>
-  </data>
   <data name="levelOfBlinding_DoubleAssisted" xml:space="preserve">
     <value>Doppelblind Assistiert: Weder der Hundeführer noch der Assistent sind mit der Strecke vertraut.</value>
   </data>
@@ -333,9 +330,15 @@ Wenn es nur zwei Routen gibt, ist es ziemlich unkompliziert - der erste ist der 
     <value>Offene Fährte: Der Hundeführer begleitet seinen Hund auf einer selbst angelegten Fährte</value>
   </data>
   <data name="LevelOfBlinding_Single" xml:space="preserve">
-    <value>Einfachblind: Der Hundeführer ist mit der Strecke nicht vertraut. Der Assistent ist.</value>
+    <value>Einfachblind</value>
   </data>
   <data name="levelOfBlinding_Unknown" xml:space="preserve">
     <value>Unbekannt</value>
+  </data>
+  <data name="Y-AxisLabelCount" xml:space="preserve">
+    <value>Anzahl der Trails</value>
+  </data>
+  <data name="LevelOfBlinding_Double" xml:space="preserve">
+    <value>Doppelblind</value>
   </data>
 </root>

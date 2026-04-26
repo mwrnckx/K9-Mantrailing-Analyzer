@@ -446,16 +446,6 @@ Public Class TrailReport
         End Set
     End Property
 
-    'Public Property NumberOfArticlesFound As String
-
-    'Public Property LevelOfBlinding As LevelOfBlindingType
-    '    Get
-    '        Return _levelOfBlinding
-    '    End Get
-    '    Set(value As LevelOfBlindingType)
-    '        _levelOfBlinding = value
-    '    End Set
-    'End Property
 
     Public Property LevelOfBlindingText As String 'todo: předělat aby se načítalo lokalizovaně dle trailstats.levelofblinding nebo to udělat při vytváření nového reportu?
 

@@ -117,14 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="lblGoal.Text" xml:space="preserve">
-    <value>Мета тренінгу:</value>
-  </data>
-  <data name="$this.Text" xml:space="preserve">
-    <value>Редагувати коментарі</value>
-  </data>
   <data name="lblInfo.Text" xml:space="preserve">
     <value>Відредагуйте коментарі до тренувального Сесіона. Ці коментарі будуть збережені у файлі GPX та відображатись у таких програмах, як gpxsee.org та накладні відео. Якщо ви пишете коментарі у своєму додатку GPS, додайте "G:" Перед описом мети "T:" Перед описом сліду та "P:" Перед оцінкою роботи команди. Якщо ви хочете додати ще один переклад, натисніть кнопку "Додати іншу мову". В іншому випадку натисніть "ОК".</value>
+  </data>
+  <data name="lblGoal.Text" xml:space="preserve">
+    <value>Мета тренінгу:</value>
   </data>
   <data name="btnAnotherLang.Text" xml:space="preserve">
     <value>Додайте іншу мову</value>
@@ -132,16 +129,13 @@
   <data name="lblLanguage.Text" xml:space="preserve">
     <value>Мова:</value>
   </data>
-  <data name="cbLevelOfBlinding.Items4" xml:space="preserve">
-    <value>Double-blind Assisted: ні хендлер, ні асистент не знайомі з трасою</value>
-  </data>
-  <data name="cbLevelOfBlinding.Items5" xml:space="preserve">
-    <value>Подвійне сліпе соло: хендлер не знайомий з трасою</value>
-  </data>
-  <data name="cbLevelOfBlinding.Items2" xml:space="preserve">
-    <value>Відома доріжка, також синя лінія: обробник знайомий із доріжкою</value>
-  </data>
   <data name="lblLevelOfBlinding.Text" xml:space="preserve">
     <value>Рівень засліплення:</value>
+  </data>
+  <data name="lblNoOFArticles.Text" xml:space="preserve">
+    <value>Кількість предметів</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Редагувати коментарі</value>
   </data>
 </root>

@@ -56,12 +56,17 @@ Public Class PngSequenceCreator
             staticTextbmpPoints.Save(filenamePoints, ImageFormat.Png)
         Next key
     End Sub
-    Public Sub CreateFrames(tracks As List(Of TrackAsPointsF), staticBgTransparent As Bitmap, staticbgMap As Bitmap, outputDir As DirectoryInfo, pngTimes As List(Of DateTime))
+    Public Sub CreateFrames(tracks As List(Of TrackAsPointsF), staticBgTransparent As Bitmap, staticbgMap As Bitmap, bgMap As Bitmap, outputDir As DirectoryInfo, pngTimes As List(Of DateTime))
 
         ' Vytvoříme statický obrázek s mapou 
         If staticbgMap IsNot Nothing Then
             Dim filename = IO.Path.Combine(outputDir.FullName, "TracksOnMap.png")
             staticbgMap.Save(filename, ImageFormat.Png)
+        End If
+        'jen holá mapa:
+        If bgMap IsNot Nothing Then
+            Dim filename = IO.Path.Combine(outputDir.FullName, "Map.png")
+            bgMap.Save(filename, ImageFormat.Png)
         End If
 
         'Const minFrameInterval As Double = 3.0 'minimální interval mezi snímky v sekundách, aby video nebylo moc velké a rychlé, defaultně 3 sekundy
@@ -150,9 +155,9 @@ Public Class PngRenderer
         'Dim videoDiagonal = Math.Sqrt(Me.videoSize.Width ^ 2 + Me.videoSize.Height ^ 2)
         'Dim bgmapDiagonal = Math.Sqrt(bgTiles.bgmap.Width ^ 2 + bgTiles.bgmap.Height ^ 2)
         pixelsPerMeter = (OsmTileDownloader.TileSize * Math.Pow(2.0, OsmTileDownloader.zoom)) / (Math.Cos(TrackConverter.DegToRad(latitude)) * 2 * Math.PI * TrackConverter.EarthRadiusM) 'přepočet z metrů na pixely, protože se mění s latitudou
-        Me.radius = 4 * VideoSettings.TrailWidth * pixelsPerMeter '0.015 * diagonal ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
-        Me.penWidth = VideoSettings.TrailWidth * pixelsPerMeter '0.008 * diagonal ' šířka pera pro kreslení čar, 1% šířky obrázku
-        Me.emSize = 0.02 * trackBounds.Height * fontScale '
+        Me.radius = 4 * VideoSettings.TrailWidth_m * pixelsPerMeter '0.015 * diagonal ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
+        Me.penWidth = VideoSettings.TrailWidth_m * pixelsPerMeter '0.008 * diagonal ' šířka pera pro kreslení čar, 1% šířky obrázku
+        Me.emSize = 0.03 * trackBounds.Height * fontScale '
         Me.font = New Font("Cascadia Code", emSize, FontStyle.Bold)
     End Sub
 
@@ -167,7 +172,7 @@ Public Class PngRenderer
     ''' <param name="tracksAsPointsF">A list of tracks to be rendered as points.</param>
     ''' <param name="backgroundTiles">A tuple containing the background bitmap and its minimum tile X and Y coordinates.</param>
     ''' <returns>A <see cref="Bitmap"/> containing the rendered static map background.</returns>
-    Public Function RenderStaticMapBackground(tracksAsPointsF As List(Of TrackAsPointsF),
+    Public Function RenderStaticMap(tracksAsPointsF As List(Of TrackAsPointsF),
                                               backgroundTiles As (bgmap As Bitmap,
                                               minTileX As Single, minTileY As Single),
                                               Optional maxDeviation As TrackAsPointsF = Nothing,
@@ -178,9 +183,9 @@ Public Class PngRenderer
         ' Vykresli statické stopy
         ' Vrátí bitmapu s podkladem
 
-        Dim backgroundMap = New Bitmap(backgroundTiles.bgmap)
+        Dim staticMap = New Bitmap(backgroundTiles.bgmap)
 
-        Using g As Graphics = Graphics.FromImage(backgroundMap)
+        Using g As Graphics = Graphics.FromImage(staticMap)
             g.SmoothingMode = SmoothingMode.AntiAlias
             'first the direction of the wind:
             If windDirection IsNot Nothing And windDirection >= 0 And windDirection <= 360 Then
@@ -218,8 +223,8 @@ Public Class PngRenderer
                             Dim distance As Double = Math.Sqrt((p1.X - p2.X) ^ 2 + (p1.Y - p2.Y) ^ 2) / pixelsPerMeter ' Vzdálenost mezi dvěma body v m
                             Dim timeDiff As Double = (track.TrackPointsF(i + 1).Time - track.TrackPointsF(i).Time).TotalSeconds
                             Dim speed As Double = If(timeDiff > 0, distance / timeDiff, 0) ' Rychlost mezi dvěma body v m/s, ošetření dělení nulou
-                            Debug.WriteLine($"render:  {speed}")
-                            Dim maxExpectedSpeed As Double = 1.666 'm/s = 6 km/h, rychlost, která odpovídá přibližně rychlosti pohybu psa na stopě, použijeme ji pro určení barevné škály, kde rychlejší pohyb bude červenější a pomalejší zelenější
+                            'Debug.WriteLine($"render:  {speed}")
+                            Dim maxExpectedSpeed As Double = 1.3888 'm/s = 5 km/h, rychlost, která odpovídá přibližně rychlosti pohybu psa na stopě, použijeme ji pro určení barevné škály, kde rychlejší pohyb bude červenější a pomalejší zelenější
                             ' Použijeme Using, aby se Pen (pero) správně uvolnilo z paměti
                             Using pen As New Pen(GetColorBySpeed(speed, maxExpectedSpeed), penWidth)
                                 ' Zakulacení konců čar, aby na sebe plynule navazovaly
@@ -330,7 +335,7 @@ Public Class PngRenderer
             End If
         End Using
 
-        Return backgroundMap
+        Return staticMap
     End Function
 
     ''' <summary>
@@ -741,100 +746,7 @@ Public Class PngRenderer
     ''' Draws text containing Czech diacritics and emoji (as PNG images), with word wrapping and vbCrLf handling.
     ''' Emoji images must be stored in "Emoji" subfolder (e.g. "1F463.png" for 👣).
     ''' </summary>
-    Public Function DrawWrappedTextWithEmoji_old(ByVal g As Graphics, ByVal text As String, ByVal baseFont As Font, ByVal brush As Brush, ByVal layoutRect As RectangleF) As Single
-        g.TextRenderingHint = TextRenderingHint.SystemDefault
-        g.SmoothingMode = Drawing2D.SmoothingMode.HighQuality
 
-        Dim lineHeight As Single = baseFont.GetHeight(g)
-        Dim currentPosition As New PointF(layoutRect.X, layoutRect.Y)
-        currentPosition.Y += lineHeight * 0.5F
-        Dim spaceWidth As Single = g.MeasureString(" ", baseFont).Width
-
-        ' 🔹 Emoji regex (zachytí i vícesymbolové emoji)
-        'Dim emojiRegex As New Regex("[\uD83C-\uDBFF\uDC00-\uDFFF]+")
-        'Dim emojiRegex As New Regex("[\u2614\u2600-\u26FF\u2700-\u27BF\u2B00-\u2BFF\u2C60-\u2C7F\uD83C\uDC00-\uDFFF\uD83D\uDC00-\uDFFF\uD83E\uDC00-\uDFFF]")
-        'Dim emojiRegex As New Regex("(?:\u2614|[\u2600-\u27BF\u2B00-\u2BFF\u2C60-\u2C7F]|[\uD83C-\uDBFF][\uDC00-\uDFFF])")
-        'Dim emojiRegex As New Regex("(?:\u2614|[\u2300-\u23FF\u2600-\u27BF\u2B00-\u2BFF\u2C60-\u2C7F]|[\uD83C-\uDBFF][\uDC00-\uDFFF])")
-        Dim emojiRegex As New Regex("(?:\u2614|[\u2300-\u23FF\u2600-\u27BF\u2B00-\u2BFF\u2C60-\u2C7F]|[\uD800-\uDBFF][\uDC00-\uDFFF](?:\u200D?[\uD800-\uDBFF][\uDC00-\uDFFF])*)")
-        ' 🔹 Rozdělíme text podle ručních zalomení
-        Dim lines() As String = text.Split(New String() {vbCrLf}, StringSplitOptions.None)
-
-        For Each line As String In lines
-            Dim words() As String = line.Split(" "c)
-            currentPosition.X = layoutRect.X
-
-            For Each word As String In words
-                If String.IsNullOrEmpty(word) Then Continue For
-
-                ' --- Měření šířky slova (včetně emoji obrázků) ---
-                Dim wordWidth As Single = 0
-                Dim matches = emojiRegex.Matches(word)
-                Dim lastIndex As Integer = 0
-                For Each m As Match In matches
-                    ' text před emoji
-                    Dim beforeText As String = word.Substring(lastIndex, m.Index - lastIndex)
-                    wordWidth += g.MeasureString(beforeText, baseFont).Width
-
-                    ' emoji "šířka" = výška řádku
-                    wordWidth += lineHeight * 0.9F
-                    lastIndex = m.Index + m.Length
-                Next
-                ' zbytek po posledním emoji
-                If lastIndex < word.Length Then
-                    wordWidth += g.MeasureString(word.Substring(lastIndex), baseFont).Width
-                End If
-
-                ' --- Zalamování ---
-                If (currentPosition.X + wordWidth > layoutRect.Right) AndAlso (currentPosition.X > layoutRect.X) Then
-                    currentPosition.X = layoutRect.X
-                    currentPosition.Y += lineHeight
-                End If
-
-                ' --- Vykreslení ---
-                lastIndex = 0
-                For Each m As Match In matches
-                    ' text před emoji
-                    Dim beforeText As String = word.Substring(lastIndex, m.Index - lastIndex)
-                    If beforeText.Length > 0 Then
-                        g.DrawString(beforeText, baseFont, brush, currentPosition)
-                        currentPosition.X += g.MeasureString(beforeText, baseFont).Width
-                    End If
-
-                    ' emoji
-                    Dim emojiText As String = m.Value
-                    Dim codepoint As Integer = Char.ConvertToUtf32(emojiText, 0)
-                    Dim codeHex As String = codepoint.ToString("X4")
-                    Dim imgPath As String = Path.Combine(Application.StartupPath, "Resources", "emoji", codeHex & ".png")
-
-                    If File.Exists(imgPath) Then
-                        Using emojiImg As Image = Image.FromFile(imgPath)
-                            g.DrawImage(emojiImg, currentPosition.X, currentPosition.Y - lineHeight * 0.1F, lineHeight, lineHeight)
-                        End Using
-                    Else
-                        ' fallback, pokud obrázek chybí
-                        g.DrawString(emojiText, baseFont, Brushes.Gray, currentPosition)
-                    End If
-
-                    currentPosition.X += lineHeight * 0.9F
-                    lastIndex = m.Index + m.Length
-                Next
-
-                ' zbytek textu po emoji
-                If lastIndex < word.Length Then
-                    Dim remainingText As String = word.Substring(lastIndex)
-                    g.DrawString(remainingText, baseFont, brush, currentPosition)
-                    currentPosition.X += g.MeasureString(remainingText, baseFont).Width
-                End If
-
-                currentPosition.X += spaceWidth
-            Next
-
-            ' 🔹 nová řádka
-            currentPosition.Y += lineHeight
-        Next
-
-        Return currentPosition.Y
-    End Function
 
     ' * Obálka pro měření (volá DrawWrappedTextWithEmoji s drawText=False)
     Private Function MeasureWrappedTextHeightWithEmoji(ByVal g As Graphics, ByVal text As String, ByVal baseFont As Font, ByVal layoutRect As RectangleF) As Single

@@ -126,4 +126,25 @@
   <data name="Total" xml:space="preserve">
     <value>Gesamt</value>
   </data>
+  <data name="FinalFind" xml:space="preserve">
+    <value>Fund / Abschluss</value>
+  </data>
+  <data name="ofPoints" xml:space="preserve">
+    <value>von</value>
+  </data>
+  <data name="DogReading" xml:space="preserve">
+    <value>Hund lesen / Reading K9</value>
+  </data>
+  <data name="Scoring" xml:space="preserve">
+    <value>Bewertung</value>
+  </data>
+  <data name="Speed" xml:space="preserve">
+    <value>Geschwindigkeit</value>
+  </data>
+  <data name="Trail_description" xml:space="preserve">
+    <value>Trailbeschreibung</value>
+  </data>
+  <data name="TrailPickup" xml:space="preserve">
+    <value>Trail-Ansatz</value>
+  </data>
 </root>

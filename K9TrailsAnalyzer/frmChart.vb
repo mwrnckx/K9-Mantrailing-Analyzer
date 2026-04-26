@@ -2,10 +2,10 @@
 Imports System.Globalization
 Imports System.Threading
 Imports System.Windows.Forms.DataVisualization.Charting
-Imports DocumentFormat.OpenXml.Drawing.Charts
 Imports TrackVideoExporter
 Imports Chart = System.Windows.Forms.DataVisualization.Charting.Chart
 Imports Legend = System.Windows.Forms.DataVisualization.Charting.Legend
+Imports GPXTrailAnalyzer.My.Resources
 
 Partial Class frmChart
     Inherits System.Windows.Forms.Form
@@ -46,7 +46,7 @@ Partial Class frmChart
         ScoreVsTime
     End Enum
     ' Konstruktor, který přijme data
-    Public Sub New(dogname As String, _X_data As DateTime(), _Y_data As Double(), yAxisLabel As String, _startDate As Date, _endDate As Date, _meText As String, _isIntercept As Boolean, _chartType As SeriesChartType, _CultureInfo As CultureInfo)
+    Public Sub New(dogName As String, _X_data As DateTime(), _Y_data As Double(), yAxisLabel As String, _startDate As Date, _endDate As Date, _meText As String, _isIntercept As Boolean, _chartType As SeriesChartType, _CultureInfo As CultureInfo)
         Me.X_Data = _X_data
         Me.Y_Data = _Y_data
         Me.yAxisLabel = yAxisLabel
@@ -55,7 +55,7 @@ Partial Class frmChart
         Me.Text = _meText
         Me.isIntercept = _isIntercept
         Me.chartType = _chartType
-        Me.dogName = dogname
+        Me.dogName = dogName
         Thread.CurrentThread.CurrentCulture = _CultureInfo
         InitializeComponent()
     End Sub
@@ -63,8 +63,8 @@ Partial Class frmChart
     ' Konstruktor, který přijme data
     Public Sub New(dogname As String, data As List(Of (X As Date, Y As Double)), yAxisLabel As String, _startDate As Date, _endDate As Date, _meText As String, _isIntercept As Boolean, _chartType As SeriesChartType, _CultureInfo As CultureInfo)
         ' Rozdělení na X a Y osy
-        Me.X_Data = data.Select(Function(p) p.Item1).ToArray()
-        Me.Y_Data = data.Select(Function(p) p.Item2).ToArray()
+        Me.X_Data = data.Select(Function(p) p.X).ToArray()
+        Me.Y_Data = data.Select(Function(p) p.Y).ToArray()
         Me.yAxisLabel = yAxisLabel
         Me.startDate = _startDate
         Me.endDate = _endDate
@@ -78,7 +78,7 @@ Partial Class frmChart
     End Sub
 
     ' Konstruktor, který přijme data
-    Public Sub New(dogname As String, _X_data As String(), _Y_data As Double(), yAxisLabel As String, _startDate As Date, _endDate As Date, _meText As String, _isIntercept As Boolean, _chartType As SeriesChartType, _CultureInfo As CultureInfo)
+    Public Sub New(dogName As String, _X_data As String(), _Y_data As Double(), yAxisLabel As String, _startDate As Date, _endDate As Date, _meText As String, _isIntercept As Boolean, _chartType As SeriesChartType, _CultureInfo As CultureInfo)
         Me.X_DataString = _X_data
         Me.Y_Data = _Y_data
         Me.yAxisLabel = yAxisLabel
@@ -87,7 +87,7 @@ Partial Class frmChart
         Me.Text = _meText
         Me.isIntercept = _isIntercept
         Me.chartType = _chartType
-        Me.dogName = dogname
+        Me.dogName = dogName
         Thread.CurrentThread.CurrentCulture = _CultureInfo
         InitializeComponent()
 
@@ -96,9 +96,10 @@ Partial Class frmChart
     ' Nový konstruktor pro scatter plot
     Public Sub New(dogname As String,
                _trailData As List(Of (Time As DateTime, Age As Double, Length As Double, TotalScore As Integer, Deviation As Double, Speed As Double, Distancekm As Double, Blinding As LevelOfBlindingType)),
-               _meText As String,
+               YAxisLabel As String, _meText As String,
                _CultureInfo As CultureInfo, _mode As ScatterModeEnum)
         Me.dogName = dogname
+        Me.yAxisLabel = YAxisLabel
         Me.Text = _meText
         Me.trailData = _trailData  ' nová private proměnná
         Me.X_Data = _trailData.Select(Function(t) t.Time).ToArray() ' pro regresi
@@ -112,48 +113,48 @@ Partial Class frmChart
     ' Metoda pro výpočet směrnice přímky procházející bodem [X_Data.First().ToOADate(), 0]
     Private Function CalculateLinearRegression(_X_Data() As Date, _Y_data() As Double, _IsIntercept As Boolean) As (slope As Double, intercept As Double)
         Dim n As Integer = _X_Data.Length
-        If n = 0 Then Return (0.0, 0.0) ' Ošetření prázdných dat
+        If n < 2 Then Return (0.0, 0.0)
 
-        Dim firstX As Double = _X_Data(0).ToOADate() ' První X hodnota (pro posun)
-        Dim sumX As Double = 0
-        Dim sumY As Double = 0
-        Dim sumXY As Double = 0
-        Dim sumX2 As Double = 0
+        ' STABILIZACE: Použijeme první bod jako "časovou nulu"
+        Dim firstX As Double = _X_Data(0).ToOADate()
+
+        Dim sumX As Double = 0, sumY As Double = 0
+        Dim sumXY As Double = 0, sumX2 As Double = 0
+
+        For i As Integer = 0 To n - 1
+            ' x je nyní relativní čas (např. 0, 1.5, 2.0 dní od začátku)
+            Dim x As Double = _X_Data(i).ToOADate() - firstX
+            Dim y As Double = _Y_data(i)
+
+            sumX += x
+            sumY += y
+            sumXY += x * y
+            sumX2 += x * x
+        Next
 
         Dim slope As Double
-        Dim intercept As Double
+        Dim localIntercept As Double
 
-        If isIntercept Then ' Standardní lineární regrese (bez posunu)
-            For i As Integer = 0 To n - 1
-                Dim x As Double = _X_Data(i).ToOADate()
-                Dim y As Double = _Y_data(i)
-                sumX += x
-                sumY += y
-                sumXY += x * y
-                sumX2 += x * x
-            Next
+        If _IsIntercept Then
+            ' Klasická regrese y = ax + b
+            Dim denominator As Double = (n * sumX2 - sumX * sumX)
+            If Math.Abs(denominator) < 0.0000000001 Then Return (0.0, 0.0) ' Ochrana před svislicí
 
-            slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX)
-            intercept = (sumY - slope * sumX) / n
-
-        Else ' Lineární regrese s posunutým počátkem
-            For i As Integer = 0 To n - 1
-                Dim x As Double = _X_Data(i).ToOADate() - firstX ' Posun X hodnot
-                Dim y As Double = _Y_data(i)
-                sumX += x
-                sumY += y
-                sumXY += x * y
-                sumX2 += x * x
-            Next
-
-            If sumX2 = 0 Then ' Ošetření dělení nulou (všechny X hodnoty stejné)
-                Return (0.0, 0.0) ' Nebo vyhoď výjimku, podle potřeby
-            End If
+            slope = (n * sumXY - sumX * sumY) / denominator
+            localIntercept = (sumY - slope * sumX) / n
+        Else
+            ' Regrese procházející počátkem [0,0] v relativním čase
+            If sumX2 = 0 Then Return (0.0, 0.0)
             slope = sumXY / sumX2
-            intercept = -slope * firstX ' Výpočet interceptu v původních souřadnicích
+            localIntercept = 0
         End If
 
-        Return (slope, intercept)
+        ' PŘEVOD ZPĚT: Musíme upravit intercept, aby odpovídal původním OADate
+        ' Původní rovnice: y = slope * (x - firstX) + localIntercept
+        ' Roznásobeno: y = slope * x - (slope * firstX) + localIntercept
+        Dim finalIntercept As Double = localIntercept - (slope * firstX)
+
+        Return (slope, finalIntercept)
     End Function
 
 
@@ -350,10 +351,18 @@ Partial Class frmChart
     End Sub
 
     Public Sub PlotScoreVsAge(chart As Chart)
+
+        Debug.WriteLine($"TrailData count: {trailData?.Count}")
+        Debug.WriteLine($"Series count před vykreslením: {chart1.Series.Count}")
+
+        If trailData Is Nothing OrElse trailData.Count = 0 Then
+            Debug.WriteLine("TrailData je prázdný - končím")
+            Return
+        End If
         chart.Series.Clear()
         'Me.chart1.ChartAreas(0).AxisY.Maximum = 500.0
         chart.ChartAreas(0).AxisX.Maximum = 4.0
-
+        chart.Titles(0).Text = Me.dogName & " - " & Me.Text
         ' Vytvoř samostatnou sérii pro každou kategorii
         Dim seriesDict As New Dictionary(Of LevelOfBlindingType, Series)
         For Each kvp In blindingColors
@@ -375,9 +384,9 @@ Partial Class frmChart
 
         ' Popisky os
         With chart.ChartAreas(0)
-            .AxisX.Title = "Stáří stopy (hodiny)"
+            .AxisX.Title = $"{Resource1.outAge}"
             .AxisX.Minimum = 0
-            .AxisY.Title = "Skóre"
+            .AxisY.Title = Me.yAxisLabel
             .AxisY.Minimum = 0
         End With
 
@@ -394,8 +403,10 @@ Partial Class frmChart
 
         ' Legenda
         chart.Legends.Clear()
-        Dim legend As New Legend("Zaslepení")
-        chart.Legends.Add(legend)
+        chart.Legends.Add(New Legend(Resource1.outBlinding) With {
+    .BackColor = Color.Transparent
+})
+
     End Sub
 
     Private Sub PlotScoreVsTime(chart As Chart)
@@ -404,7 +415,7 @@ Partial Class frmChart
         chart.ChartAreas(0).AxisX.LabelStyle.Angle = -45
         chart.ChartAreas(0).AxisX.Minimum = trailData.Min(Function(t) t.Time).ToOADate()
         chart.ChartAreas(0).AxisX.Maximum = trailData.Max(Function(t) t.Time).ToOADate()
-        chart.ChartAreas(0).AxisY.Title = "Skóre"
+        chart.ChartAreas(0).AxisY.Title = Me.yAxisLabel
         chart.ChartAreas(0).AxisX.MajorGrid.LineColor = Color.LightGray
         chart.ChartAreas(0).AxisY.MajorGrid.LineColor = Color.LightGray
         chart.ChartAreas(0).AxisX.MajorGrid.LineWidth = 1
@@ -458,13 +469,17 @@ Partial Class frmChart
                 regressionSeries.Points.AddXY(DateTime.FromOADate(xStart), yStart)
                 regressionSeries.Points.AddXY(DateTime.FromOADate(xEnd), yEnd)
 
+
+
                 chart1.Series.Add(regressionSeries)
             End If
         Next
 
         ' Legenda
         chart.Legends.Clear()
-        chart.Legends.Add(New Legend("Zaslepení"))
+        chart.Legends.Add(New Legend(Resource1.outBlinding) With {
+    .BackColor = Color.Transparent
+})
     End Sub
     Private Sub SaveAs(sender As Object, e As EventArgs) Handles SaveAsToolStripMenuItem.Click
         Using dialog As New SaveFileDialog()

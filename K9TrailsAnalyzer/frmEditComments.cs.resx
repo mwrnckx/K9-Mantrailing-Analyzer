@@ -142,26 +142,17 @@
   <data name="lblLanguage.Text" xml:space="preserve">
     <value>Jazyk:</value>
   </data>
+  <data name="lblDogName.Text" xml:space="preserve">
+    <value>Jméno psa:</value>
+  </data>
+  <data name="lblHandlerName.Text" xml:space="preserve">
+    <value>Psovod:</value>
+  </data>
   <data name="lblLevelOfBlinding.Text" xml:space="preserve">
     <value>Stupeň zaslepení:</value>
   </data>
-  <data name="cbLevelOfBlinding.Items" xml:space="preserve">
-    <value>Vyber úroveň zaslepení</value>
-  </data>
-  <data name="cbLevelOfBlinding.Items1" xml:space="preserve">
-    <value>Otevřená stopa: vlastní stopa; pes doprovází kladeče</value>
-  </data>
-  <data name="cbLevelOfBlinding.Items2" xml:space="preserve">
-    <value>Známá stopa: psovod zná průběh stopy</value>
-  </data>
-  <data name="cbLevelOfBlinding.Items3" xml:space="preserve">
-    <value>Zaslepená stopa: psovod trasu stopy nezná, rozhodčí ji zná</value>
-  </data>
-  <data name="cbLevelOfBlinding.Items4" xml:space="preserve">
-    <value>Dvojitě zaslepená stopa: nikdo kromě kladeče průběh  stopy nezná</value>
-  </data>
-  <data name="cbLevelOfBlinding.Items5" xml:space="preserve">
-    <value>Psovod nezná stopu a jde sám bez asistenta</value>
+  <data name="lblNoOFArticles.Text" xml:space="preserve">
+    <value>Počet nalezených předmětů:</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -7374,11 +7365,5 @@
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Upravit komentáře</value>
-  </data>
-  <data name="lblDogName.Text" xml:space="preserve">
-    <value>Jméno psa:</value>
-  </data>
-  <data name="lblNoOFArticles.Text" xml:space="preserve">
-    <value>Počet nalezených předmětů:</value>
   </data>
 </root>

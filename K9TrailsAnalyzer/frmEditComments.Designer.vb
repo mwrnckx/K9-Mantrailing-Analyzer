@@ -138,7 +138,6 @@ Partial Class frmEditComments
         cbLevelOfBlinding.DropDownStyle = ComboBoxStyle.DropDownList
         cbLevelOfBlinding.DropDownWidth = 800
         cbLevelOfBlinding.FormattingEnabled = True
-        cbLevelOfBlinding.Items.AddRange(New Object() {resources.GetString("cbLevelOfBlinding.Items"), resources.GetString("cbLevelOfBlinding.Items1"), resources.GetString("cbLevelOfBlinding.Items2"), resources.GetString("cbLevelOfBlinding.Items3"), resources.GetString("cbLevelOfBlinding.Items4"), resources.GetString("cbLevelOfBlinding.Items5")})
         resources.ApplyResources(cbLevelOfBlinding, "cbLevelOfBlinding")
         cbLevelOfBlinding.Name = "cbLevelOfBlinding"
         ' 

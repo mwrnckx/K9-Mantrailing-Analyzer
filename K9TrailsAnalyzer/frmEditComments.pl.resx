@@ -117,14 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="lblGoal.Text" xml:space="preserve">
-    <value>Cel treningowy</value>
-  </data>
-  <data name="$this.Text" xml:space="preserve">
-    <value>Edytuj komentarze</value>
-  </data>
   <data name="lblInfo.Text" xml:space="preserve">
     <value>Edytuj komentarze do Sesji Szkolenia. Te komentarze zostaną zapisane w pliku GPX i wyświetlone w aplikacjach takich jak gpxsee.org i nakładki. Jeśli piszesz komentarze w aplikacji GPS, dodaj „G:” przed opisem celu „T:” Przed opisem szlaku i „P:” przed oceną pracy zespołu. Jeśli chcesz dodać kolejne tłumaczenie, naciśnij przycisk „Dodaj inny język”. W przeciwnym razie kliknij „OK”.</value>
+  </data>
+  <data name="lblGoal.Text" xml:space="preserve">
+    <value>Cel treningowy</value>
   </data>
   <data name="btnAnotherLang.Text" xml:space="preserve">
     <value>Dodaj inny język</value>
@@ -135,13 +132,13 @@
   <data name="lblDogName.Text" xml:space="preserve">
     <value>Imię psa:</value>
   </data>
-  <data name="cbLevelOfBlinding.Items5" xml:space="preserve">
-    <value>Podwójnie ślepe solo: przewodnik nie zna toru</value>
-  </data>
-  <data name="cbLevelOfBlinding.Items2" xml:space="preserve">
-    <value>Znany tor, czyli niebieska linia: przewodnik zna ten tor</value>
-  </data>
   <data name="lblLevelOfBlinding.Text" xml:space="preserve">
     <value>Poziom oślepienia:</value>
+  </data>
+  <data name="lblNoOFArticles.Text" xml:space="preserve">
+    <value>Liczba przedmiotów:</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Edytuj komentarze</value>
   </data>
 </root>

@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Y-AxisLabelTotalLength" xml:space="preserve">
-    <value>Sniffed Kilometers </value>
+    <value>Total Trailed Distance</value>
   </data>
   <data name="Y-AxisLabelLength" xml:space="preserve">
     <value>Length of trails (km)</value>
@@ -130,7 +130,7 @@
     <value>Age of trails (hours)</value>
   </data>
   <data name="Y-AxisLabelSpeed" xml:space="preserve">
-    <value>Speed of the dog on the trails (km/h)</value>
+    <value>Speed of the dog (km/h)</value>
   </data>
   <data name="Y-AxisLabelDeviation" xml:space="preserve">
     <value>Dog deviation (m)</value>
@@ -253,7 +253,7 @@
     <value>Next time ask again</value>
   </data>
   <data name="Y-AxisLabelMonthly" xml:space="preserve">
-    <value>Sniffed per month (km)</value>
+    <value>Trailed per month (km)</value>
   </data>
   <data name="txtGoalLabel" xml:space="preserve">
     <value>Training goal</value>
@@ -285,7 +285,7 @@ For further processing, you need to decide which track corresponds to
 If there are only two routes, it's pretty straightforward - the first is the subject trail, the second is the dog route. But if there is only one track or more than two you have to decide.</value>
   </data>
   <data name="CrossingTrail" xml:space="preserve">
-    <value>Crossing trail</value>
+    <value>Cross Track</value>
   </data>
   <data name="dogTrack" xml:space="preserve">
     <value>Dog</value>
@@ -354,4 +354,11 @@ If there are only two routes, it's pretty straightforward - the first is the sub
   <data name="levelOfBlinding_Unknown" xml:space="preserve">
     <value>Uknown</value>
   </data>
+  <data name="Y-AxisLabelCount" xml:space="preserve">
+    <value>Number of trails</value>
+  </data>
+  <data name="LevelOfBlinding_Double" xml:space="preserve">
+    <value>Double-blind: neither the handler nor the assistant is familiar with the track.</value>
+  </data>
+  
 </root>

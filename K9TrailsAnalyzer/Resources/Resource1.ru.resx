@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Y-AxisLabelTotalLength" xml:space="preserve">
-    <value>Пройденные километры</value>
+    <value>Общая дистанция (км)</value>
   </data>
   <data name="Y-AxisLabelLength" xml:space="preserve">
-    <value>Длина следoв (км)</value>
+    <value>Длина трасс (км)</value>
   </data>
   <data name="Y-AxisLabelLengthAge" xml:space="preserve">
     <value>Взвешенная длина маршрута (км)</value>
@@ -130,7 +130,7 @@
     <value>Возраст следoв (часы)</value>
   </data>
   <data name="Y-AxisLabelSpeed" xml:space="preserve">
-    <value>Скорость собаки на следy (км/ч)</value>
+    <value>Скорость собаки (км/ч)</value>
   </data>
   <data name="Y-AxisLabelDeviation" xml:space="preserve">
     <value>Отклонение тропы (м)</value>
@@ -253,7 +253,7 @@
     <value>В следующий раз спросите еще раз</value>
   </data>
   <data name="Y-AxisLabelMonthly" xml:space="preserve">
-    <value>Понюхал в месяц (км)</value>
+    <value>Дистанция за месяц (км)</value>
   </data>
   <data name="txtGoalLabel" xml:space="preserve">
     <value>Цель</value>
@@ -285,7 +285,7 @@
 Если есть только два маршрута, это довольно просто - первая - это тропа субъекта, вторая - это маршрут для собак. Но если есть только один трек или более двух, вы должны решить.</value>
   </data>
   <data name="CrossingTrail" xml:space="preserve">
-    <value>пересечение следа</value>
+    <value>Пересечение следа</value>
   </data>
   <data name="RunnerTrail" xml:space="preserve">
     <value>бегун</value>
@@ -317,9 +317,6 @@
   <data name="outDeviation" xml:space="preserve">
     <value>Отклонение</value>
   </data>
-  <data name="dogTrack" xml:space="preserve">
-    <value>Собака</value>
-  </data>
   <data name="levelOfBlinding_DoubleAssisted" xml:space="preserve">
     <value>Двойная слепая помощь: ни хендлер, ни ассистент не знакомы с трассой.</value>
   </data>
@@ -336,9 +333,15 @@
     <value>Очки за поиск бегуна</value>
   </data>
   <data name="LevelOfBlinding_Single" xml:space="preserve">
-    <value>Одинарный слепой: хэндлер не знаком с трассой. Ассистент есть.</value>
+    <value>Одинарный слепой</value>
   </data>
   <data name="levelOfBlinding_Unknown" xml:space="preserve">
     <value>Неизвестный</value>
+  </data>
+  <data name="Y-AxisLabelCount" xml:space="preserve">
+    <value>Количество трасс</value>
+  </data>
+  <data name="LevelOfBlinding_Double" xml:space="preserve">
+    <value>Двойной слепой</value>
   </data>
 </root>

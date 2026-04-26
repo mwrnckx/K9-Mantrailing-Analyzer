@@ -4,28 +4,31 @@
     "id": "001",
     "name": "Rex (demo_dog)",
     "remotedirectory": "",
-      "PointsForFindMax": 100,
-    "PointsPerKmhGrossSpeed": 20,
-    "PointsForAccuracyMax": 100,
-    "PointsForDogReadingMax": 100
+    "PointsForFindMax": 50,
+      "PointsPerTempoMax": 10,
+      "PointsForAccuracyMax": 15,
+      "PointsForDogReadingMax": 20,
+      "PointsForTrailPickupMax": 5
     },
     {
     "id": "002",
     "name": "Category: Beginners",
     "remotedirectory": "",
-      "PointsForFindMax": 100,
-    "PointsPerKmhGrossSpeed": 20,
-    "PointsForAccuracyMax": 100,
-    "PointsForDogReadingMax": 100
+     "PointsForFindMax": 50,
+      "PointsPerTempoMax": 10,
+      "PointsForAccuracyMax": 15,
+      "PointsForDogReadingMax": 20,
+      "PointsForTrailPickupMax": 5
     },
      {
     "id": "003",
     "name": "Category: Advanced",
     "remotedirectory": "",
-      "PointsForFindMax": 100,
-    "PointsPerKmhGrossSpeed": 20,
-    "PointsForAccuracyMax": 100,
-    "PointsForDogReadingMax": 100
+     "PointsForFindMax": 50,
+    "PointsPerTempoMax": 10,
+      "PointsForAccuracyMax": 15,
+      "PointsForDogReadingMax": 20,
+      "PointsForTrailPickupMax": 5
     }
 ],
   "activeCategory": {

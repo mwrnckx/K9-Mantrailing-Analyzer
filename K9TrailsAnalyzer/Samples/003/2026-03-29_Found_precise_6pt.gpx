@@ -1,16 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <gpx version="1.0" creator="K9TrailsAnalyzer" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:locus="https://www.locusmap.app" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" xmlns:k9="https://github.com/mwrnckx/K9-Trails-Analyzer/gpxextenze/1.0">
   <metadata>
-    <extensions>
+    <extensions>   <k9:trailStats LevelOfBlinding="DoubleBlindAssisted" DogName="Rex" HandlerName="Richard Moser" > </k9:trailStats >
       <k9:report lang="en">
         <k9:goal>testing the application</k9:goal>
         <k9:trail>1,9 km, ⌛ 0,8 h, forest, footpaths, gravel</k9:trail>
         <k9:performance>Best work  - precise</k9:performance>
-        <k9:levelOfBlindingType>DoubleBlindAssisted</k9:levelOfBlindingType>
-        <k9:levelOfBlindingText>Double-blind Assisted: neither the handler nor the assistant is familiar with the track</k9:levelOfBlindingText>
+        
+        
         <k9:numberOfArticlesFound>6</k9:numberOfArticlesFound>
-                <k9:dogName>Rex</k9:dogName>
-        <k9:handlerName>Richard Moser</k9:handlerName>
+              
         <k9:weather temperature="3" windSpeed="2.55" windDirection="318" precipitation="0" relHumidity="85" cloudCover="100">🌡3 °C,  🌬2,6 m/s NW, 💧85 %,   ☔​0 mm/h, 🌥100 %</k9:weather>
       
       </k9:report>
@@ -60,7 +59,7 @@
     <hdop>1.90</hdop>
   </wpt>
   <trk>
-    <extensions>
+    <extensions>   
       <k9:TrackType>RunnerTrail</k9:TrackType>
     </extensions>
     <name>2026-03-29 08:13</name>
@@ -4011,7 +4010,7 @@
     </trkseg>
   </trk>
   <trk>
-    <extensions>
+    <extensions>   
       <k9:TrackType>DogTrack</k9:TrackType>
     </extensions>
     <name>2026-03-29 09:03</name>

@@ -172,7 +172,7 @@ Namespace TrackVideoExporter
                                Dim renderer As New PngRenderer(windDirection, windSpeed, Me.backgroundTiles, Me.videoSettings, latitude)
                                renderer.CreateWindArrowBitmap(outputDir)
                                Dim staticBgTransparent = renderer.RenderStaticTransparentBackground(_tracksAsPointsF, backgroundTiles, waypointsAsPointsF)
-                               Dim staticBgMap = renderer.RenderStaticMapBackground(_tracksAsPointsF, backgroundTiles, maxDeviationAsPointsF, waypointsAsPointsF, maxDeviationMetres, lastConfirmedIndex)
+                               Dim staticBgMap = renderer.RenderStaticMap(_tracksAsPointsF, backgroundTiles, maxDeviationAsPointsF, waypointsAsPointsF, maxDeviationMetres, lastConfirmedIndex)
 
 
                                pngCreator = New PngSequenceCreator(renderer, videoSettings)
@@ -180,7 +180,7 @@ Namespace TrackVideoExporter
                                Dim pngTimes = pngCreator.GetPngTimes(_tracksAsPointsF)
                                pngCreator.CreateReports(outputDir, Me.LocalisedReports)
                                pngCreator.CreateFrames(_tracksAsPointsF,
-                                        staticBgTransparent, staticBgMap,
+                                        staticBgTransparent, staticBgMap, backgroundTiles.bgmap,
                                         outputDir, pngTimes)
 
                            End Sub)
@@ -201,7 +201,7 @@ Namespace TrackVideoExporter
         Public Property VideoHeight As Integer = 1080
 
         <JsonPropertyName("trailWidth")>
-        Public Property TrailWidth As Integer = 2
+        Public Property TrailWidth_m As Integer = 2 'trail width in metres
 
         <JsonPropertyName("videoMode")>
         Public Property VideoMode As VideoModeEnum = VideoModeEnum.light

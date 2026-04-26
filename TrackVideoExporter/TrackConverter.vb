@@ -456,7 +456,7 @@ Public Class TrackConverter
         Dim childNode As XmlElement = CreateElement(XpathchildNodeName, parentNode)
         childNode.InnerText = value
         If attValue <> "" Then childNode.SetAttribute(attName, attValue)
-        Debug.WriteLine($"Přidávám nový uzel {XpathchildNodeName} s atributem {attName}={attValue} a textem '{value}'.")
+        'Debug.WriteLine($"Přidávám nový uzel {XpathchildNodeName} s atributem {attName}={attValue} a textem '{value}'.")
 
         If childNodes.Count = 0 OrElse insertAfter Then
             insertedNode = parentNode.AppendChild(childNode)

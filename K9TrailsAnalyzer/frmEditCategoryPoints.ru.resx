@@ -121,7 +121,7 @@
     <value>Выбор маршрута – максимальное количество очков:</value>
   </data>
   <data name="lblSpeed.Text" xml:space="preserve">
-    <value>Скорость – Баллы/км/ч:</value>
+    <value>Скорость – Баллы max.:</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Изменить правила подсчета очков</value>

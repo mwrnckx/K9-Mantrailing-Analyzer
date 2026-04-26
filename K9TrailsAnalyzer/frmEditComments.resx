@@ -483,13 +483,13 @@ Otherwise, click 'OK'.</value>
     <value>34, 551</value>
   </data>
   <data name="lblHandlerName.Size" type="System.Drawing.Size, System.Drawing">
-    <value>127, 21</value>
+    <value>118, 21</value>
   </data>
   <data name="lblHandlerName.TabIndex" type="System.Int32, mscorlib">
     <value>16</value>
   </data>
   <data name="lblHandlerName.Text" xml:space="preserve">
-    <value>Dog-handler name:</value>
+    <value>Dog handler:</value>
   </data>
   <data name="&gt;&gt;lblHandlerName.Name" xml:space="preserve">
     <value>lblHandlerName</value>
@@ -578,24 +578,6 @@ Otherwise, click 'OK'.</value>
   <data name="&gt;&gt;lblLevelOfBlinding.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="cbLevelOfBlinding.Items" xml:space="preserve">
-    <value>Select the level of blinding</value>
-  </data>
-  <data name="cbLevelOfBlinding.Items1" xml:space="preserve">
-    <value>Open Track: the handler is accompanied by their dog on a self-laid track</value>
-  </data>
-  <data name="cbLevelOfBlinding.Items2" xml:space="preserve">
-    <value>Known track aka Blue line: the handler is familiar with the track</value>
-  </data>
-  <data name="cbLevelOfBlinding.Items3" xml:space="preserve">
-    <value>Single-blind: the handler is not familiar with the track. The assistant is</value>
-  </data>
-  <data name="cbLevelOfBlinding.Items4" xml:space="preserve">
-    <value>Double-blind Assisted: neither the handler nor the assistant is familiar with the track</value>
-  </data>
-  <data name="cbLevelOfBlinding.Items5" xml:space="preserve">
-    <value>Double-blind Solo: the handler  is not familiar with the track</value>
-  </data>
   <data name="cbLevelOfBlinding.Location" type="System.Drawing.Point, System.Drawing">
     <value>212, 181</value>
   </data>
@@ -630,13 +612,13 @@ Otherwise, click 'OK'.</value>
     <value>34, 235</value>
   </data>
   <data name="lblNoOFArticles.Size" type="System.Drawing.Size, System.Drawing">
-    <value>235, 21</value>
+    <value>208, 21</value>
   </data>
   <data name="lblNoOFArticles.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
   </data>
   <data name="lblNoOFArticles.Text" xml:space="preserve">
-    <value>Number of articles found:</value>
+    <value>Number of items found:</value>
   </data>
   <data name="&gt;&gt;lblNoOFArticles.Name" xml:space="preserve">
     <value>lblNoOFArticles</value>

@@ -494,6 +494,7 @@ Partial Public Class Form1
         rtbOutput.AppendText((My.Resources.Resource1.outSpeed & manySpaces).Substring(0, 11))
         rtbOutput.AppendText((My.Resources.Resource1.outDeviation & manySpaces).Substring(0, 12))
         rtbOutput.AppendText((My.Resources.Resource1.outBlinding & manySpaces).Substring(0, 12))
+        rtbOutput.AppendText((My.Resources.Resource1.points & manySpaces).Substring(0, 8))
         rtbOutput.AppendText(My.Resources.Resource1.outDescription)
         rtbOutput.AppendText(vbCrLf)
 
@@ -516,18 +517,18 @@ Partial Public Class Form1
                 If _gpxRecord.TrailStats.TrailAge.TotalHours > 0 Then
                     rtbOutput.AppendText((_gpxRecord.TrailStats.TrailAge.TotalHours.ToString("G2") & " h" & manySpaces).Substring(0, 8))
                 Else
-                    rtbOutput.AppendText((manySpaces).Substring(0, 8))
+                    rtbOutput.AppendText(("-" & manySpaces).Substring(0, 8))
                 End If
                 'Dim dogspeed As Double = _gpxRecord.DogSpeed
                 If _gpxRecord.TrailStats.DogGrossSpeedkmh > 0 Then
                     rtbOutput.AppendText((_gpxRecord.TrailStats.DogGrossSpeedkmh.ToString("G2") & " km/h" & manySpaces).Substring(0, 11))
                 Else
-                    rtbOutput.AppendText((manySpaces).Substring(0, 11))
+                    rtbOutput.AppendText(("-" & manySpaces).Substring(0, 11))
                 End If
                 If _gpxRecord.TrailStats.AverDeviation > 0 Then
                     rtbOutput.AppendText((_gpxRecord.TrailStats.AverDeviation.ToString("G2") & " m" & manySpaces).Substring(0, 12))
                 Else
-                    rtbOutput.AppendText((manySpaces).Substring(0, 12))
+                    rtbOutput.AppendText(("-" & manySpaces).Substring(0, 12))
                 End If
 
                 If _gpxRecord.LocalisedReports.Count > 0 Then
@@ -547,10 +548,23 @@ Partial Public Class Form1
                         Case LevelOfBlindingType.DoubleBlindSolo
                             blinding = "Double bl."
                     End Select
-                    rtbOutput.AppendText(blinding & " ")
+                    rtbOutput.AppendText((blinding & manySpaces).Substring(0, 12))
                 Else
-                    rtbOutput.AppendText("        ")
+                    rtbOutput.AppendText(("-" & manySpaces).Substring(0, 12))
                 End If
+
+                If (_gpxRecord.TrailStats.PointsInMTCompetition IsNot Nothing) AndAlso _gpxRecord.TrailStats.TrailAge.TotalHours > 0 Then
+                    Dim TotalPoints As Integer = _gpxRecord.TrailStats.PointsInMTCompetition.DogAccuracyPoints +
+                        _gpxRecord.TrailStats.PointsInMTCompetition.DogReadingPoints +
+                        _gpxRecord.TrailStats.PointsInMTCompetition.DogSpeedPoints +
+                        _gpxRecord.TrailStats.PointsInMTCompetition.RunnerFoundPoints +
+                        _gpxRecord.TrailStats.PointsInMTCompetition.TrailPickupPoints
+
+                    rtbOutput.AppendText((TotalPoints.ToString("F0") & manySpaces).Substring(0, 8))
+                Else
+                    rtbOutput.AppendText(("-" & manySpaces).Substring(0, 8))
+                End If
+
                 If Not _gpxRecord.Description = Nothing Then
                     rtbOutput.AppendText(_gpxRecord.Description)
                 End If
@@ -832,21 +846,23 @@ Partial Public Class Form1
         chart1 = New frmChart(
     dogname:=ActiveCategoryInfo.Name,
     _trailData:=GPXFilesManager.TrailData,
-    _meText:="Skóre vs. stáří stopy",
+    YAxisLabel:=Resource1.hdr_TotalPoints,
+    _meText:=$"{Resource1.hdr_TotalPoints} vs. {Resource1.outAge}",
     _CultureInfo:=CultureInfo.CurrentCulture, frmChart.ScatterModeEnum.ScoreVsAge
 )
         chart1.Show()
         Charts.Add(chart1)
 
-        'Difficulty indexes
-        chart1 = New frmChart(ActiveCategoryInfo.Name, GPXFilesManager.DiffIndexes, "Trail Difficulty Index (h·km)", GPXFilesManager.dateFrom, GPXFilesManager.dateTo, "Trail Difficulty Index (h·km)", True, SeriesChartType.Point, currentCulture)
-        chart1.Show()
-        Charts.Add(chart1)
+        ''Difficulty indexes
+        'chart1 = New frmChart(ActiveCategoryInfo.Name, GPXFilesManager.DiffIndexes, "Trail Difficulty Index (h·km)", GPXFilesManager.dateFrom, GPXFilesManager.dateTo, "Trail Difficulty Index (h·km)", True, SeriesChartType.Point, currentCulture)
+        'chart1.Show()
+        'Charts.Add(chart1)
 
         chart1 = New frmChart(
     dogname:=ActiveCategoryInfo.Name,
     _trailData:=GPXFilesManager.TrailData,
-    _meText:="Skóre vs. čas",
+    YAxisLabel:=Resource1.hdr_TotalPoints,
+    _meText:=Resource1.hdr_TotalPoints,
     _CultureInfo:=CultureInfo.CurrentCulture, frmChart.ScatterModeEnum.ScoreVsTime
 )
         chart1.Show()
@@ -1588,7 +1604,7 @@ Partial Public Class Form1
 
         Return sb.ToString()
     End Function
-    Private Sub ShowInBrowser_new(gpxRecord As GPXRecord, report As TrailReport, Optional fileName As String = "gpx_preview", Optional dogName As String = "", Optional handlerName As String = "")
+    Private Sub ShowInBrowser(gpxRecord As GPXRecord, report As TrailReport, Optional fileName As String = "gpx_preview", Optional dogName As String = "", Optional handlerName As String = "")
         Dim gpxPath As String = gpxRecord.Reader.FilePath
         Dim gpxContent As String = File.ReadAllText(gpxPath, Encoding.UTF8)
 
@@ -1609,22 +1625,7 @@ Partial Public Class Form1
         File.WriteAllText(tempPath, html, Encoding.UTF8)
         Process.Start(New ProcessStartInfo(tempPath) With {.UseShellExecute = True})
     End Sub
-    Private Sub ShowInBrowser(gpxRecord As GPXRecord, Optional fileName As String = "gpx_preview", Optional dogName As String = "", Optional handlerName As String = "")
-        Dim gpxPath As String = gpxRecord.Reader.FilePath
-        Dim gpxContent As String = File.ReadAllText(gpxPath, Encoding.UTF8)
 
-        ' Načti šablonu (embedded resource nebo soubor)
-        Dim template As String = File.ReadAllText(
-        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "gpx_viewer.html"))
-
-        ' Vlož GPX obsah
-        Dim html1 As String = template.Replace("%%GPX_CONTENT%%", gpxContent)
-        Dim html As String = html1.Replace("%%NAME_FILE%%", fileName & "  " & dogName & "  " & handlerName)
-        ' Zapiš do temp a otevři
-        Dim tempPath As String = Path.Combine(Path.GetTempPath(), fileName & ".html")
-        File.WriteAllText(tempPath, html, Encoding.UTF8)
-        Process.Start(New ProcessStartInfo(tempPath) With {.UseShellExecute = True})
-    End Sub
 
     Public Async Function CreateVideoFromGPXRecord(_gpxRecord As GPXRecord, videoSettings As VideoSettingsConfig) As Task(Of Boolean)
 
@@ -2013,7 +2014,7 @@ Partial Public Class Form1
             Dim _gpxRecord = TryCast(item.Tag, GPXRecord) 'není to zbytečný?
             If Not _gpxRecord Is Nothing Then
                 'ShowInBrowser(_gpxRecord, _gpxRecord.FileName, _gpxRecord.DogName, _gpxRecord.LocalisedReports.FirstOrDefault.Value.HandlerNameText)
-                ShowInBrowser_new(_gpxRecord, _gpxRecord.LocalisedReports.FirstOrDefault.Value, _gpxRecord.FileName, _gpxRecord.TrailStats.DogName, _gpxRecord.TrailStats.HandlerName)
+                ShowInBrowser(_gpxRecord, _gpxRecord.LocalisedReports.FirstOrDefault.Value, _gpxRecord.FileName, _gpxRecord.TrailStats.DogName, _gpxRecord.TrailStats.HandlerName)
             End If
         Next
 
@@ -2052,7 +2053,7 @@ Partial Public Class Form1
         For Each _gpxRecord As GPXRecord In selectedrecords
 
             'ShowInBrowser(selectedFile, selectedFile.FileName, selectedFile.DogName, selectedFile.LocalisedReports.FirstOrDefault.Value.HandlerNameText)
-            ShowInBrowser_new(_gpxRecord, _gpxRecord.LocalisedReports.FirstOrDefault.Value, _gpxRecord.FileName, _gpxRecord.TrailStats.DogName, _gpxRecord.TrailStats.HandlerName)
+            ShowInBrowser(_gpxRecord, _gpxRecord.LocalisedReports.FirstOrDefault.Value, _gpxRecord.FileName, _gpxRecord.TrailStats.DogName, _gpxRecord.TrailStats.HandlerName)
 
         Next
 
@@ -2179,7 +2180,7 @@ Partial Public Class Form1
                 record.IsAlreadyProcessed = True 'už byl soubor zpracován
                 record.Save()
             Catch ex As Exception
-
+                Debug.WriteLine(ex.Message)
             End Try
         Next record
     End Sub
@@ -2297,15 +2298,15 @@ Public Class TrailStatsDisplay
 
 
 
-    <DisplayName("Dog Speed Points")>
-    Public Property DogSpeedPoints As Integer
+    <DisplayName("Dog Reading Points")>
+    Public Property DogReadingPoints As Integer
         Get
-            Return _dogSpeedPoints
+            Return _dogReadingPoints
         End Get
         Set(value As Integer)
-            If _dogSpeedPoints <> value Then
-                _dogSpeedPoints = value
-                OnPropertyChanged(NameOf(DogSpeedPoints))
+            If _dogReadingPoints <> value Then
+                _dogReadingPoints = value
+                OnPropertyChanged(NameOf(DogReadingPoints))
                 CalculateTotalPoints()
             End If
         End Set
@@ -2325,20 +2326,19 @@ Public Class TrailStatsDisplay
         End Set
     End Property
 
-    <DisplayName("Dog Reading Points")>
-    Public Property DogReadingPoints As Integer
+    <DisplayName("Dog Speed Points")>
+    Public Property DogSpeedPoints As Integer
         Get
-            Return _dogReadingPoints
+            Return _dogSpeedPoints
         End Get
         Set(value As Integer)
-            If _dogReadingPoints <> value Then
-                _dogReadingPoints = value
-                OnPropertyChanged(NameOf(DogReadingPoints))
+            If _dogSpeedPoints <> value Then
+                _dogSpeedPoints = value
+                OnPropertyChanged(NameOf(DogSpeedPoints))
                 CalculateTotalPoints()
             End If
         End Set
     End Property
-
     <DisplayName("Trail Pick-up Points")>
     Public Property TrailPickupPoints As Integer
         Get
@@ -2476,19 +2476,19 @@ Public Class CategoryInfo
 
     ' Konfigurační body pro disciplíny (uživatelsky nastavitelné)
     <JsonPropertyName("PointsForFindMax")>
-    Public Property PointsForFindMax As Integer = 100
+    Public Property PointsForFindMax As Integer = 50
 
-    <JsonPropertyName("PointsPerKmhGrossSpeed")>
-    Public Property PointsPerKmhGrossSpeed As Double = 20
+    <JsonPropertyName("PointsPerTempoMax")>
+    Public Property PointsPerTempoMax As Double = 10
 
     <JsonPropertyName("PointsForAccuracyMax")>
-    Public Property PointsForAccuracyMax As Integer = 100
+    Public Property PointsForAccuracyMax As Integer = 15
 
     <JsonPropertyName("PointsForDogReadingMax")>
-    Public Property PointsForDogReadingMax As Integer = 100
+    Public Property PointsForDogReadingMax As Integer = 20
 
     <JsonPropertyName("PointsForTrailPickupMax")>
-    Public Property PointsForTrailPickupMax As Integer = 100
+    Public Property PointsForTrailPickupMax As Integer = 5
 
 
     <JsonIgnore>

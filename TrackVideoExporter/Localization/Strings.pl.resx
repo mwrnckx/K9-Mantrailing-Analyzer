@@ -123,4 +123,28 @@
   <data name="Scoring" xml:space="preserve">
     <value>Punktacja</value>
   </data>
+  <data name="FinalFind" xml:space="preserve">
+    <value>Odnalezienie osoby</value>
+  </data>
+  <data name="ofPoints" xml:space="preserve">
+    <value>z</value>
+  </data>
+  <data name="points" xml:space="preserve">
+    <value>punktów</value>
+  </data>
+  <data name="DogReading" xml:space="preserve">
+    <value>Czytanie psa</value>
+  </data>
+  <data name="Speed" xml:space="preserve">
+    <value>Prędkość</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Łącznie</value>
+  </data>
+  <data name="Trail_description" xml:space="preserve">
+    <value>Opis śladu</value>
+  </data>
+  <data name="TrailPickup" xml:space="preserve">
+    <value>Podjęcie śladu</value>
+  </data>
 </root>

@@ -22,7 +22,7 @@ Namespace My.Resources
     '''<summary>
     '''  Třída prostředků se silnými typy pro vyhledávání lokalizovaných řetězců atp.
     '''</summary>
-    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0"),  _
+    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0"),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute()>  _
     Friend Class Strings
@@ -74,7 +74,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Dog Reading.
+        '''  Vyhledá lokalizovaný řetězec podobný Reading K9.
         '''</summary>
         Friend Shared ReadOnly Property DogReading() As String
             Get
@@ -146,7 +146,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Trail Pick up.
+        '''  Vyhledá lokalizovaný řetězec podobný Trail Head / Start.
         '''</summary>
         Friend Shared ReadOnly Property TrailPickup() As String
             Get

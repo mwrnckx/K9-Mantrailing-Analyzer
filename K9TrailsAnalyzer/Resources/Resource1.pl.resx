@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Y-AxisLabelTotalLength" xml:space="preserve">
-    <value>Przebyte kilometry</value>
+    <value>Przepracowano łącznie (km)</value>
   </data>
   <data name="Y-AxisLabelLength" xml:space="preserve">
     <value>Długość śladów (km)</value>
@@ -130,7 +130,7 @@
     <value>Wiek tras (godziny)</value>
   </data>
   <data name="Y-AxisLabelSpeed" xml:space="preserve">
-    <value>Prędkość psa na śladu (km/h)</value>
+    <value>Prędkość psa (km/h)</value>
   </data>
   <data name="Y-AxisLabelDeviation" xml:space="preserve">
     <value>Odchylenie szlaku (m)</value>
@@ -253,7 +253,7 @@
     <value>Następnym razem zapytaj ponownie</value>
   </data>
   <data name="Y-AxisLabelMonthly" xml:space="preserve">
-    <value>Wąchany miesięcznie (km)</value>
+    <value>Miesięczny dystans (km)</value>
   </data>
   <data name="txtGoalLabel" xml:space="preserve">
     <value>Cel treningowy</value>
@@ -285,7 +285,7 @@ Aby uzyskać dalsze przetwarzanie, musisz zdecydować, który tor odpowiada
 Jeśli są tylko dwie trasy, jest to dość proste - pierwszy to szlak tematyczny, druga to droga psa. Ale jeśli jest tylko jeden utwór lub więcej niż dwa, musisz zdecydować.</value>
   </data>
   <data name="CrossingTrail" xml:space="preserve">
-    <value>przecięcie śladu</value>
+    <value>Skrzyżowanie śladów</value>
   </data>
   <data name="RunnerTrail" xml:space="preserve">
     <value>Biegacz</value>
@@ -320,9 +320,6 @@ Jeśli są tylko dwie trasy, jest to dość proste - pierwszy to szlak tematyczn
   <data name="outDeviation" xml:space="preserve">
     <value>Odchylenie</value>
   </data>
-  <data name="dogTrack" xml:space="preserve">
-    <value>Pies</value>
-  </data>
   <data name="levelOfBlinding_DoubleAssisted" xml:space="preserve">
     <value>Podwójnie ślepe wspomagane: ani przewodnik, ani asystent nie znają toru.</value>
   </data>
@@ -342,9 +339,15 @@ Jeśli są tylko dwie trasy, jest to dość proste - pierwszy to szlak tematyczn
     <value>Wybierz poziom oślepienia.</value>
   </data>
   <data name="LevelOfBlinding_Single" xml:space="preserve">
-    <value>Pojedyncza ślepa: przewodnik nie zna toru. Asystent jest.</value>
+    <value>Próba ślepa (pojedyncza)</value>
   </data>
   <data name="levelOfBlinding_Unknown" xml:space="preserve">
     <value>Nieznany</value>
+  </data>
+  <data name="Y-AxisLabelCount" xml:space="preserve">
+    <value>Liczba śladów</value>
+  </data>
+  <data name="LevelOfBlinding_Double" xml:space="preserve">
+    <value>Podwójna ślepa próba</value>
   </data>
 </root>

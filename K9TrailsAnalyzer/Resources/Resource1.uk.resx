@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Y-AxisLabelTotalLength" xml:space="preserve">
-    <value>Пройдено кілометрів</value>
+    <value>Загальна відстань (км)</value>
   </data>
   <data name="Y-AxisLabelLength" xml:space="preserve">
-    <value>Довжина всіх слідів (км)</value>
+    <value>Довжина маршрутів (км)</value>
   </data>
   <data name="Y-AxisLabelLengthAge" xml:space="preserve">
     <value>Зважена довжина стежки (км)</value>
@@ -130,7 +130,7 @@
     <value>Вік слідів (години)</value>
   </data>
   <data name="Y-AxisLabelSpeed" xml:space="preserve">
-    <value>Швидкість собаки на маршрутах (км/год)</value>
+    <value>Швидкість собаки (км/год)</value>
   </data>
   <data name="Y-AxisLabelDeviation" xml:space="preserve">
     <value>Відхилення траси (м)!</value>
@@ -253,7 +253,7 @@
     <value>Наступного разу запитайте ще раз</value>
   </data>
   <data name="Y-AxisLabelMonthly" xml:space="preserve">
-    <value>Нюхали на місяць (км)</value>
+    <value>Дистанція за місяць (км)</value>
   </data>
   <data name="txtGoalLabel" xml:space="preserve">
     <value>Навчальна мета</value>
@@ -285,7 +285,7 @@
 Якщо є лише два маршрути, це досить просто - перший - це предметний слід, другий - це маршрут собаки. Але якщо є лише один трек або більше двох, ви повинні вирішити.</value>
   </data>
   <data name="CrossingTrail" xml:space="preserve">
-    <value>перетин сліду</value>
+    <value>Перехрещення сліду</value>
   </data>
   <data name="RunnerTrail" xml:space="preserve">
     <value>бігун</value>
@@ -314,9 +314,6 @@
   <data name="hdr_DogReadingPoints" xml:space="preserve">
     <value>Бонус за гарне читання собак</value>
   </data>
-  <data name="dogTrack" xml:space="preserve">
-    <value>собака</value>
-  </data>
   <data name="levelOfBlinding_DoubleAssisted" xml:space="preserve">
     <value>Double-blind Assisted: ні хендлер, ні асистент не знайомі з трасою.</value>
   </data>
@@ -330,9 +327,15 @@
     <value>Відкрита доріжка: провідник супроводжується своєю собакою на самостійно прокладеній доріжці</value>
   </data>
   <data name="LevelOfBlinding_Single" xml:space="preserve">
-    <value>Одинарний сліпий: провідник не знайомий з трасою. Помічник є.</value>
+    <value>Одинарний сліпий</value>
   </data>
   <data name="levelOfBlinding_Unknown" xml:space="preserve">
     <value>невідомий</value>
+  </data>
+  <data name="Y-AxisLabelCount" xml:space="preserve">
+    <value>Кількість маршрутів</value>
+  </data>
+  <data name="LevelOfBlinding_Double" xml:space="preserve">
+    <value>Подвійний сліпий</value>
   </data>
 </root>
