@@ -48,7 +48,7 @@ Public Class frmVideoSettings
         Me.numWidth.Value = Me.videoSettings.VideoWidth
         Me.numHeight.Value = Me.videoSettings.VideoHeight
         Me.numTrailWidth.Value = Me.videoSettings.TrailWidth_m
-
+        Me.cbTrailSpeedColor.SelectedItem = If(Me.videoSettings.DogTrailSpeedColor, "Yes", "No")
         If Me.videoSettings.VideoWidth = 3840 AndAlso Me.videoSettings.VideoHeight = 2160 Then
             cbVideoSize.Text = "3840x2160 (4K Ultra HD)"
         End If
@@ -80,6 +80,9 @@ Public Class frmVideoSettings
         Me.videoSettings.VideoWidth = CInt(numWidth.Value)
         Me.videoSettings.VideoHeight = CInt(numHeight.Value)
         Me.videoSettings.TrailWidth_m = CInt(numTrailWidth.Value)
+        If cbTrailSpeedColor.SelectedItem IsNot Nothing Then
+            Me.videoSettings.DogTrailSpeedColor = (cbTrailSpeedColor.SelectedItem.ToString() = "Yes")
+        End If
         Me.DialogResult = DialogResult.OK ' Tímto se okno samo zavře a vrátí OK
     End Sub
 

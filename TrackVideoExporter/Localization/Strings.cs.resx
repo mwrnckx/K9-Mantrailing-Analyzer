@@ -145,6 +145,9 @@
     <value>Popis trailu</value>
   </data>
   <data name="TrailPickup" xml:space="preserve">
-    <value>Nasazení / Začátek stopy</value>
+    <value>Nasazení (začátek stopy)</value>
+  </data>
+  <data name="TimeLimit" xml:space="preserve">
+    <value>Časový limit</value>
   </data>
 </root>

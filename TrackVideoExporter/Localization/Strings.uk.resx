@@ -120,14 +120,14 @@
   <data name="Accuracy" xml:space="preserve">
     <value>Точність</value>
   </data>
-  <data name="points" xml:space="preserve">
-    <value>балів</value>
-  </data>
   <data name="FinalFind" xml:space="preserve">
     <value>Знайдення суб'єкта</value>
   </data>
   <data name="ofPoints" xml:space="preserve">
     <value>з</value>
+  </data>
+  <data name="points" xml:space="preserve">
+    <value>балів</value>
   </data>
   <data name="DogReading" xml:space="preserve">
     <value>Читання собаки</value>
@@ -146,5 +146,8 @@
   </data>
   <data name="TrailPickup" xml:space="preserve">
     <value>Взяття сліду</value>
+  </data>
+  <data name="TimeLimit" xml:space="preserve">
+    <value>Обмеження часу</value>
   </data>
 </root>

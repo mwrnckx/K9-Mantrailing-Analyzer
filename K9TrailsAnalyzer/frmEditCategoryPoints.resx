@@ -130,13 +130,13 @@
     <value>4, 0, 4, 0</value>
   </data>
   <data name="lblFind.Size" type="System.Drawing.Size, System.Drawing">
-    <value>244, 21</value>
+    <value>253, 21</value>
   </data>
   <data name="lblFind.TabIndex" type="System.Int32, mscorlib">
     <value>11</value>
   </data>
   <data name="lblFind.Text" xml:space="preserve">
-    <value>Runner Found – Max Points:</value>
+    <value>Runner Found – Max. Points:</value>
   </data>
   <data name="&gt;&gt;lblFind.Name" xml:space="preserve">
     <value>lblFind</value>
@@ -148,7 +148,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblFind.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>13</value>
   </data>
   <data name="lblSpeed.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -166,7 +166,7 @@
     <value>10</value>
   </data>
   <data name="lblSpeed.Text" xml:space="preserve">
-    <value>Progress tempo – Points max.:</value>
+    <value>Progress Tempo – Max. Points:</value>
   </data>
   <data name="&gt;&gt;lblSpeed.Name" xml:space="preserve">
     <value>lblSpeed</value>
@@ -178,7 +178,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblSpeed.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>12</value>
   </data>
   <data name="lblAcc.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -190,13 +190,13 @@
     <value>4, 0, 4, 0</value>
   </data>
   <data name="lblAcc.Size" type="System.Drawing.Size, System.Drawing">
-    <value>208, 21</value>
+    <value>217, 21</value>
   </data>
   <data name="lblAcc.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
   </data>
   <data name="lblAcc.Text" xml:space="preserve">
-    <value>Accuracy - Max Points:</value>
+    <value>Accuracy - Max. Points:</value>
   </data>
   <data name="&gt;&gt;lblAcc.Name" xml:space="preserve">
     <value>lblAcc</value>
@@ -208,7 +208,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblAcc.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>11</value>
   </data>
   <data name="lblRead.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -220,13 +220,13 @@
     <value>4, 0, 4, 0</value>
   </data>
   <data name="lblRead.Size" type="System.Drawing.Size, System.Drawing">
-    <value>235, 21</value>
+    <value>244, 21</value>
   </data>
   <data name="lblRead.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
   <data name="lblRead.Text" xml:space="preserve">
-    <value>Dog Reading - Max Pionts:</value>
+    <value>Dog Reading - Max. Pionts:</value>
   </data>
   <data name="&gt;&gt;lblRead.Name" xml:space="preserve">
     <value>lblRead</value>
@@ -238,7 +238,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblRead.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>10</value>
   </data>
   <data name="lblPick.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -250,13 +250,13 @@
     <value>4, 0, 4, 0</value>
   </data>
   <data name="lblPick.Size" type="System.Drawing.Size, System.Drawing">
-    <value>226, 21</value>
+    <value>235, 21</value>
   </data>
   <data name="lblPick.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
   </data>
   <data name="lblPick.Text" xml:space="preserve">
-    <value>Trail pick – Max Points:</value>
+    <value>Trail Pick – Max. Points:</value>
   </data>
   <data name="&gt;&gt;lblPick.Name" xml:space="preserve">
     <value>lblPick</value>
@@ -268,7 +268,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblPick.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>9</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="numFind.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
@@ -296,7 +296,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;numFind.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>8</value>
   </data>
   <data name="numSpeed.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -323,7 +323,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;numSpeed.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>7</value>
   </data>
   <data name="numAcc.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -350,7 +350,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;numAcc.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>6</value>
   </data>
   <data name="numRead.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -377,7 +377,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;numRead.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>5</value>
   </data>
   <data name="numPick.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -404,7 +404,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;numPick.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>4</value>
   </data>
   <data name="btnOK.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
@@ -416,7 +416,7 @@
     <value>Flat</value>
   </data>
   <data name="btnOK.Location" type="System.Drawing.Point, System.Drawing">
-    <value>280, 230</value>
+    <value>280, 305</value>
   </data>
   <data name="btnOK.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
@@ -440,7 +440,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnOK.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>3</value>
   </data>
   <data name="btnCancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
@@ -449,7 +449,7 @@
     <value>Flat</value>
   </data>
   <data name="btnCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>156, 230</value>
+    <value>156, 305</value>
   </data>
   <data name="btnCancel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
@@ -473,6 +473,66 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnCancel.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="numTimeLimit.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="numTimeLimit.Location" type="System.Drawing.Point, System.Drawing">
+    <value>349, 223</value>
+  </data>
+  <data name="numTimeLimit.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="numTimeLimit.Size" type="System.Drawing.Size, System.Drawing">
+    <value>129, 26</value>
+  </data>
+  <data name="numTimeLimit.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="&gt;&gt;numTimeLimit.Name" xml:space="preserve">
+    <value>numTimeLimit</value>
+  </data>
+  <data name="&gt;&gt;numTimeLimit.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;numTimeLimit.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;numTimeLimit.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="Label1.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="Label1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="Label1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 228</value>
+  </data>
+  <data name="Label1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
+  </data>
+  <data name="Label1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>199, 21</value>
+  </data>
+  <data name="Label1.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
+  </data>
+  <data name="Label1.Text" xml:space="preserve">
+    <value>Time Limit (minutes):</value>
+  </data>
+  <data name="&gt;&gt;Label1.Name" xml:space="preserve">
+    <value>Label1</value>
+  </data>
+  <data name="&gt;&gt;Label1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;Label1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;Label1.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -482,13 +542,10 @@
     <value>9, 21</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>527, 296</value>
+    <value>527, 371</value>
   </data>
   <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
     <value>Cascadia Code, 12pt</value>
-  </data>
-  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
   </data>
   <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>

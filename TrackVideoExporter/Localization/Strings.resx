@@ -147,4 +147,7 @@
   <data name="TrailPickup" xml:space="preserve">
     <value>Trail Head / Start</value>
   </data>
+  <data name="TimeLimit" xml:space="preserve">
+    <value>Time Limit</value>
+  </data>
 </root>

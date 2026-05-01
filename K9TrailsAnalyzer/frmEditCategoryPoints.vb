@@ -12,6 +12,7 @@
         numAcc.Value = _categoryInfo.PointsForAccuracyMax
         numRead.Value = _categoryInfo.PointsForDogReadingMax
         numPick.Value = _categoryInfo.PointsForTrailPickupMax
+        numTimeLimit.Value = _categoryInfo.TimeLimitMinutes
     End Sub
 
     Private Sub btnOK_Click(sender As Object, e As EventArgs) Handles btnOK.Click
@@ -20,6 +21,7 @@
         _categoryInfo.PointsForAccuracyMax = CInt(numAcc.Value)
         _categoryInfo.PointsForDogReadingMax = CInt(numRead.Value)
         _categoryInfo.PointsForTrailPickupMax = CInt(numPick.Value)
+        _categoryInfo.TimeLimitMinutes = CInt(numTimeLimit.Value)
 
         Me.DialogResult = DialogResult.OK
     End Sub

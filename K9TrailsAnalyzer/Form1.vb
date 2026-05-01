@@ -992,7 +992,9 @@ Partial Public Class Form1
 
         resources.ApplyResources(clmTrkCount, "clmTrkCount")
 
-
+        resources.ApplyResources(btnQuickGPXPreview, "btnQuickGPXPreview")
+        resources.ApplyResources(btnEditPoints, "btnEditPoints")
+        resources.ApplyResources(btnCreateDiploma, "btnCreateDiploma")
         ' Lokalizace položek MenuStrip
 
         LocalizeMenuItems(MenuStrip1.Items, resources)
@@ -2489,6 +2491,9 @@ Public Class CategoryInfo
 
     <JsonPropertyName("PointsForTrailPickupMax")>
     Public Property PointsForTrailPickupMax As Integer = 5
+
+    <JsonPropertyName("TimeLimitMinutes")>
+    Public Property TimeLimitMinutes As Integer = 20
 
 
     <JsonIgnore>

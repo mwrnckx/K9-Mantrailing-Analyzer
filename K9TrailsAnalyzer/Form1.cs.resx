@@ -403,14 +403,8 @@
   <data name="btnVideoSettings.Text" xml:space="preserve">
     <value>Nastavení videa</value>
   </data>
-  <data name="btnVideoSettings.ToolTip" xml:space="preserve">
-    <value>Vytvářejte videa z vybraných souborů</value>
-  </data>
   <data name="btnGPXView.Text" xml:space="preserve">
     <value>Rychlý náhled trailu</value>
-  </data>
-  <data name="btnGPXView.ToolTip" xml:space="preserve">
-    <value>Vytvářejte videa z vybraných souborů</value>
   </data>
   <data name="btnEditPoints.Text" xml:space="preserve">
     <value>Nastavte body v kategorii a přepočítejte</value>
@@ -423,9 +417,6 @@
   </data>
   <data name="btnCreateDiploma.Text" xml:space="preserve">
     <value>Vytvářejte diplomy</value>
-  </data>
-  <data name="btnEditComments.ToolTip" xml:space="preserve">
-    <value>Vytvářejte videa z vybraných souborů</value>
   </data>
   <data name="btnEditComments.Text" xml:space="preserve">
     <value>Upravit poznámky</value>

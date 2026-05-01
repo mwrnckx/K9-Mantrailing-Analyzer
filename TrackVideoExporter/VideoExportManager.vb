@@ -171,7 +171,7 @@ Namespace TrackVideoExporter
 
                                Dim renderer As New PngRenderer(windDirection, windSpeed, Me.backgroundTiles, Me.videoSettings, latitude)
                                renderer.CreateWindArrowBitmap(outputDir)
-                               Dim staticBgTransparent = renderer.RenderStaticTransparentBackground(_tracksAsPointsF, backgroundTiles, waypointsAsPointsF)
+                               Dim staticBgTransparent = renderer.RenderStaticTransparentBackground(_tracksAsPointsF, backgroundTiles, waypointsAsPointsF, lastConfirmedIndex)
                                Dim staticBgMap = renderer.RenderStaticMap(_tracksAsPointsF, backgroundTiles, maxDeviationAsPointsF, waypointsAsPointsF, maxDeviationMetres, lastConfirmedIndex)
 
 
@@ -202,6 +202,9 @@ Namespace TrackVideoExporter
 
         <JsonPropertyName("trailWidth")>
         Public Property TrailWidth_m As Integer = 2 'trail width in metres
+
+        <JsonPropertyName("dogTrailSpeedColor")>
+        Public Property DogTrailSpeedColor As Boolean = False 'dog trail color according to speed
 
         <JsonPropertyName("videoMode")>
         Public Property VideoMode As VideoModeEnum = VideoModeEnum.light

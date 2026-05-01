@@ -121,6 +121,7 @@ Public Class PngRenderer
     Private trackBounds As RectangleF
     Private myWindArrow As Bitmap
     Private videoSize As Size
+    Private dogTrailSpeedColor As Boolean
 
     'Dim diagonal As Single
     Dim radius As Single ' poloměr kruhu pro poslední bod, ideálně 5m v pixelech, ale protože se mění s latitudou, bude se přepočítávat v konstruktoru
@@ -140,7 +141,7 @@ Public Class PngRenderer
         Me.windDirection = windDirection
         Me.windSpeed = windSpeed
         Me.videoSize = New Size(VideoSettings.VideoWidth, VideoSettings.VideoHeight)
-
+        Me.dogTrailSpeedColor = VideoSettings.DogTrailSpeedColor
         Me.latitude = latitude
         Me.trackBounds = bgTiles.bgmap.GetBounds(GraphicsUnit.Pixel) 'přepočítá obdélník na souřadnice v pixelech
         Dim videoRatio = videoSize.Width / videoSize.Height
@@ -225,6 +226,7 @@ Public Class PngRenderer
                             Dim speed As Double = If(timeDiff > 0, distance / timeDiff, 0) ' Rychlost mezi dvěma body v m/s, ošetření dělení nulou
                             'Debug.WriteLine($"render:  {speed}")
                             Dim maxExpectedSpeed As Double = 1.3888 'm/s = 5 km/h, rychlost, která odpovídá přibližně rychlosti pohybu psa na stopě, použijeme ji pro určení barevné škály, kde rychlejší pohyb bude červenější a pomalejší zelenější
+                            speed = If(dogTrailSpeedColor, speed, maxExpectedSpeed) ' pokud nechceme barevně odlišovat rychlost pohybu psa, nastavíme všechny úseky na maxExpectedSpeed, aby byly všechny stejně červené)
                             ' Použijeme Using, aby se Pen (pero) správně uvolnilo z paměti
                             Using pen As New Pen(GetColorBySpeed(speed, maxExpectedSpeed), penWidth)
                                 ' Zakulacení konců čar, aby na sebe plynule navazovaly
@@ -310,7 +312,7 @@ Public Class PngRenderer
                     Dim location As PointF = wpt.Location
                     Dim _Color As Color = If(wpt.Name = "First Contact", Color.Magenta, waypointsAsPointsF.Color) ' First Contact Point je červeně
                     If i = lastConfirmedIndex Then
-                        _Color = Color.Cyan ' pro testování, třetí waypoint bude azurový
+                        _Color = Color.Cyan ' 
                         description = "Last Confirmed"
                     End If
                     Dim contrastColor As Color = GetContrastColor(_Color)
@@ -347,7 +349,8 @@ Public Class PngRenderer
     ''' <returns>A <see cref="Bitmap"/> with a transparent background, containing the rendered tracks, wind arrow, and labels.</returns>
     Public Function RenderStaticTransparentBackground(tracksAsPointsF As List(Of TrackAsPointsF),
                                                       backgroundTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single),
-                                                      Optional waypointsAsPointsF As TrackAsPointsF = Nothing) As Bitmap
+                                                      Optional waypointsAsPointsF As TrackAsPointsF = Nothing,
+                                                      Optional lastConfirmedIndex As Integer = 0) As Bitmap
         ' Vykresli statické stopy, šipku větru, popisky
 
         Dim staticBmp As New Bitmap(backgroundTiles.bgmap.Width, backgroundTiles.bgmap.Height, PixelFormat.Format32bppArgb)
@@ -408,17 +411,22 @@ Public Class PngRenderer
             Next
 
             If waypointsAsPointsF IsNot Nothing AndAlso waypointsAsPointsF.TrackPointsF.Count > 0 Then
-                Dim i As Integer = 1
-                For Each wpt In waypointsAsPointsF.TrackPointsF
-                    Dim location As PointF = wpt.Location
 
+                For i = 0 To waypointsAsPointsF.TrackPointsF.Count - 1
+                    Dim wpt As TrackPointF = waypointsAsPointsF.TrackPointsF(i)
+                    Dim location As PointF = wpt.Location
+                    Dim popis As String = wpt.Name
                     Dim _Color As Color = If(wpt.Name = "First Contact", Color.Magenta, waypointsAsPointsF.Color) ' First Contact Point je červeně
+                    If i = lastConfirmedIndex Then
+                        _Color = Color.Cyan ' 
+                        popis = "Last Confirmed"
+                    End If
                     Dim contrastColor As Color = GetContrastColor(_Color)
 
                     Dim brush As SolidBrush = New SolidBrush(_Color) ' plná barva pro statické stopy
 
                     g.FillEllipse(brush, location.X - radius / 2, location.Y - radius / 2, radius, radius)
-                    Dim popis As String = wpt.Name '$"{waypointsAsPointsF.Label} {i}"
+
                     Dim textSize = g.MeasureString(popis, font)
                     Dim textoffsetX As Single
                     If location.X - textSize.Width - radius < 0 Then
@@ -485,6 +493,7 @@ Public Class PngRenderer
                             Dim p1 = _dogTrail(i)
                             Dim p2 = _dogTrail(i + 1)
                             speed = Math.Sqrt((p1.X - p2.X) ^ 2 + (p1.Y - p2.Y) ^ 2) / pixelsPerMeter ' Rychlost mezi dvěma body v m/s předpokládá frameinterval = 1 s
+                            speed = If(dogTrailSpeedColor, speed, maxExpectedSpeed)
                             'Debug.WriteLine($"render:  {speed}")
                             ' Použijeme Using, aby se Pen (pero) správně uvolnilo z paměti
                             Using pen As New Pen(GetColorBySpeed(speed, maxExpectedSpeed), penWidth)
@@ -497,14 +506,13 @@ Public Class PngRenderer
                             End Using
                         Next
                     End If
-                    'Using pen As New Pen(GetColorBySpeed(speed, maxExpectedSpeed), penWidth)
+                    speed = If(dogTrailSpeedColor, speed, maxExpectedSpeed)
                     'Debug.WriteLine($"ellipse----:  {speed}")
                     Using brush As New SolidBrush(GetColorBySpeed(speed, maxExpectedSpeed))
                         g.FillEllipse(brush, p.X - radius / 2, p.Y - radius / 2, radius, radius)
                     End Using
 
 
-                    'Dim font As New Font("Cascadia Code", emSize, FontStyle.Bold)
                     Dim popis As String = "Dog " & frameTime.ToString("HH:mm:ss")
                     Dim textSize = g.MeasureString(popis, font)
                     Dim offsetX As Single

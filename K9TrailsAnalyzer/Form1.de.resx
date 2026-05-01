@@ -384,14 +384,8 @@
   <data name="btnVideoSettings.Text" xml:space="preserve">
     <value>Videoeinstellungen</value>
   </data>
-  <data name="btnVideoSettings.ToolTip" xml:space="preserve">
-    <value>Erstellen Sie Videos aus ausgewählten Dateien</value>
-  </data>
   <data name="btnGPXView.Text" xml:space="preserve">
     <value>Ausgewählte Trail-Schnellvorschau</value>
-  </data>
-  <data name="btnGPXView.ToolTip" xml:space="preserve">
-    <value>Erstellen Sie Videos aus ausgewählten Dateien</value>
   </data>
   <data name="btnEditPoints.Text" xml:space="preserve">
     <value>Punkte in Kategorie setzen und neu berechnen</value>
@@ -407,9 +401,6 @@
   </data>
   <data name="btnCreateDiploma.Text" xml:space="preserve">
     <value>Erstellen Sie Diplome</value>
-  </data>
-  <data name="btnEditComments.ToolTip" xml:space="preserve">
-    <value>Erstellen Sie Videos aus ausgewählten Dateien</value>
   </data>
   <data name="btnEditComments.Text" xml:space="preserve">
     <value>Notizen bearbeiten</value>

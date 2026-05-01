@@ -120,9 +120,6 @@
   <data name="Accuracy" xml:space="preserve">
     <value>Dokładność</value>
   </data>
-  <data name="Scoring" xml:space="preserve">
-    <value>Punktacja</value>
-  </data>
   <data name="FinalFind" xml:space="preserve">
     <value>Odnalezienie osoby</value>
   </data>
@@ -135,6 +132,9 @@
   <data name="DogReading" xml:space="preserve">
     <value>Czytanie psa</value>
   </data>
+  <data name="Scoring" xml:space="preserve">
+    <value>Punktacja</value>
+  </data>
   <data name="Speed" xml:space="preserve">
     <value>Prędkość</value>
   </data>
@@ -146,5 +146,8 @@
   </data>
   <data name="TrailPickup" xml:space="preserve">
     <value>Podjęcie śladu</value>
+  </data>
+  <data name="TimeLimit" xml:space="preserve">
+    <value>Limit czasu</value>
   </data>
 </root>

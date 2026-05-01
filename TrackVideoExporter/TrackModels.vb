@@ -560,6 +560,7 @@ Public Structure CheckpointData
     Public deviationFromTrail As Double
     Public dogGrossSpeedkmh As Double
     Public distAlongTrailkm As Double
+    Public time As DateTime
     Public chPtIndex As Integer
 End Structure
 

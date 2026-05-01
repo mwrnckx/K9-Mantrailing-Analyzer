@@ -128,6 +128,15 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Time Limit.
+        '''</summary>
+        Friend Shared ReadOnly Property TimeLimit() As String
+            Get
+                Return ResourceManager.GetString("TimeLimit", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Total.
         '''</summary>
         Friend Shared ReadOnly Property Total() As String

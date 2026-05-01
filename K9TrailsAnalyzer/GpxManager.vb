@@ -1757,6 +1757,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             Dim txtAccuracy = Localizer.GetString("Accuracy", kvp.Key)
             Dim txtDogReading = Localizer.GetString("DogReading", kvp.Key)
             Dim txtTrailPickup = Localizer.GetString("TrailPickup", kvp.Key)
+            Dim txtTimeLimit = Localizer.GetString("TimeLimit", kvp.Key)
             Dim pointsTotal As Integer = Me.TrailStats.PointsInMTCompetition.RunnerFoundPoints + Me.TrailStats.PointsInMTCompetition.DogSpeedPoints + Me.TrailStats.PointsInMTCompetition.DogAccuracyPoints + Me.TrailStats.PointsInMTCompetition.DogReadingPoints + Me.TrailStats.PointsInMTCompetition.TrailPickupPoints
             Dim pointsMax As Integer = Me.ActiveCategoryInfo.PointsForFindMax + Me.ActiveCategoryInfo.PointsPerTempoMax + Me.ActiveCategoryInfo.PointsForAccuracyMax + Me.ActiveCategoryInfo.PointsForDogReadingMax + Me.ActiveCategoryInfo.PointsForTrailPickupMax
             Dim performancePoints As String = $"🏆{txtTotal}: {pointsTotal} {txtpoints} ({txtof} {pointsMax}){vbCrLf}
@@ -1764,7 +1765,8 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         👁{txtDogReading}: {Me.TrailStats.PointsInMTCompetition.DogReadingPoints} {txtpoints} ({txtof} {Me.ActiveCategoryInfo.PointsForDogReadingMax}){vbCrLf}
         🎯{txtAccuracy}: {Me.TrailStats.PointsInMTCompetition.DogAccuracyPoints} {txtpoints} ({txtof} {Me.ActiveCategoryInfo.PointsForAccuracyMax}){vbCrLf}
         🚀{txtSpeed}: {Me.TrailStats.PointsInMTCompetition.DogSpeedPoints} {txtpoints} ({txtof} {Me.ActiveCategoryInfo.PointsPerTempoMax}){vbCrLf}
-        🔀{txtTrailPickup}: {Me.TrailStats.PointsInMTCompetition.TrailPickupPoints} {txtpoints} ({txtof} {Me.ActiveCategoryInfo.PointsForTrailPickupMax})
+        🔀{txtTrailPickup}: {Me.TrailStats.PointsInMTCompetition.TrailPickupPoints} {txtpoints} ({txtof} {Me.ActiveCategoryInfo.PointsForTrailPickupMax}){vbCrLf}
+        ⏱{txtTimeLimit}:  {Me.ActiveCategoryInfo.TimeLimitMinutes} min
        "
 
             kvp.Value.PerformancePointsText = performancePoints
@@ -2125,6 +2127,9 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
             For i = 0 To analysedCheckPoints.Count - 1
                 Dim cp = analysedCheckPoints(i)
+                If cp.time - Me._First_Contact.Time > TimeSpan.FromMinutes(Me.ActiveCategoryInfo.TimeLimitMinutes) Then
+                    Continue For ' přeskočí checkpointy, které jsou mimo časový limit
+                End If
                 'weight is the distance of the checkPoint from the path of the runner x the relative effective length along the path 
                 Dim _weight = Weight(cp.deviationFromTrail) * (cp.distAlongTrailkmWeighted / (preparedData.RunnerTotalDistance))
                 If _weight > maxWeight Then
@@ -2223,7 +2228,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         Dim lat0 As Double = If(runnerGeoPoints IsNot Nothing AndAlso runnerGeoPoints.Count > 0, runnerGeoPoints(0).Location.Lat, dogGeoPoints(0).Location.Lat)
         Dim lon0 As Double = If(runnerGeoPoints IsNot Nothing AndAlso runnerGeoPoints.Count > 0, runnerGeoPoints(0).Location.Lon, dogGeoPoints(0).Location.Lon)
 
-        Dim finalDogGeoPoints = dogGeoPoints
+        Dim finalDogGeoPoints As List(Of TrackGeoPoint) = dogGeoPoints
         Dim finalRunnerGeoPoints As List(Of TrackGeoPoint) = Nothing
         Dim runnerTotalDistance As Double = 0
         Dim RunnerFound As Boolean = False
@@ -2253,13 +2258,23 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             ' --- OŘEZÁNÍ DAT NA STARTU ---
             ' Ponecháme jen body od dogStartIndex / runnerStartIndex do konce
             finalDogGeoPoints = dogGeoPoints.Skip(dogStartIndex).ToList()
+            finalRunnerGeoPoints = runnerGeoPoints.Skip(runnerStartIndex).ToList()
 
-            ' --- LOGIKA VYHLEDÁNÍ CÍle (runner found!) ---
-            Dim dogFoundIndex As Integer = dogGeoPoints.Count - 1
+            'Logika ukončení pro nesplnění časového limitu pro práci psa TODO!!!!
+            Dim timeLimit As TimeSpan = TimeSpan.FromMinutes(ActiveCategoryInfo.TimeLimitMinutes) 'nastavitelný časový limit pro práci psa od First Contact
+            For i = 0 To finalDogGeoPoints.Count - 1
+                If finalDogGeoPoints(i).Time - Me._First_Contact.Time > timeLimit Then
+                    ' Pokud se časový limit překročí, ořežeme trasu psa do tohoto bodu a ukončíme hledání
+                    finalDogGeoPoints = finalDogGeoPoints.Take(i).ToList()
+                    Exit For
+                End If
+            Next i
+            ' --- LOGIKA VYHLEDÁNÍ CÍle (runner found?) ---
+            Dim dogFoundIndex As Integer = finalDogGeoPoints.Count - 1
             Dim minDistanceToRunner As Double = Double.MaxValue
-
-
-            For i As Integer = 0 To finalDogGeoPoints.Count - 1
+            'prohledáváme jen konec trasy psa (posledních 10 %)
+            Dim startIndex As Integer = finalDogGeoPoints.Count * 0.9
+            For i As Integer = startIndex To finalDogGeoPoints.Count - 1
                 ' Hledáme první  bod na trase psa který je blíž než 10 m od kladeče(posledního bodu trasy kladeče)
                 Dim RunnerPosition As TrackGeoPoint = runnerGeoPoints.Last() ' pozice kladeče na konci jeho trasy
                 Dim distanceMetres = TrackConverter.HaversineDistance(finalDogGeoPoints(i).Location.Lat, finalDogGeoPoints(i).Location.Lon, RunnerPosition.Location.Lat, RunnerPosition.Location.Lon, "m")
@@ -2277,7 +2292,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             ' --- OŘEZÁNÍ DAT PO NALEZENÍ KLADEČE---
             ' Ponecháme jen body od začátku do dogFoundIndex (pokud se kladeč našel), pokud se kladeč nenašel, ponecháme trasu psa celou od startu do konce
             finalDogGeoPoints = finalDogGeoPoints.Take(dogFoundIndex + 1).ToList() ' pokud se kladeč našel, ořežeme trasu psa i na konci, pokud ne, ponecháme ji celou od startu do konce
-            finalRunnerGeoPoints = runnerGeoPoints.Skip(runnerStartIndex).ToList()
+
 
 
             ' --- REKALKULACE TOTAL DISTANCE --- (pouze z ořezaných dat)
@@ -2330,6 +2345,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         ' --- Hlavní procesní cyklus ---
         Dim cpIndex As Integer = -1
         For Each cp In pointsToEvaluate
+
             cpIndex += 1
             'Dim distFromDogStart = TrackConverter.HaversineDistance(cp.Location.Lat, cp.Location.Lon, firstDogPoint.Location.Lat, firstDogPoint.Location.Lon, "m")
 
@@ -2397,9 +2413,10 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             .deviationFromTrail = minDeviationFromRunnerTrail,
             .dogGrossSpeedkmh = dogGrossSpeedkmh,
             .distAlongTrailkm = distanceAlongRunnTrail,
-            .chPtIndex = cpIndex
+            .chPtIndex = cpIndex,
+            .time = cp.Time
         })
-        Next
+        Next cp
 
         Return _checkPointsData
     End Function

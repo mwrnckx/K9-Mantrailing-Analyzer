@@ -372,14 +372,8 @@
   <data name="btnVideoSettings.Text" xml:space="preserve">
     <value>Настройки видео</value>
   </data>
-  <data name="btnVideoSettings.ToolTip" xml:space="preserve">
-    <value>Создать видео из выбранных файлов</value>
-  </data>
   <data name="btnGPXView.Text" xml:space="preserve">
     <value>Быстрый просмотр выбранного маршрута</value>
-  </data>
-  <data name="btnGPXView.ToolTip" xml:space="preserve">
-    <value>Создать видео из выбранных файлов</value>
   </data>
   <data name="mnuCompetitionRules.Text" xml:space="preserve">
     <value>Правила соревнований</value>
@@ -392,9 +386,6 @@
   </data>
   <data name="btnQuickGPXPreview.Text" xml:space="preserve">
     <value>Быстрый просмотр выбранного маршрута</value>
-  </data>
-  <data name="btnEditComments.ToolTip" xml:space="preserve">
-    <value>Создать видео из выбранных файлов</value>
   </data>
   <data name="btnEditComments.Text" xml:space="preserve">
     <value>Редактировать заметки</value>

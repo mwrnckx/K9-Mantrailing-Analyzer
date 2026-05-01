@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Y-AxisLabelTotalLength" xml:space="preserve">
-    <value>Namantrailováno celkem (km)</value>
+    <value>Načucháno celkem (km)</value>
   </data>
   <data name="Y-AxisLabelLength" xml:space="preserve">
     <value>Délka trailů (km)</value>
@@ -254,7 +254,7 @@
     <value>U příští dvojice se zase zeptat</value>
   </data>
   <data name="Y-AxisLabelMonthly" xml:space="preserve">
-    <value>Namantrailováno měsíčně (km)</value>
+    <value>Načucháno měsíčně (km)</value>
   </data>
   <data name="txtGoalLabel" xml:space="preserve">
     <value>Cíl tréninku</value>

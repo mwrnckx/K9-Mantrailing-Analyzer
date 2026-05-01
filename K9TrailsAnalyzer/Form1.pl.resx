@@ -439,14 +439,8 @@
   <data name="btnVideoSettings.Text" xml:space="preserve">
     <value>Ustawienia wideo</value>
   </data>
-  <data name="btnVideoSettings.ToolTip" xml:space="preserve">
-    <value>Utwórz filmy z wybranych plików</value>
-  </data>
   <data name="btnGPXView.Text" xml:space="preserve">
     <value>Szybki podgląd wybranego szlaku</value>
-  </data>
-  <data name="btnGPXView.ToolTip" xml:space="preserve">
-    <value>Utwórz filmy z wybranych plików</value>
   </data>
   <data name="mnuCompetitionRules.Text" xml:space="preserve">
     <value>Regulamin konkursu</value>
@@ -462,9 +456,6 @@
   </data>
   <data name="btnCreateDiploma.Text" xml:space="preserve">
     <value>Twórz dyplomy</value>
-  </data>
-  <data name="btnEditComments.ToolTip" xml:space="preserve">
-    <value>Utwórz filmy z wybranych plików</value>
   </data>
   <data name="btnEditComments.Text" xml:space="preserve">
     <value>Edytuj notatki</value>

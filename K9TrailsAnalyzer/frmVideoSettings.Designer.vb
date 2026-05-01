@@ -31,6 +31,8 @@ Partial Class frmVideoSettings
         lblHeight = New Label()
         Label1 = New Label()
         numTrailWidth = New NumericUpDown()
+        lblTrailSpeedColor = New Label()
+        cbTrailSpeedColor = New ComboBox()
         CType(numWidth, ComponentModel.ISupportInitialize).BeginInit()
         CType(numHeight, ComponentModel.ISupportInitialize).BeginInit()
         CType(numTrailWidth, ComponentModel.ISupportInitialize).BeginInit()
@@ -39,7 +41,7 @@ Partial Class frmVideoSettings
         ' cbVideoSize
         ' 
         cbVideoSize.BackColor = Color.Goldenrod
-        cbVideoSize.Font = New Font("Segoe UI", 12.0F, FontStyle.Bold)
+        cbVideoSize.Font = New Font("Segoe UI", 12F, FontStyle.Bold)
         cbVideoSize.FormattingEnabled = True
         cbVideoSize.Items.AddRange(New Object() {"3840x2160 (4K Ultra HD)", "2560x1440 (QHD - 2K)", "1920x1080 (Full HD)", "1280x720 (HD)", "1920x1440", "1024x768 (XGA)", "1080x1920 (Vertical - TikTok/Reels)", "1080x1080 (Instagram Square)", "Vlastní..."})
         cbVideoSize.Location = New Point(196, 39)
@@ -50,7 +52,7 @@ Partial Class frmVideoSettings
         ' numWidth
         ' 
         numWidth.BackColor = Color.LightYellow
-        numWidth.Font = New Font("Segoe UI", 12.0F, FontStyle.Bold)
+        numWidth.Font = New Font("Segoe UI", 12F, FontStyle.Bold)
         numWidth.Location = New Point(196, 90)
         numWidth.Maximum = New Decimal(New Integer() {10000, 0, 0, 0})
         numWidth.Minimum = New Decimal(New Integer() {360, 0, 0, 0})
@@ -62,7 +64,7 @@ Partial Class frmVideoSettings
         ' numHeight
         ' 
         numHeight.BackColor = Color.LightYellow
-        numHeight.Font = New Font("Segoe UI", 12.0F, FontStyle.Bold)
+        numHeight.Font = New Font("Segoe UI", 12F, FontStyle.Bold)
         numHeight.Location = New Point(196, 133)
         numHeight.Maximum = New Decimal(New Integer() {10000, 0, 0, 0})
         numHeight.Minimum = New Decimal(New Integer() {360, 0, 0, 0})
@@ -75,8 +77,8 @@ Partial Class frmVideoSettings
         ' 
         btnOK.BackColor = Color.Salmon
         btnOK.FlatStyle = FlatStyle.Flat
-        btnOK.Font = New Font("Segoe UI", 12.0F, FontStyle.Bold)
-        btnOK.Location = New Point(455, 221)
+        btnOK.Font = New Font("Segoe UI", 12F, FontStyle.Bold)
+        btnOK.Location = New Point(455, 283)
         btnOK.Name = "btnOK"
         btnOK.Size = New Size(75, 29)
         btnOK.TabIndex = 3
@@ -86,7 +88,7 @@ Partial Class frmVideoSettings
         ' lblResolution
         ' 
         lblResolution.AutoSize = True
-        lblResolution.Font = New Font("Segoe UI", 12.0F, FontStyle.Bold)
+        lblResolution.Font = New Font("Segoe UI", 12F, FontStyle.Bold)
         lblResolution.ForeColor = Color.Maroon
         lblResolution.Location = New Point(33, 42)
         lblResolution.Name = "lblResolution"
@@ -97,7 +99,7 @@ Partial Class frmVideoSettings
         ' lblWidth
         ' 
         lblWidth.AutoSize = True
-        lblWidth.Font = New Font("Segoe UI", 12.0F, FontStyle.Bold)
+        lblWidth.Font = New Font("Segoe UI", 12F, FontStyle.Bold)
         lblWidth.ForeColor = Color.Maroon
         lblWidth.Location = New Point(33, 92)
         lblWidth.Name = "lblWidth"
@@ -108,7 +110,7 @@ Partial Class frmVideoSettings
         ' lblHeight
         ' 
         lblHeight.AutoSize = True
-        lblHeight.Font = New Font("Segoe UI", 12.0F, FontStyle.Bold)
+        lblHeight.Font = New Font("Segoe UI", 12F, FontStyle.Bold)
         lblHeight.ForeColor = Color.Maroon
         lblHeight.Location = New Point(33, 135)
         lblHeight.Name = "lblHeight"
@@ -119,7 +121,7 @@ Partial Class frmVideoSettings
         ' Label1
         ' 
         Label1.AutoSize = True
-        Label1.Font = New Font("Segoe UI", 12.0F, FontStyle.Bold)
+        Label1.Font = New Font("Segoe UI", 12F, FontStyle.Bold)
         Label1.ForeColor = Color.Maroon
         Label1.Location = New Point(33, 181)
         Label1.Name = "Label1"
@@ -130,7 +132,7 @@ Partial Class frmVideoSettings
         ' numTrailWidth
         ' 
         numTrailWidth.BackColor = Color.LightYellow
-        numTrailWidth.Font = New Font("Segoe UI", 12.0F, FontStyle.Bold)
+        numTrailWidth.Font = New Font("Segoe UI", 12F, FontStyle.Bold)
         numTrailWidth.Location = New Point(259, 179)
         numTrailWidth.Maximum = New Decimal(New Integer() {10, 0, 0, 0})
         numTrailWidth.Minimum = New Decimal(New Integer() {1, 0, 0, 0})
@@ -139,12 +141,36 @@ Partial Class frmVideoSettings
         numTrailWidth.TabIndex = 7
         numTrailWidth.Value = New Decimal(New Integer() {10, 0, 0, 0})
         ' 
+        ' lblTrailSpeedColor
+        ' 
+        lblTrailSpeedColor.AutoSize = True
+        lblTrailSpeedColor.Font = New Font("Segoe UI", 12F, FontStyle.Bold)
+        lblTrailSpeedColor.ForeColor = Color.Maroon
+        lblTrailSpeedColor.Location = New Point(33, 233)
+        lblTrailSpeedColor.Name = "lblTrailSpeedColor"
+        lblTrailSpeedColor.Size = New Size(342, 21)
+        lblTrailSpeedColor.TabIndex = 9
+        lblTrailSpeedColor.Text = "Render the dog's trail color based on speed:"
+        ' 
+        ' cbTrailSpeedColor
+        ' 
+        cbTrailSpeedColor.BackColor = Color.Goldenrod
+        cbTrailSpeedColor.Font = New Font("Segoe UI", 12F, FontStyle.Bold)
+        cbTrailSpeedColor.FormattingEnabled = True
+        cbTrailSpeedColor.Items.AddRange(New Object() {"Yes", "No"})
+        cbTrailSpeedColor.Location = New Point(381, 230)
+        cbTrailSpeedColor.Name = "cbTrailSpeedColor"
+        cbTrailSpeedColor.Size = New Size(63, 29)
+        cbTrailSpeedColor.TabIndex = 10
+        ' 
         ' frmVideoSettings
         ' 
-        AutoScaleDimensions = New SizeF(7.0F, 15.0F)
+        AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         BackColor = Color.DarkSeaGreen
-        ClientSize = New Size(542, 262)
+        ClientSize = New Size(542, 324)
+        Controls.Add(cbTrailSpeedColor)
+        Controls.Add(lblTrailSpeedColor)
         Controls.Add(Label1)
         Controls.Add(numTrailWidth)
         Controls.Add(lblHeight)
@@ -172,4 +198,6 @@ Partial Class frmVideoSettings
     Friend WithEvents lblHeight As Label
     Friend WithEvents Label1 As Label
     Friend WithEvents numTrailWidth As NumericUpDown
+    Friend WithEvents lblTrailSpeedColor As Label
+    Friend WithEvents cbTrailSpeedColor As ComboBox
 End Class

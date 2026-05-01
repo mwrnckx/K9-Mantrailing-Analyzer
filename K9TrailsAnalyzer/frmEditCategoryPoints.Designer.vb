@@ -19,11 +19,14 @@ Partial Class frmEditCategoryPoints
         numPick = New NumericUpDown()
         btnOK = New Button()
         btnCancel = New Button()
+        numTimeLimit = New NumericUpDown()
+        Label1 = New Label()
         CType(numFind, ComponentModel.ISupportInitialize).BeginInit()
         CType(numSpeed, ComponentModel.ISupportInitialize).BeginInit()
         CType(numAcc, ComponentModel.ISupportInitialize).BeginInit()
         CType(numRead, ComponentModel.ISupportInitialize).BeginInit()
         CType(numPick, ComponentModel.ISupportInitialize).BeginInit()
+        CType(numTimeLimit, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
         ' lblFind
@@ -105,11 +108,25 @@ Partial Class frmEditCategoryPoints
         btnCancel.Name = "btnCancel"
         btnCancel.UseVisualStyleBackColor = False
         ' 
+        ' numTimeLimit
+        ' 
+        resources.ApplyResources(numTimeLimit, "numTimeLimit")
+        numTimeLimit.BackColor = SystemColors.Window
+        numTimeLimit.Increment = New Decimal(New Integer() {10, 0, 0, 0})
+        numTimeLimit.Name = "numTimeLimit"
+        ' 
+        ' Label1
+        ' 
+        resources.ApplyResources(Label1, "Label1")
+        Label1.Name = "Label1"
+        ' 
         ' frmEditCategoryPoints
         ' 
         resources.ApplyResources(Me, "$this")
         AutoScaleMode = AutoScaleMode.Font
         BackColor = Color.LightYellow
+        Controls.Add(Label1)
+        Controls.Add(numTimeLimit)
         Controls.Add(btnCancel)
         Controls.Add(btnOK)
         Controls.Add(numPick)
@@ -131,6 +148,7 @@ Partial Class frmEditCategoryPoints
         CType(numAcc, ComponentModel.ISupportInitialize).EndInit()
         CType(numRead, ComponentModel.ISupportInitialize).EndInit()
         CType(numPick, ComponentModel.ISupportInitialize).EndInit()
+        CType(numTimeLimit, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
         PerformLayout()
 
@@ -150,5 +168,7 @@ Partial Class frmEditCategoryPoints
 
     Friend WithEvents btnOK As Button
     Friend WithEvents btnCancel As Button
+    Friend WithEvents numTimeLimit As NumericUpDown
+    Friend WithEvents Label1 As Label
 
 End Class
