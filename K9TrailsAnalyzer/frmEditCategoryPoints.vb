@@ -12,7 +12,7 @@
         numAcc.Value = _categoryInfo.PointsForAccuracyMax
         numRead.Value = _categoryInfo.PointsForDogReadingMax
         numPick.Value = _categoryInfo.PointsForTrailPickupMax
-        numTimeLimit.Value = _categoryInfo.TimeLimitMinutes
+        numTimeLimit.Value = _categoryInfo.TimeLimitMinutesPerKm
     End Sub
 
     Private Sub btnOK_Click(sender As Object, e As EventArgs) Handles btnOK.Click
@@ -21,7 +21,11 @@
         _categoryInfo.PointsForAccuracyMax = CInt(numAcc.Value)
         _categoryInfo.PointsForDogReadingMax = CInt(numRead.Value)
         _categoryInfo.PointsForTrailPickupMax = CInt(numPick.Value)
-        _categoryInfo.TimeLimitMinutes = CInt(numTimeLimit.Value)
+        If numTimeLimit.Value < 33 AndAlso
+            mboxq($"The time limit you entered is very low. Are you sure you want to set the time limit to " & numTimeLimit.Value & " min/km? The minimum recommended value is 33 min/km.", MessageBoxDefaultButton.Button2) = DialogResult.No Then
+            Return
+        End If
+        _categoryInfo.TimeLimitMinutesPerKm = CInt(numTimeLimit.Value)
 
         Me.DialogResult = DialogResult.OK
     End Sub

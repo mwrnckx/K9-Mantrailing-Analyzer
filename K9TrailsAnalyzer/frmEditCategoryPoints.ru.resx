@@ -141,4 +141,7 @@
   <data name="btnCancel.Text" xml:space="preserve">
     <value>Отмена</value>
   </data>
+  <data name="lblTimeLimit.Text" xml:space="preserve">
+    <value>Лимит времени (мин/км):</value>
+  </data>
 </root>

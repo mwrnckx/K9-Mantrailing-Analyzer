@@ -612,13 +612,13 @@ Otherwise, click 'OK'.</value>
     <value>34, 235</value>
   </data>
   <data name="lblNoOFArticles.Size" type="System.Drawing.Size, System.Drawing">
-    <value>208, 21</value>
+    <value>352, 21</value>
   </data>
   <data name="lblNoOFArticles.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
   </data>
   <data name="lblNoOFArticles.Text" xml:space="preserve">
-    <value>Number of items found:</value>
+    <value>Number of checkpoints/found artickles:</value>
   </data>
   <data name="&gt;&gt;lblNoOFArticles.Name" xml:space="preserve">
     <value>lblNoOFArticles</value>

@@ -20,7 +20,7 @@ Partial Class frmEditCategoryPoints
         btnOK = New Button()
         btnCancel = New Button()
         numTimeLimit = New NumericUpDown()
-        Label1 = New Label()
+        lblTimeLimit = New Label()
         CType(numFind, ComponentModel.ISupportInitialize).BeginInit()
         CType(numSpeed, ComponentModel.ISupportInitialize).BeginInit()
         CType(numAcc, ComponentModel.ISupportInitialize).BeginInit()
@@ -115,17 +115,17 @@ Partial Class frmEditCategoryPoints
         numTimeLimit.Increment = New Decimal(New Integer() {10, 0, 0, 0})
         numTimeLimit.Name = "numTimeLimit"
         ' 
-        ' Label1
+        ' lblTimeLimit
         ' 
-        resources.ApplyResources(Label1, "Label1")
-        Label1.Name = "Label1"
+        resources.ApplyResources(lblTimeLimit, "lblTimeLimit")
+        lblTimeLimit.Name = "lblTimeLimit"
         ' 
         ' frmEditCategoryPoints
         ' 
         resources.ApplyResources(Me, "$this")
         AutoScaleMode = AutoScaleMode.Font
         BackColor = Color.LightYellow
-        Controls.Add(Label1)
+        Controls.Add(lblTimeLimit)
         Controls.Add(numTimeLimit)
         Controls.Add(btnCancel)
         Controls.Add(btnOK)
@@ -169,6 +169,6 @@ Partial Class frmEditCategoryPoints
     Friend WithEvents btnOK As Button
     Friend WithEvents btnCancel As Button
     Friend WithEvents numTimeLimit As NumericUpDown
-    Friend WithEvents Label1 As Label
+    Friend WithEvents lblTimeLimit As Label
 
 End Class

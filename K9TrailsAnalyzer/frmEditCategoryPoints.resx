@@ -502,37 +502,37 @@
   <data name="&gt;&gt;numTimeLimit.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="Label1.AutoSize" type="System.Boolean, mscorlib">
+  <data name="lblTimeLimit.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="Label1.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="lblTimeLimit.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="Label1.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="lblTimeLimit.Location" type="System.Drawing.Point, System.Drawing">
     <value>13, 228</value>
   </data>
-  <data name="Label1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+  <data name="lblTimeLimit.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 0, 4, 0</value>
   </data>
-  <data name="Label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>199, 21</value>
+  <data name="lblTimeLimit.Size" type="System.Drawing.Size, System.Drawing">
+    <value>190, 21</value>
   </data>
-  <data name="Label1.TabIndex" type="System.Int32, mscorlib">
+  <data name="lblTimeLimit.TabIndex" type="System.Int32, mscorlib">
     <value>13</value>
   </data>
-  <data name="Label1.Text" xml:space="preserve">
-    <value>Time Limit (minutes):</value>
+  <data name="lblTimeLimit.Text" xml:space="preserve">
+    <value>Time Limit (min/km):</value>
   </data>
-  <data name="&gt;&gt;Label1.Name" xml:space="preserve">
-    <value>Label1</value>
+  <data name="&gt;&gt;lblTimeLimit.Name" xml:space="preserve">
+    <value>lblTimeLimit</value>
   </data>
-  <data name="&gt;&gt;Label1.Type" xml:space="preserve">
+  <data name="&gt;&gt;lblTimeLimit.Type" xml:space="preserve">
     <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;Label1.Parent" xml:space="preserve">
+  <data name="&gt;&gt;lblTimeLimit.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;Label1.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;lblTimeLimit.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

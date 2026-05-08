@@ -141,4 +141,7 @@
   <data name="btnOK.Text" xml:space="preserve">
     <value>Uložit a přepočítat</value>
   </data>
+  <data name="lblTimeLimit.Text" xml:space="preserve">
+    <value>Časový limit (minut/km):</value>
+  </data>
 </root>

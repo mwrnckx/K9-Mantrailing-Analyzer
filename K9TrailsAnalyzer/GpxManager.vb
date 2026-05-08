@@ -818,7 +818,7 @@ Public Class GPXRecord
                         nameNode.InnerText = "First Contact"
                     Else
 
-                        Dim newNamei As String = $"{"Point"} {i}"
+                        Dim newNamei As String = $"{i}"
                         i += 1
 
                         If nameNode IsNot Nothing Then
@@ -858,18 +858,6 @@ Public Class GPXRecord
             Return _runnerStart
         End Get
     End Property
-    'Private _dogName As String
-    'Public ReadOnly Property DogName As String
-    '    Get
-    '        If _dogName <> "" Then Return _dogName
-    '        If Me.LocalisedReports.Count > 0 AndAlso Me.LocalisedReports.First.Value.DogNameText <> "" Then
-    '            _dogName = Me.LocalisedReports.First.Value.DogNameText
-    '        Else
-    '            _dogName = Me.ActiveCategoryInfo.Name
-    '        End If
-    '        Return _dogName
-    '    End Get
-    'End Property
 
     Private _dogStart As TrackGeoPoint
     Public ReadOnly Property DogStart As TrackGeoPoint
@@ -1292,55 +1280,10 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         Debug.WriteLine($"Čas:   {foundTime}")
         Debug.WriteLine($"Bez datumu a času: {cleanedName}")
 
-
-
-
-
-
-
-        '' Regex patterns for different date formats with named groups
-        'Dim datePattern1 As String =
-        '    $"(?<eu>(?<day>[0-2]\d|3[01]){Separator}(?<month>0[1-9]|1[0-2]){Separator}(?<year>\d{{4}}))|" &
-        '    $"(?<us>(?<month>0[1-9]|1[0-2]){Separator}(?<day>[0-2]\d|3[01]){Separator}(?<year>\d{{4}}))|" &
-        '    $"(?<iso>(?<year>\d{{4}}){isoSeparator}(?<month>0[1-9]|1[0-2]){isoSeparator}(?<day>[0-2]\d|3[01]))"
-
-        'Dim datePattern2 As String = $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))" ' Fallback for any three numbers separated
-        '' Regex for time in various formats (not used for date extraction, but for removal)
-        'Dim timeRegex As String = "(?:0?[0-9]|1[0-9]|2[0-3])[-:\.](?:[0-5][0-9])(?:[-:\.](?:[0-5][0-9]))?"
-
-        '' Combine all regex patterns
-        'Dim myRegex As New Regex(datePattern1 & "|" & datePattern2 & "|" & timeRegex)
-
-        'Dim match As Match = myRegex.Match(fileName)
-        'If match.Success Then
         Try
-            '        ' Try to extract year, month, day from named groups
-            '        Dim _year, _month, _day As Integer
-            '        'If match.Groups("year") IsNot Nothing Then
-            '        '    _year = Integer.Parse(match.Groups("year").Value)
-            '        'End If
-            '        If False = match.Groups("year").Success AndAlso match.Groups("eu2").Success Then
-            '            _year = Integer.Parse(match.Groups("year").Value)
-            '            _month = Integer.Parse(match.Groups("month").Value)
-            '            _day = Integer.Parse(match.Groups("day").Value)
-            '        End If
-
-
+            '        
             Dim dateTimeFromFileName As New DateTime
-            '' Determine the date format based on matched group and current culture
-            'If (match.Groups("eu").Success Or match.Groups("eu2").Success) And CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.StartsWith("d") Then
-            '    ' European format: day-month-year
-            '    dateTimeFromFileName = New DateTime(_year, _month, _day)
-            'ElseIf match.Groups("us").Success And CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.StartsWith("M") Then
-            '    ' US format: month-day-year
-            '    dateTimeFromFileName = New DateTime(_year, _month, _day)
-            'ElseIf match.Groups("iso").Success Then
-            '    ' ISO format: year-month-day
-            '    dateTimeFromFileName = New DateTime(_year, _month, _day)
-            'Else
-            '    ' Fallback: year-day-month (may be incorrect if parsing fails)
-            '    dateTimeFromFileName = New DateTime(_year, _day, _month)
-            'End If
+
 
             ' Remove the found date/time string from the file name
             Dim fileNameWithoutDate As String = cleanedName 'myRegex.Replace(fileName, "").Trim()
@@ -1411,10 +1354,6 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
 
 
-            ' Remove unwanted characters from the start and end
-            'Dim charsToTrim As Char() = {"_", "-", ".", " "}
-            'fileNameWithoutDate = fileNameWithoutDate.Replace(".gpx", "")
-            'fileNameWithoutDate = fileNameWithoutDate.TrimStart(charsToTrim).TrimEnd(charsToTrim)
             fileNameWithoutDate = fileNameWithoutDate & extension ' Add .gpx extension back
 
             ' Return the found date and the modified file name
@@ -1423,10 +1362,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             Debug.WriteLine($"{fileName} - Error in date format")
             Return (Nothing, fileName)
         End Try
-        'Else
-        '    Debug.WriteLine($"{fileName} - Date not found")
-        '    Return (Nothing, fileName)
-        'End If
+
     End Function
 
 
@@ -1532,7 +1468,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
                 trailPart = Regex.Replace(trailPart, "^[0-9\.,]+\s*(km|m)(?=\W|$)", "", RegexOptions.IgnoreCase).Trim()
                 trailPart = trailPart.Replace(My.Resources.Resource1.outLength.ToLower & ":", "") ' odstranění vícenásobných mezer
                 trailPart = trailPart.Replace("📏:", "") '
-                trailPart = (Me.TrailDistancekmWeighted).ToString("F1") & NBSP & "km, " & trailPart
+                trailPart = (Me.TrailDistancekmWeighted).ToString("F1") / Me.TrailStats.RunnerTotalDistancekm & NBSP & "km, " & trailPart
             End If
 
         Else
@@ -1766,7 +1702,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         🎯{txtAccuracy}: {Me.TrailStats.PointsInMTCompetition.DogAccuracyPoints} {txtpoints} ({txtof} {Me.ActiveCategoryInfo.PointsForAccuracyMax}){vbCrLf}
         🚀{txtSpeed}: {Me.TrailStats.PointsInMTCompetition.DogSpeedPoints} {txtpoints} ({txtof} {Me.ActiveCategoryInfo.PointsPerTempoMax}){vbCrLf}
         🔀{txtTrailPickup}: {Me.TrailStats.PointsInMTCompetition.TrailPickupPoints} {txtpoints} ({txtof} {Me.ActiveCategoryInfo.PointsForTrailPickupMax}){vbCrLf}
-        ⏱{txtTimeLimit}:  {Me.ActiveCategoryInfo.TimeLimitMinutes} min
+        ⏱{txtTimeLimit}:  {Me.ActiveCategoryInfo.TimeLimitMinutesPerKm} min/km
        "
 
             kvp.Value.PerformancePointsText = performancePoints
@@ -2127,7 +2063,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
             For i = 0 To analysedCheckPoints.Count - 1
                 Dim cp = analysedCheckPoints(i)
-                If cp.time - Me._First_Contact.Time > TimeSpan.FromMinutes(Me.ActiveCategoryInfo.TimeLimitMinutes) Then
+                If cp.time - Me._First_Contact.Time > TimeSpan.FromMinutes(Me.ActiveCategoryInfo.TimeLimitMinutesPerKm * preparedData.RunnerTotalDistance) Then
                     Continue For ' přeskočí checkpointy, které jsou mimo časový limit
                 End If
                 'weight is the distance of the checkPoint from the path of the runner x the relative effective length along the path 
@@ -2231,6 +2167,11 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         Dim finalDogGeoPoints As List(Of TrackGeoPoint) = dogGeoPoints
         Dim finalRunnerGeoPoints As List(Of TrackGeoPoint) = Nothing
         Dim runnerTotalDistance As Double = 0
+        'vypočteme celkovou délku trasy kladeče, která bude použita pro kontrolu zda je time limit smysluplný
+        For i As Integer = 0 To runnerGeoPoints.Count - 2
+            runnerTotalDistance += TrackConverter.HaversineDistance(runnerGeoPoints(i).Location.Lat, runnerGeoPoints(i).Location.Lon, runnerGeoPoints(i + 1).Location.Lat, runnerGeoPoints(i + 1).Location.Lon, "km")
+        Next
+
         Dim RunnerFound As Boolean = False
 
         If (runnerGeoPoints IsNot Nothing AndAlso runnerGeoPoints.Count > 1) Then
@@ -2261,7 +2202,8 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             finalRunnerGeoPoints = runnerGeoPoints.Skip(runnerStartIndex).ToList()
 
             'Logika ukončení pro nesplnění časového limitu pro práci psa TODO!!!!
-            Dim timeLimit As TimeSpan = TimeSpan.FromMinutes(ActiveCategoryInfo.TimeLimitMinutes) 'nastavitelný časový limit pro práci psa od First Contact
+            Dim timeLimit As TimeSpan = TimeSpan.FromMinutes(ActiveCategoryInfo.TimeLimitMinutesPerKm * runnerTotalDistance) 'nastavitelný časový limit pro práci psa od First Contact
+
             For i = 0 To finalDogGeoPoints.Count - 1
                 If finalDogGeoPoints(i).Time - Me._First_Contact.Time > timeLimit Then
                     ' Pokud se časový limit překročí, ořežeme trasu psa do tohoto bodu a ukončíme hledání

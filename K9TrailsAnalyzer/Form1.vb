@@ -2492,8 +2492,8 @@ Public Class CategoryInfo
     <JsonPropertyName("PointsForTrailPickupMax")>
     Public Property PointsForTrailPickupMax As Integer = 5
 
-    <JsonPropertyName("TimeLimitMinutes")>
-    Public Property TimeLimitMinutes As Integer = 20
+    <JsonPropertyName("TimeLimitMinutesPerKm")>
+    Public Property TimeLimitMinutesPerKm As Integer = 40
 
 
     <JsonIgnore>

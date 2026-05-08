@@ -141,4 +141,7 @@
   <data name="btnCancel.Text" xml:space="preserve">
     <value>Stornieren</value>
   </data>
+  <data name="lblTimeLimit.Text" xml:space="preserve">
+    <value>Zeitlimit (Minuten/km):</value>
+  </data>
 </root>

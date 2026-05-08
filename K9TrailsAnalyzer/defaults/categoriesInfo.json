@@ -8,7 +8,8 @@
       "PointsPerTempoMax": 10,
       "PointsForAccuracyMax": 15,
       "PointsForDogReadingMax": 20,
-      "PointsForTrailPickupMax": 5
+      "PointsForTrailPickupMax": 5,
+        "TimeLimitMinutesPerKm": 40
     },
     {
     "id": "002",
@@ -18,7 +19,8 @@
       "PointsPerTempoMax": 10,
       "PointsForAccuracyMax": 15,
       "PointsForDogReadingMax": 20,
-      "PointsForTrailPickupMax": 5
+      "PointsForTrailPickupMax": 5,
+        "TimeLimitMinutesPerKm": 40
     },
      {
     "id": "003",
@@ -28,7 +30,8 @@
     "PointsPerTempoMax": 10,
       "PointsForAccuracyMax": 15,
       "PointsForDogReadingMax": 20,
-      "PointsForTrailPickupMax": 5
+      "PointsForTrailPickupMax": 5,
+        "TimeLimitMinutesPerKm": 40
     }
 ],
   "activeCategory": {
