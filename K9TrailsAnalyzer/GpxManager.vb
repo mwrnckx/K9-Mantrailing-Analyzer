@@ -286,7 +286,8 @@ Public Class GpxFileManager
 
             ' Zpracování každého GPX souboru
             For Each _gpxRecord As GPXRecord In gpxFilesSortedAndFiltered
-                Dim readData = _gpxRecord.ReadSavedDataFromXML(_gpxRecord.LocalisedReports)
+                Try
+                    Dim readData = _gpxRecord.ReadSavedDataFromXML(_gpxRecord.LocalisedReports)
                 Dim isTrackStatsCalculated As Boolean = False
                 If Not readData.isStatsLoaded Then
                     isTrackStatsCalculated = _gpxRecord.CalculateTrackStats(_gpxRecord.TrailStats)
@@ -312,14 +313,14 @@ Public Class GpxFileManager
                         _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.Unknown
                         isTrackStatsCalculated = True
                     ElseIf xmlContent.Contains("known", StringComparison.OrdinalIgnoreCase) Then
-                            _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.KnownTrack
-                            isTrackStatsCalculated = True
-                        ElseIf xmlContent.Contains("Open", StringComparison.OrdinalIgnoreCase) Then
-                            _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.Open
-                            isTrackStatsCalculated = True
-                        End If
+                        _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.KnownTrack
+                        isTrackStatsCalculated = True
+                    ElseIf xmlContent.Contains("Open", StringComparison.OrdinalIgnoreCase) Then
+                        _gpxRecord.TrailStats.LevelOfBlinding = LevelOfBlindingType.Open
+                        isTrackStatsCalculated = True
                     End If
-                    If _gpxRecord.TrailStats.CheckpointsEval IsNot Nothing AndAlso _gpxRecord.TrailStats.NumberOfArticlesFound = 0 Then
+                End If
+                If _gpxRecord.TrailStats.CheckpointsEval IsNot Nothing AndAlso _gpxRecord.TrailStats.NumberOfArticlesFound = 0 Then
                     _gpxRecord.TrailStats.NumberOfArticlesFound = _gpxRecord.TrailStats.CheckpointsEval.Count 'pokud se nenahrály z atributu, načteme počet nalezených checkpointů z jejich počtu v XML
                     isTrackStatsCalculated = True
                 End If
@@ -357,7 +358,7 @@ Public Class GpxFileManager
                     _gpxRecord.IsSaved = False
                 End If
 
-                Try
+
 
                     If _gpxRecord.IsSaved = False Then
                         _gpxRecord.Save() 'obsahuje i modified date
@@ -367,7 +368,7 @@ Public Class GpxFileManager
 
 
                 Catch ex As Exception
-                    MessageBox.Show($"Reading or processing of the file {_gpxRecord.Reader.FileName} failed.")
+                    MessageBox.Show($"Reading or processing of the file {_gpxRecord.Reader.FileName} failed." & vbCrLf & ex.ToString)
                 End Try
 
             Next _gpxRecord
@@ -460,7 +461,7 @@ Public Class GpxFileManager
                         Debug.WriteLine("Skipping: " & Path.GetFileName(remoteFilePath))
                     End If
                 Catch ex As Exception
-
+                    MessageBox.Show($"Reading or processing of the file {Path.GetFileName(remoteFilePath)} failed." & vbCrLf & ex.ToString)
                 End Try
             Next
             RaiseEvent WarningOccurred($"Found {i} new files.", Color.OrangeRed)
@@ -541,54 +542,60 @@ Public Class GpxFileManager
 
         Dim usedIndexes As New HashSet(Of Integer)
         For i = 0 To _gpxRecords.Count - 1
-            If usedIndexes.Contains(i) Then Continue For
-            ' Ensure the record does not already contain both tracks (runner and dog)
-            Dim iHasOnlyRunner = _gpxRecords(i).Tracks.Any(Function(t) t.TrackType = TrackType.RunnerTrail) _
+            Try
+
+                If usedIndexes.Contains(i) Then Continue For
+                ' Ensure the record does not already contain both tracks (runner and dog)
+                Dim iHasOnlyRunner = _gpxRecords(i).Tracks.Any(Function(t) t.TrackType = TrackType.RunnerTrail) _
                 AndAlso Not _gpxRecords(i).Tracks.Any(Function(t) t.TrackType = TrackType.DogTrack)
-            Dim iHasOnlyDog = _gpxRecords(i).Tracks.Any(Function(t) t.TrackType = TrackType.DogTrack) _
-                AndAlso Not _gpxRecords(i).Tracks.Any(Function(t) t.TrackType = TrackType.RunnerTrail)
+                Dim iHasOnlyDog = _gpxRecords(i).Tracks.Any(Function(t) t.TrackType = TrackType.DogTrack) _
+                    AndAlso Not _gpxRecords(i).Tracks.Any(Function(t) t.TrackType = TrackType.RunnerTrail)
 
-            If Not (iHasOnlyRunner Or iHasOnlyDog) Then
-                ' If the record already contains both tracks, add it as is
-                gpxFilesMerged.Add(_gpxRecords(i))
-                usedIndexes.Add(i)
-                Continue For
-            End If
+                If Not (iHasOnlyRunner Or iHasOnlyDog) Then
+                    ' If the record already contains both tracks, add it as is
+                    gpxFilesMerged.Add(_gpxRecords(i))
+                    usedIndexes.Add(i)
+                    Continue For
+                End If
 
-            Dim merged As Boolean = False
-            For j = 0 To _gpxRecords.Count - 1
-                If i = j OrElse usedIndexes.Contains(j) Then Continue For
+                Dim merged As Boolean = False
+                For j = 0 To _gpxRecords.Count - 1
+                    If i = j OrElse usedIndexes.Contains(j) Then Continue For
 
-                Dim jHasRunner = _gpxRecords(j).Tracks.All(Function(t) t.TrackType = TrackType.RunnerTrail)
-                Dim jHasDog = _gpxRecords(j).Tracks.All(Function(t) t.TrackType = TrackType.DogTrack)
+                    Dim jHasRunner = _gpxRecords(j).Tracks.All(Function(t) t.TrackType = TrackType.RunnerTrail)
+                    Dim jHasDog = _gpxRecords(j).Tracks.All(Function(t) t.TrackType = TrackType.DogTrack)
 
-                ' One must be runner, the other must be dog
-                If (iHasOnlyRunner And jHasDog) Or (iHasOnlyDog And jHasRunner) Then
-                    Dim runnerIdx = If(iHasOnlyRunner, i, j)
-                    Dim dogIdx = If(iHasOnlyDog, i, j)
-                    Dim runner = _gpxRecords(runnerIdx)
-                    Dim dog = _gpxRecords(dogIdx)
+                    ' One must be runner, the other must be dog
+                    If (iHasOnlyRunner And jHasDog) Or (iHasOnlyDog And jHasRunner) Then
+                        Dim runnerIdx = If(iHasOnlyRunner, i, j)
+                        Dim dogIdx = If(iHasOnlyDog, i, j)
+                        Dim runner = _gpxRecords(runnerIdx)
+                        Dim dog = _gpxRecords(dogIdx)
 
-                    Dim timeDiff = dog.TrailStart.Time - runner.TrailStart.Time
-                    ' Merge only if the time difference is positive and within the allowed maxAgeForMerge
-                    If timeDiff.TotalSeconds > 0 AndAlso timeDiff <= maxAgeForMerge Then
-                        If TryMerge(dog, runner) Then
-                            gpxFilesMerged.Add(runner)
-                            usedIndexes.Add(runnerIdx)
-                            usedIndexes.Add(dogIdx)
-                            runner.CreateTracks() 'nutné přepočítat tracky, protože jinak proprties vrací staré hodnoty, kde je jen runnerTrail
-                            merged = True
-                            Exit For
+                        Dim timeDiff = dog.TrailStart.Time - runner.TrailStart.Time
+                        ' Merge only if the time difference is positive and within the allowed maxAgeForMerge
+                        If timeDiff.TotalSeconds > 0 AndAlso timeDiff <= maxAgeForMerge Then
+                            If TryMerge(dog, runner) Then
+                                gpxFilesMerged.Add(runner)
+                                usedIndexes.Add(runnerIdx)
+                                usedIndexes.Add(dogIdx)
+                                runner.CreateTracks() 'nutné přepočítat tracky, protože jinak proprties vrací staré hodnoty, kde je jen runnerTrail
+                                merged = True
+                                Exit For
+                            End If
                         End If
                     End If
-                End If
-            Next
 
-            ' If not merged, add the record as is
-            If Not merged AndAlso Not usedIndexes.Contains(i) Then
-                gpxFilesMerged.Add(_gpxRecords(i))
-                usedIndexes.Add(i)
-            End If
+                Next
+
+                ' If not merged, add the record as is
+                If Not merged AndAlso Not usedIndexes.Contains(i) Then
+                    gpxFilesMerged.Add(_gpxRecords(i))
+                    usedIndexes.Add(i)
+                End If
+            Catch ex As Exception
+                MessageBox.Show($"Merging of the file {_gpxRecords(i).Reader.FileName} failed." & vbCrLf & ex.ToString)
+            End Try
         Next
 
         Return gpxFilesMerged
@@ -2168,10 +2175,11 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         Dim finalRunnerGeoPoints As List(Of TrackGeoPoint) = Nothing
         Dim runnerTotalDistance As Double = 0
         'vypočteme celkovou délku trasy kladeče, která bude použita pro kontrolu zda je time limit smysluplný
-        For i As Integer = 0 To runnerGeoPoints.Count - 2
-            runnerTotalDistance += TrackConverter.HaversineDistance(runnerGeoPoints(i).Location.Lat, runnerGeoPoints(i).Location.Lon, runnerGeoPoints(i + 1).Location.Lat, runnerGeoPoints(i + 1).Location.Lon, "km")
-        Next
-
+        If runnerGeoPoints IsNot Nothing AndAlso runnerGeoPoints.Count > 1 Then
+            For i As Integer = 0 To runnerGeoPoints.Count - 2
+                runnerTotalDistance += TrackConverter.HaversineDistance(runnerGeoPoints(i).Location.Lat, runnerGeoPoints(i).Location.Lon, runnerGeoPoints(i + 1).Location.Lat, runnerGeoPoints(i + 1).Location.Lon, "km")
+            Next
+        End If
         Dim RunnerFound As Boolean = False
 
         If (runnerGeoPoints IsNot Nothing AndAlso runnerGeoPoints.Count > 1) Then
@@ -2202,15 +2210,16 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             finalRunnerGeoPoints = runnerGeoPoints.Skip(runnerStartIndex).ToList()
 
             'Logika ukončení pro nesplnění časového limitu pro práci psa TODO!!!!
-            Dim timeLimit As TimeSpan = TimeSpan.FromMinutes(ActiveCategoryInfo.TimeLimitMinutesPerKm * runnerTotalDistance) 'nastavitelný časový limit pro práci psa od First Contact
-
-            For i = 0 To finalDogGeoPoints.Count - 1
-                If finalDogGeoPoints(i).Time - Me._First_Contact.Time > timeLimit Then
-                    ' Pokud se časový limit překročí, ořežeme trasu psa do tohoto bodu a ukončíme hledání
-                    finalDogGeoPoints = finalDogGeoPoints.Take(i).ToList()
-                    Exit For
-                End If
-            Next i
+            If finalRunnerGeoPoints IsNot Nothing Then
+                Dim timeLimit As TimeSpan = TimeSpan.FromMinutes(ActiveCategoryInfo.TimeLimitMinutesPerKm * runnerTotalDistance) 'nastavitelný časový limit pro práci psa od First Contact
+                For i = 0 To finalDogGeoPoints.Count - 1
+                    If finalDogGeoPoints(i).Time - Me._First_Contact.Time > timeLimit Then
+                        ' Pokud se časový limit překročí, ořežeme trasu psa do tohoto bodu a ukončíme hledání
+                        finalDogGeoPoints = finalDogGeoPoints.Take(i).ToList()
+                        Exit For
+                    End If
+                Next i
+            End If
             ' --- LOGIKA VYHLEDÁNÍ CÍle (runner found?) ---
             Dim dogFoundIndex As Integer = finalDogGeoPoints.Count - 1
             Dim minDistanceToRunner As Double = Double.MaxValue
