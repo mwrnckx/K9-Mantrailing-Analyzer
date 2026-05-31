@@ -3120,8 +3120,8 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         Dim datum As String = $"{TrailStart.Time:yyyy-MM-dd}"
         Dim url As String = $"https://api.open-meteo.com/v1/forecast?latitude={TrailStart.Location.Lat.ToString(CultureInfo.InvariantCulture)}&longitude={TrailStart.Location.Lon.ToString(CultureInfo.InvariantCulture)}&start_date={datum}&end_date={datum}&hourly=temperature_2m,wind_speed_10m,soil_temperature_0cm,wind_direction_10m,relative_humidity_2m,cloud_cover,precipitation&wind_speed_unit=ms"
 
-        If TrailStart.Time < Today.AddDays(-6) Then
-            'po šesti dnech jsou k dispozici historická data z archivu
+        If TrailStart.Time.Day < Today.Day Then
+            ' jsou k dispozici historická data z archivu
             url = $"https://archive-api.open-meteo.com/v1/archive?latitude={TrailStart.Location.Lat.ToString(CultureInfo.InvariantCulture)}&longitude={TrailStart.Location.Lon.ToString(CultureInfo.InvariantCulture)}&start_date={datum}&end_date={datum}&hourly=temperature_2m,wind_speed_10m,soil_temperature_0_to_7cm,wind_direction_10m,relative_humidity_2m,cloud_cover,precipitation&wind_speed_unit=ms"
         End If
 
@@ -3143,7 +3143,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
             Dim localTime As DateTime = Me.TrailStart.Time ' ten načtený čas
             Dim utcTime As DateTime = TrailStart.Time.ToUniversalTime()
-            Dim hledanyCasUTC As String = $"{utcTime:yyyy-MM-ddThh:00}"
+            Dim hledanyCasUTC As String = $"{utcTime:yyyy-MM-ddTHH:00}"
 
             ' Teď projdeme všechny časy a najdeme index, kde čas == hledaný čas
             Dim index As Integer = -1

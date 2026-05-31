@@ -666,7 +666,7 @@ Otherwise, click 'OK'.</value>
     <value>10</value>
   </data>
   <data name="cbNumberOfArticlesFound.Location" type="System.Drawing.Point, System.Drawing">
-    <value>276, 231</value>
+    <value>445, 232</value>
   </data>
   <data name="cbNumberOfArticlesFound.Size" type="System.Drawing.Size, System.Drawing">
     <value>121, 29</value>
