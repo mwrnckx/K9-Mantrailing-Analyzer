@@ -178,7 +178,7 @@ Public Class PngRenderer
                                               minTileX As Single, minTileY As Single),
                                               Optional maxDeviation As TrackAsPointsF = Nothing,
                                               Optional waypointsAsPointsF As TrackAsPointsF = Nothing,
-                                             Optional maxDeviationMetres As Double = 0, Optional lastConfirmedIndex As Integer = 0
+                                             Optional maxDeviationMetres As Double = 0, Optional bestCheckPointIndex As Integer = 0
                                               ) As Bitmap
 
         ' Vykresli statické stopy
@@ -310,11 +310,19 @@ Public Class PngRenderer
 
                     ' Pro přístup k souřadnicím použijte Location
                     Dim location As PointF = wpt.Location
-                    Dim _Color As Color = If(wpt.Name = "First Contact", Color.Magenta, waypointsAsPointsF.Color) ' First Contact Point je červeně
-                    If i = lastConfirmedIndex Then
-                        _Color = Color.Cyan ' 
-                        description = "Last Confirmed"
-                    End If
+                    Dim _Color As Color = waypointsAsPointsF.Color
+
+                    Select Case True
+                        Case i = bestCheckPointIndex
+                            _Color = Color.Cyan
+                            description = "Best Checkpoint"
+                        Case wpt.Name = "Time Limit"
+                            _Color = Color.Red
+                            description = "Time Limit" ' Volitelné, pokud chcete nastavit i popisek
+                        Case wpt.Name = "First Contact"
+                            _Color = Color.Magenta
+                    End Select
+
                     Dim contrastColor As Color = GetContrastColor(_Color)
 
                     Dim brush As SolidBrush = New SolidBrush(_Color) ' plná barva pro statické stopy
@@ -350,7 +358,7 @@ Public Class PngRenderer
     Public Function RenderStaticTransparentBackground(tracksAsPointsF As List(Of TrackAsPointsF),
                                                       backgroundTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single),
                                                       Optional waypointsAsPointsF As TrackAsPointsF = Nothing,
-                                                      Optional lastConfirmedIndex As Integer = 0) As Bitmap
+                                                      Optional bestCheckPointIndex As Integer = 0) As Bitmap
         ' Vykresli statické stopy, šipku větru, popisky
 
         Dim staticBmp As New Bitmap(backgroundTiles.bgmap.Width, backgroundTiles.bgmap.Height, PixelFormat.Format32bppArgb)
@@ -417,9 +425,9 @@ Public Class PngRenderer
                     Dim location As PointF = wpt.Location
                     Dim popis As String = wpt.Name
                     Dim _Color As Color = If(wpt.Name = "First Contact", Color.Magenta, waypointsAsPointsF.Color) ' First Contact Point je červeně
-                    If i = lastConfirmedIndex Then
+                    If i = bestCheckPointIndex Then
                         _Color = Color.Cyan ' 
-                        popis = "Last Confirmed"
+                        popis = "Best Check Point"
                     End If
                     Dim contrastColor As Color = GetContrastColor(_Color)
 

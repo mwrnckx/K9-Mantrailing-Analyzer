@@ -759,7 +759,104 @@ Public Class GPXRecord
 
     Dim _wptNodes As TrackAsTrkPts
     Private _First_Contact As TrackGeoPoint = Nothing
+    Private _LastWithinTimeLimit As TrackGeoPoint = Nothing
 
+
+    'Public ReadOnly Property WptNodes As TrackAsTrkPts
+    '    Get
+    '        If _wptNodes IsNot Nothing Then Return _wptNodes
+    '        If Me.Reader Is Nothing Then
+    '            Throw New InvalidOperationException("Reader nebyl nastaven.")
+    '        End If
+
+
+    '        ' --- TADY PŘIDÁME VIRTUÁLNÍ START ---
+    '        If _First_Contact IsNot Nothing Then
+    '            Dim wptNodeList As XmlNodeList = Me.Reader.SelectNodes("wpt") 'když není žádný, vrátí prázdný list
+
+    '            Dim combinedNodes As List(Of XmlNode) = wptNodeList.Cast(Of XmlNode)().ToList()
+    '            Dim i As Integer
+    '            For i = combinedNodes.Count - 1 To 0 Step -1 'projdeme list pozpátku, protože budeme odstraňovat uzly
+    '                ' Najdi uzel <name> uvnitř <wpt> s použitím namespace
+    '                Dim nameNode As XmlNode = TrackConverter.SelectSingleChildNode("name", combinedNodes(i))
+    '                If nameNode IsNot Nothing AndAlso nameNode.InnerText = "First Contact" Then
+    '                    ' vymaže dříve definovaný first contact
+    '                    combinedNodes.Remove(combinedNodes(i))
+    '                End If
+    '            Next
+
+
+    '            ' Vytvoříme uzel 
+    '            Dim startNode As XmlElement = Me.Reader.CreateElement("wpt")
+    '            startNode.SetAttribute("lat", _First_Contact.Location.Lat.ToString(System.Globalization.CultureInfo.InvariantCulture))
+    '            startNode.SetAttribute("lon", _First_Contact.Location.Lon.ToString(System.Globalization.CultureInfo.InvariantCulture))
+
+    '            ' Přidáme čas, aby fungovalo řazení
+    '            ' Nejdříve převedeme na UniversalTime a pak teprve formátujeme
+    '            TrackConverter.CreateAndAddElement(startNode, "time", _First_Contact.Time.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ"), False)
+    '            TrackConverter.CreateAndAddElement(startNode, "name", "First Contact", False) ' Identifikátor
+
+    '            combinedNodes.Add(startNode)
+
+    '            ' 1. Převedeme XmlNodeList na IEnumerable(Of XmlNode) pomocí .Cast(Of XmlNode)
+    '            ' 2. Seřadíme uzly pomocí .OrderBy()
+    '            ' Seřazení (teď už i s tím naším startem)
+    '            Dim sortedWptNodeList As List(Of XmlNode) = combinedNodes.
+    '        OrderBy(Function(node)
+    '                    Dim timenode As XmlNode = TrackConverter.SelectSingleChildNode("time", node)
+    '                    Return If(timenode Is Nothing, DateTime.MinValue, DateTime.Parse(timenode.InnerText))
+    '                End Function).ToList()
+    '            Dim parentNode As XmlNode
+    '            If wptNodeList.Count > 0 Then
+    '                parentNode = wptNodeList(0)?.ParentNode
+    '                For Each wptNode As XmlNode In wptNodeList
+    '                    parentNode.RemoveChild(wptNode) 'odstraní uzel z původního umístění
+    '                Next
+    '            End If
+    '            ' 4. Přidání Seřazených Uzlů Zpět
+    '            ' Přidáme seřazené uzly na konec rodičovského uzlu v novém pořadí.
+    '            i = 1
+    '            '  Dim newName As String = My.Resources.Resource1.article
+    '            ' Pokud je to náš START, pojmenujeme ho 
+    '            For Each wptNode In sortedWptNodeList
+    '                ' Najdi uzel <name> uvnitř <wpt> s použitím namespace
+    '                Dim nameNode As XmlNode = TrackConverter.SelectSingleChildNode("name", wptNode)
+    '                If nameNode IsNot Nothing AndAlso nameNode.InnerText = "First Contact" Then
+    '                    ' Pokud je to místo kde se pes přiblíží na 5 m k trase, pojmenujeme ho "First Contact"
+    '                    nameNode.InnerText = "First Contact"
+    '                Else
+
+    '                    Dim newNamei As String = $"{i}"
+    '                    i += 1
+
+    '                    If nameNode IsNot Nothing Then
+    '                        ' Přepiš hodnotu <name> na newname
+    '                        nameNode.InnerText = $"{newNamei}"
+    '                    Else
+    '                        TrackConverter.CreateAndAddElement(wptNode, "name", newNamei, False)
+    '                    End If
+    '                End If
+    '                If wptNode.ParentNode Is Nothing Then
+    '                    ' Toto je ten náš nový uzel - vložíme ho taky, aby byl vidět v mapě/UI
+    '                    Me.Tracks(0).TrkNode.ParentNode.InsertBefore(wptNode, Me.Tracks(0).TrkNode)
+    '                Else
+    '                    parentNode.InsertBefore(wptNode, Me.Tracks(0).TrkNode)
+    '                End If
+    '                ' ... (konec tvého cyklu For Each wptNode In sortedWptNodeList)
+    '            Next
+    '        End If
+    '        ' TADY JE TO KOUZLO:
+    '        ' Protože jsi všechny uzly (včetně "First Contact") vložil do dokumentu,
+    '        ' prostě se znovu zeptej dokumentu na všechny "wpt" uzly.
+    '        ' Výsledkem bude nový, čerstvý XmlNodeList, který obsahuje vše a v novém pořadí.
+
+    '        Dim finalNodeList As XmlNodeList = Me.Reader.SelectNodes("wpt") ' 
+
+    '        _wptNodes = New TrackAsTrkPts(TrackType.Article, finalNodeList)
+    '        Return _wptNodes
+
+    '    End Get
+    'End Property
 
     Public ReadOnly Property WptNodes As TrackAsTrkPts
         Get
@@ -768,88 +865,91 @@ Public Class GPXRecord
                 Throw New InvalidOperationException("Reader nebyl nastaven.")
             End If
 
-
-            ' --- TADY PŘIDÁME TEN VIRTUÁLNÍ START ---
-            If _First_Contact IsNot Nothing Then
+            ' --- TADY PŘIDÁME VIRTUÁLNÍ BODY (START I KONEC LIMITU) ---
+            ' Spustíme logiku, pokud existuje alespoň jeden z těchto bodů
+            If _First_Contact IsNot Nothing OrElse _LastWithinTimeLimit IsNot Nothing Then
                 Dim wptNodeList As XmlNodeList = Me.Reader.SelectNodes("wpt") 'když není žádný, vrátí prázdný list
 
                 Dim combinedNodes As List(Of XmlNode) = wptNodeList.Cast(Of XmlNode)().ToList()
                 Dim i As Integer
-                For i = combinedNodes.Count - 1 To 0 Step -1 'projdeme list pozpátku, protože budeme odstraňovat uzly
-                    ' Najdi uzel <name> uvnitř <wpt> s použitím namespace
+
+                ' Projdeme list pozpátku a vymažeme dříve definované virtuální body
+                For i = combinedNodes.Count - 1 To 0 Step -1
                     Dim nameNode As XmlNode = TrackConverter.SelectSingleChildNode("name", combinedNodes(i))
-                    If nameNode IsNot Nothing AndAlso nameNode.InnerText = "First Contact" Then
-                        ' vymaže dříve definovaný first contact
-                        combinedNodes.Remove(combinedNodes(i))
+                    If nameNode IsNot Nothing AndAlso (nameNode.InnerText = "First Contact" OrElse nameNode.InnerText = "Time Limit") Then
+                        combinedNodes.RemoveAt(i)
                     End If
                 Next
 
+                ' Vytvoříme uzel pro First Contact, pokud existuje
+                If _First_Contact IsNot Nothing Then
+                    Dim startNode As XmlElement = Me.Reader.CreateElement("wpt")
+                    startNode.SetAttribute("lat", _First_Contact.Location.Lat.ToString(System.Globalization.CultureInfo.InvariantCulture))
+                    startNode.SetAttribute("lon", _First_Contact.Location.Lon.ToString(System.Globalization.CultureInfo.InvariantCulture))
 
-                ' Vytvoříme uzel 
-                Dim startNode As XmlElement = Me.Reader.CreateElement("wpt")
-                startNode.SetAttribute("lat", _First_Contact.Location.Lat.ToString(System.Globalization.CultureInfo.InvariantCulture))
-                startNode.SetAttribute("lon", _First_Contact.Location.Lon.ToString(System.Globalization.CultureInfo.InvariantCulture))
+                    TrackConverter.CreateAndAddElement(startNode, "time", _First_Contact.Time.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ"), False)
+                    TrackConverter.CreateAndAddElement(startNode, "name", "First Contact", False)
 
-                ' Přidáme čas, aby fungovalo řazení
-                ' Nejdříve převedeme na UniversalTime a pak teprve formátujeme
-                TrackConverter.CreateAndAddElement(startNode, "time", _First_Contact.Time.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ"), False)
-                TrackConverter.CreateAndAddElement(startNode, "name", "First Contact", False) ' Identifikátor
+                    combinedNodes.Add(startNode)
+                End If
 
-                combinedNodes.Add(startNode)
+                ' Vytvoříme uzel pro Last Within Time Limit, pokud existuje
+                If _LastWithinTimeLimit IsNot Nothing Then
+                    Dim endNode As XmlElement = Me.Reader.CreateElement("wpt")
+                    endNode.SetAttribute("lat", _LastWithinTimeLimit.Location.Lat.ToString(System.Globalization.CultureInfo.InvariantCulture))
+                    endNode.SetAttribute("lon", _LastWithinTimeLimit.Location.Lon.ToString(System.Globalization.CultureInfo.InvariantCulture))
 
-                ' 1. Převedeme XmlNodeList na IEnumerable(Of XmlNode) pomocí .Cast(Of XmlNode)
-                ' 2. Seřadíme uzly pomocí .OrderBy()
-                ' Seřazení (teď už i s tím naším startem)
+                    TrackConverter.CreateAndAddElement(endNode, "time", _LastWithinTimeLimit.Time.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ"), False)
+                    TrackConverter.CreateAndAddElement(endNode, "name", "Time Limit", False)
+
+                    combinedNodes.Add(endNode)
+                End If
+
+                ' Seřazení uzlů podle času
                 Dim sortedWptNodeList As List(Of XmlNode) = combinedNodes.
-            OrderBy(Function(node)
-                        Dim timenode As XmlNode = TrackConverter.SelectSingleChildNode("time", node)
-                        Return If(timenode Is Nothing, DateTime.MinValue, DateTime.Parse(timenode.InnerText))
-                    End Function).ToList()
+                  OrderBy(Function(node)
+                              Dim timenode As XmlNode = TrackConverter.SelectSingleChildNode("time", node)
+                              Return If(timenode Is Nothing, DateTime.MinValue, DateTime.Parse(timenode.InnerText))
+                          End Function).ToList()
+
                 Dim parentNode As XmlNode
                 If wptNodeList.Count > 0 Then
                     parentNode = wptNodeList(0)?.ParentNode
                     For Each wptNode As XmlNode In wptNodeList
-                        parentNode.RemoveChild(wptNode) 'odstraní uzel z původního umístění
+                        parentNode.RemoveChild(wptNode) ' odstraní uzel z původního umístění
                     Next
                 End If
-                ' 4. Přidání Seřazených Uzlů Zpět
-                ' Přidáme seřazené uzly na konec rodičovského uzlu v novém pořadí.
-                i = 1
-                '  Dim newName As String = My.Resources.Resource1.article
-                ' Pokud je to náš START, pojmenujeme ho 
-                For Each wptNode In sortedWptNodeList
-                    ' Najdi uzel <name> uvnitř <wpt> s použitím namespace
-                    Dim nameNode As XmlNode = TrackConverter.SelectSingleChildNode("name", wptNode)
-                    If nameNode IsNot Nothing AndAlso nameNode.InnerText = "First Contact" Then
-                        ' Pokud je to místo kde se pes přiblíží na 5 m k trase, pojmenujeme ho "First Contact"
-                        nameNode.InnerText = "First Contact"
-                    Else
 
+                ' Přidání seřazených uzlů zpět
+                i = 1
+                For Each wptNode In sortedWptNodeList
+                    Dim nameNode As XmlNode = TrackConverter.SelectSingleChildNode("name", wptNode)
+
+                    ' Naše virtuální body nepřepisujeme číslem
+                    If nameNode IsNot Nothing AndAlso (nameNode.InnerText = "First Contact" OrElse nameNode.InnerText = "Last Within Time Limit") Then
+                        ' Zůstává původní název
+                    Else
                         Dim newNamei As String = $"{i}"
                         i += 1
 
                         If nameNode IsNot Nothing Then
-                            ' Přepiš hodnotu <name> na newname
                             nameNode.InnerText = $"{newNamei}"
                         Else
                             TrackConverter.CreateAndAddElement(wptNode, "name", newNamei, False)
                         End If
                     End If
+
+                    ' Vložení do dokumentu
                     If wptNode.ParentNode Is Nothing Then
-                        ' Toto je ten náš nový uzel - vložíme ho taky, aby byl vidět v mapě/UI
                         Me.Tracks(0).TrkNode.ParentNode.InsertBefore(wptNode, Me.Tracks(0).TrkNode)
                     Else
                         parentNode.InsertBefore(wptNode, Me.Tracks(0).TrkNode)
                     End If
-                    ' ... (konec tvého cyklu For Each wptNode In sortedWptNodeList)
                 Next
             End If
-            ' TADY JE TO KOUZLO:
-            ' Protože jsi všechny uzly (včetně "First Contact") vložil do dokumentu,
-            ' prostě se znovu zeptej dokumentu na všechny "wpt" uzly.
-            ' Výsledkem bude nový, čerstvý XmlNodeList, který obsahuje vše a v novém pořadí.
 
-            Dim finalNodeList As XmlNodeList = Me.Reader.SelectNodes("wpt") ' 
+            ' Načtení finálního stavu
+            Dim finalNodeList As XmlNodeList = Me.Reader.SelectNodes("wpt")
 
             _wptNodes = New TrackAsTrkPts(TrackType.Article, finalNodeList)
             Return _wptNodes
@@ -2215,7 +2315,9 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
                 For i = 0 To finalDogGeoPoints.Count - 1
                     If finalDogGeoPoints(i).Time - Me._First_Contact.Time > timeLimit Then
                         ' Pokud se časový limit překročí, ořežeme trasu psa do tohoto bodu a ukončíme hledání
-                        finalDogGeoPoints = finalDogGeoPoints.Take(i).ToList()
+                        finalDogGeoPoints = finalDogGeoPoints.Take(i - 1).ToList()
+                        'poslední bod trasy psa přidat jako waypoint s informací o překročení časového limitu
+                        Me._LastWithinTimeLimit = finalDogGeoPoints.Last()
                         Exit For
                     End If
                 Next i
@@ -2247,7 +2349,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
 
             ' --- REKALKULACE TOTAL DISTANCE --- (pouze z ořezaných dat)
-
+            runnerTotalDistance = 0
             If finalRunnerGeoPoints IsNot Nothing Then
                 For i As Integer = 0 To finalRunnerGeoPoints.Count - 2
                     runnerTotalDistance += TrackConverter.HaversineDistance(finalRunnerGeoPoints(i).Location.Lat, finalRunnerGeoPoints(i).Location.Lon, finalRunnerGeoPoints(i + 1).Location.Lat, finalRunnerGeoPoints(i + 1).Location.Lon, "km")
@@ -2261,8 +2363,15 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             ' časový interval mezi body 
             dogTotalTime += (finalDogGeoPoints(i + 1).Time - finalDogGeoPoints(i).Time)
         Next
-
-        Return (finalDogGeoPoints, finalRunnerGeoPoints, lat0, lon0, runnerTotalDistance, dogTotalDist, dogTotalTime, RunnerFound)
+        Return (PurifiedDogGeoPoints:=finalDogGeoPoints,
+        PurifiedRunnerGeoPoints:=finalRunnerGeoPoints,
+        Lat0:=lat0,
+        Lon0:=lon0,
+        RunnerTotalDistance:=runnerTotalDistance,
+        dogTotalDistance:=dogTotalDist,
+        dogTotalTime:=dogTotalTime,
+        RunnerFound:=RunnerFound)
+        'Return (finalDogGeoPoints, finalRunnerGeoPoints, lat0, lon0, runnerTotalDistance, dogTotalDist, dogTotalTime, RunnerFound)
     End Function
 
 
@@ -2284,7 +2393,9 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             Dim converted = converter.ConvertTrackTrkPtsToGeoPoints(checkPoints).TrackGeoPoints
             If converted IsNot Nothing Then
                 ' Seřazení podle času, pokud je k dispozici
-                pointsToEvaluate.AddRange(converted.OrderBy(Function(p) p.Time))
+                'pointsToEvaluate.AddRange(converted.OrderBy(Function(p) p.Time))
+                'vynecháme bod s názvem "Time Limit", protože ten je jen informativní a nemá být vyhodnocován jako checkpoint
+                pointsToEvaluate.AddRange(converted.Where(Function(p) p.name <> "Time Limit").OrderBy(Function(p) p.Time))
             End If
         End If
 
@@ -3495,7 +3606,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         SetAttributeDouble(trailStatsNode, "dogGrossSpeed", statsData.DogGrossSpeedkmh, "G2")
         SetAttributeDouble(trailStatsNode, "averDeviation", statsData.AverDeviation, "F1")
         SetAttributeDouble(trailStatsNode, "TrailPickupFactorPerCent", statsData.TrailPickupFactorPerCent, "F0")
-        SetAttributeDouble(trailStatsNode, "LastConfirmedPointIndex", statsData.BestCheckPointIndex, "F0")
+        SetAttributeDouble(trailStatsNode, "bestCheckPointIndex", statsData.BestCheckPointIndex, "F0")
         SetAttributeDouble(trailStatsNode, "NumberOfArticlesFound", statsData.NumberOfArticlesFound, "F0")
         SetAttributeString(trailStatsNode, "DogName", statsData.DogName)
         SetAttributeString(trailStatsNode, "HandlerName", statsData.HandlerName)
@@ -3613,7 +3724,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
               .RunnerTotalDistancekm = ParseDouble(statsNode, "runnerDistance"),
         .DogTotalDistancekm = ParseDouble(statsNode, "dogDistance"),
         .DogTotalTime = ParseTimeSpan(statsNode, "totalTime"),
-          .BestCheckPointIndex = ParseDouble(statsNode, "LastConfirmedPointIndex"),
+          .BestCheckPointIndex = ParseDouble(statsNode, "bestCheckPointIndex"),
             .NumberOfArticlesFound = ParseInteger(statsNode, "NumberOfArticlesFound"),
             .DogName = If(statsNode.Attributes("DogName")?.Value, Me.ActiveCategoryInfo.Name),
             .HandlerName = statsNode.Attributes("HandlerName")?.Value,
