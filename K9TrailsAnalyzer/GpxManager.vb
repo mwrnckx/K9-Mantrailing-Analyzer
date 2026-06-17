@@ -926,7 +926,7 @@ Public Class GPXRecord
                     Dim nameNode As XmlNode = TrackConverter.SelectSingleChildNode("name", wptNode)
 
                     ' Naše virtuální body nepřepisujeme číslem
-                    If nameNode IsNot Nothing AndAlso (nameNode.InnerText = "First Contact" OrElse nameNode.InnerText = "Last Within Time Limit") Then
+                    If nameNode IsNot Nothing AndAlso (nameNode.InnerText = "First Contact" OrElse nameNode.InnerText = "Time Limit") Then
                         ' Zůstává původní název
                     Else
                         Dim newNamei As String = $"{i}"
@@ -2170,7 +2170,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
             For i = 0 To analysedCheckPoints.Count - 1
                 Dim cp = analysedCheckPoints(i)
-                If cp.time - Me._First_Contact.Time > TimeSpan.FromMinutes(Me.ActiveCategoryInfo.TimeLimitMinutesPerKm * preparedData.RunnerTotalDistance) Then
+                If cp.time - Me._First_Contact.Time > preparedData.timeLimit Then
                     Continue For ' přeskočí checkpointy, které jsou mimo časový limit
                 End If
                 'weight is the distance of the checkPoint from the path of the runner x the relative effective length along the path 
@@ -2204,6 +2204,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             .TrailPickupFactorPerCent = If(preparedData.PurifiedRunnerGeoPoints IsNot Nothing, PickupFactor(preparedData.PurifiedDogGeoPoints, preparedData.PurifiedRunnerGeoPoints) * 100, 0)
             .BestCheckPointIndex = max_index
             .DogName = If(.DogName, Me.ActiveCategoryInfo.Name)
+            .TimeLimit = preparedData.timeLimit
         End With
 
         Return True
@@ -2233,7 +2234,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
     ''' Pokud trasa běžce neexistuje, First Contact se nehledá a ořezání se neprovádí.
     ''' </remarks>
     Private Function PrepareTrackData(dogTrkNode As XmlNode, runnerTrkNode As XmlNode) _
-    As (PurifiedDogGeoPoints As List(Of TrackGeoPoint), PurifiedRunnerGeoPoints As List(Of TrackGeoPoint), Lat0 As Double, Lon0 As Double, RunnerTotalDistance As Double, dogTotalDistance As Double, dogTotalTime As TimeSpan, RunnerFound As Boolean)
+    As (PurifiedDogGeoPoints As List(Of TrackGeoPoint), PurifiedRunnerGeoPoints As List(Of TrackGeoPoint), Lat0 As Double, Lon0 As Double, RunnerTotalDistance As Double, dogTotalDistance As Double, dogTotalTime As TimeSpan, RunnerFound As Boolean, timeLimit As TimeSpan)
 
         Dim conv As New TrackConverter()
         Const PICKUP_ACTIVATION_THRESHOLD_M As Double = 5.0
@@ -2265,7 +2266,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             runnerGeoPoints = runnerTrkAsGeoPoints.TrackGeoPoints
         End If
 
-        If dogGeoPoints Is Nothing OrElse dogGeoPoints.Count = 0 Then Return (Nothing, Nothing, 0, 0, 0, 0, TimeSpan.Zero, False)
+        If dogGeoPoints Is Nothing OrElse dogGeoPoints.Count = 0 Then Return (Nothing, Nothing, 0, 0, 0, 0, TimeSpan.Zero, False, TimeSpan.Zero)
 
         ' Reference (Lat0, Lon0)
         Dim lat0 As Double = If(runnerGeoPoints IsNot Nothing AndAlso runnerGeoPoints.Count > 0, runnerGeoPoints(0).Location.Lat, dogGeoPoints(0).Location.Lat)
@@ -2274,6 +2275,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         Dim finalDogGeoPoints As List(Of TrackGeoPoint) = dogGeoPoints
         Dim finalRunnerGeoPoints As List(Of TrackGeoPoint) = Nothing
         Dim runnerTotalDistance As Double = 0
+        Dim timeLimit As TimeSpan = TimeSpan.Zero
         'vypočteme celkovou délku trasy kladeče, která bude použita pro kontrolu zda je time limit smysluplný
         If runnerGeoPoints IsNot Nothing AndAlso runnerGeoPoints.Count > 1 Then
             For i As Integer = 0 To runnerGeoPoints.Count - 2
@@ -2287,6 +2289,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             Dim dogStartIndex As Integer = 0
             Dim runnerStartIndex As Integer = 0
             Dim foundFirstContact As Boolean = False
+
             Me._First_Contact = dogGeoPoints(0) 'pokud se nenajde vezme se první bod trasy psa
             For i As Integer = 0 To dogGeoPoints.Count - 1
                 ' Hledáme první bod na trase psa který se přiblížil na 5 m ke trase kladeče
@@ -2311,7 +2314,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
             'Logika ukončení pro nesplnění časového limitu pro práci psa TODO!!!!
             If finalRunnerGeoPoints IsNot Nothing Then
-                Dim timeLimit As TimeSpan = TimeSpan.FromMinutes(ActiveCategoryInfo.TimeLimitMinutesPerKm * runnerTotalDistance) 'nastavitelný časový limit pro práci psa od First Contact
+                timeLimit = TimeSpan.FromMinutes(ActiveCategoryInfo.TimeLimitMinutesPerKm * runnerTotalDistance) 'nastavitelný časový limit pro práci psa od First Contact
                 For i = 0 To finalDogGeoPoints.Count - 1
                     If finalDogGeoPoints(i).Time - Me._First_Contact.Time > timeLimit Then
                         ' Pokud se časový limit překročí, ořežeme trasu psa do tohoto bodu a ukončíme hledání
@@ -2346,8 +2349,6 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             ' Ponecháme jen body od začátku do dogFoundIndex (pokud se kladeč našel), pokud se kladeč nenašel, ponecháme trasu psa celou od startu do konce
             finalDogGeoPoints = finalDogGeoPoints.Take(dogFoundIndex + 1).ToList() ' pokud se kladeč našel, ořežeme trasu psa i na konci, pokud ne, ponecháme ji celou od startu do konce
 
-
-
             ' --- REKALKULACE TOTAL DISTANCE --- (pouze z ořezaných dat)
             runnerTotalDistance = 0
             If finalRunnerGeoPoints IsNot Nothing Then
@@ -2370,8 +2371,8 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         RunnerTotalDistance:=runnerTotalDistance,
         dogTotalDistance:=dogTotalDist,
         dogTotalTime:=dogTotalTime,
-        RunnerFound:=RunnerFound)
-        'Return (finalDogGeoPoints, finalRunnerGeoPoints, lat0, lon0, runnerTotalDistance, dogTotalDist, dogTotalTime, RunnerFound)
+        RunnerFound:=RunnerFound,
+        timelimit:=timelimit)
     End Function
 
 
@@ -3616,6 +3617,8 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         ' 4. Nastavení atributů pro TimeSpan
         SetAttributeTimeSpan(trailStatsNode, "trailAge", statsData.TrailAge, "F0")
         SetAttributeTimeSpan(trailStatsNode, "totalTime", statsData.DogTotalTime, "F0")
+        SetAttributeTimeSpan(trailStatsNode, "TimeLimit", statsData.TimeLimit, "F0")
+
 
 
         ' 5. Nastavení atributů pro Boolean
@@ -3724,6 +3727,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
               .RunnerTotalDistancekm = ParseDouble(statsNode, "runnerDistance"),
         .DogTotalDistancekm = ParseDouble(statsNode, "dogDistance"),
         .DogTotalTime = ParseTimeSpan(statsNode, "totalTime"),
+        .TimeLimit = ParseTimeSpan(statsNode, "TimeLimit"),
           .BestCheckPointIndex = ParseDouble(statsNode, "bestCheckPointIndex"),
             .NumberOfArticlesFound = ParseInteger(statsNode, "NumberOfArticlesFound"),
             .DogName = If(statsNode.Attributes("DogName")?.Value, Me.ActiveCategoryInfo.Name),

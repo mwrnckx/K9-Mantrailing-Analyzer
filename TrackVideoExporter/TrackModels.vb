@@ -7,6 +7,13 @@ Public Class TrackPointF
     Public Property Location As PointF
     Public Property Time As DateTime
     Public Property Name As String
+    Public Sub New(loc As PointF, t As DateTime)
+        Location = loc
+        Time = t
+    End Sub
+    Public Sub New()
+
+    End Sub
 End Class
 
 Public MustInherit Class TrackAs 'track as vzor pro všechny třídy reprezentující trasy
@@ -536,6 +543,7 @@ Public Class TrailStats
     Public Property MaxDistAlongTrailWeightedPerCent As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
     Public Property TrailAge As TimeSpan ' age of the trail 
     Public Property DogTotalTime As TimeSpan ' total time of the dog's route
+    Public Property TimeLimit As TimeSpan ' time limit dle délky trailu
     Public Property DogGrossSpeedkmh As Double 'gross speed calculated from the last checkpoint or the dog's last point if the dog is close to the track
     Public Property AverDeviation As Double ' average deviation in metres of the entire dog's route from the runner's track
     Public Property AverWeightOfDeviation As Double 'average weight of deviation in <0,1> of the entire dog's route from the runner's track

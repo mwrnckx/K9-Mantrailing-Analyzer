@@ -173,7 +173,15 @@ Namespace TrackVideoExporter
                                renderer.CreateWindArrowBitmap(outputDir)
                                Dim staticBgTransparent = renderer.RenderStaticTransparentBackground(_tracksAsPointsF, backgroundTiles, waypointsAsPointsF, bestCheckPointIndex)
                                Dim staticBgMap = renderer.RenderStaticMap(_tracksAsPointsF, backgroundTiles, maxDeviationAsPointsF, waypointsAsPointsF, maxDeviationMetres, bestCheckPointIndex)
+                               Dim afterTimeLimitTime As DateTime? = Nothing
 
+                               ' Najdeme první bod, který se jmenuje "Time Limit"
+                               Dim timeLimitPoint = waypointsAsPointsF.TrackPointsF.FirstOrDefault(Function(tp) tp.Name = "Time Limit")
+
+                               ' Pokud takový bod existuje, uložíme jeho čas
+                               If timeLimitPoint IsNot Nothing Then
+                                   afterTimeLimitTime = timeLimitPoint.Time
+                               End If
 
                                pngCreator = New PngSequenceCreator(renderer, videoSettings)
 
@@ -181,7 +189,7 @@ Namespace TrackVideoExporter
                                pngCreator.CreateReports(outputDir, Me.LocalisedReports)
                                pngCreator.CreateFrames(_tracksAsPointsF,
                                         staticBgTransparent, staticBgMap, backgroundTiles.bgmap,
-                                        outputDir, pngTimes)
+                                        outputDir, pngTimes, afterTimeLimitTime)
 
                            End Sub)
 

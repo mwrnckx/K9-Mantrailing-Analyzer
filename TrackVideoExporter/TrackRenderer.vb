@@ -56,7 +56,7 @@ Public Class PngSequenceCreator
             staticTextbmpPoints.Save(filenamePoints, ImageFormat.Png)
         Next key
     End Sub
-    Public Sub CreateFrames(tracks As List(Of TrackAsPointsF), staticBgTransparent As Bitmap, staticbgMap As Bitmap, bgMap As Bitmap, outputDir As DirectoryInfo, pngTimes As List(Of DateTime))
+    Public Sub CreateFrames(tracks As List(Of TrackAsPointsF), staticBgTransparent As Bitmap, staticbgMap As Bitmap, bgMap As Bitmap, outputDir As DirectoryInfo, pngTimes As List(Of DateTime), Optional afterTimeLimitTime As DateTime? = Nothing)
 
         ' Vytvoříme statický obrázek s mapou 
         If staticbgMap IsNot Nothing Then
@@ -82,11 +82,11 @@ Public Class PngSequenceCreator
         Dim durationSeconds = (endTime - startTime).TotalSeconds
         frameInterval = 1 '
 
-        Dim _dogTrail As New List(Of PointF)
+        Dim _dogTrail As New List(Of TrackPointF)
         Dim frameCount = CInt(Math.Ceiling(durationSeconds / frameInterval)) 'počet dynamických snímků
         For frameindex As Integer = 0 To frameCount - 1
             Dim frameTime = pngTimes.First().AddSeconds((frameindex) * frameInterval)
-            Dim frame = renderer.RenderFrame(tracks, staticBgTransparent, frameTime, _dogTrail)
+            Dim frame = renderer.RenderFrame(tracks, staticBgTransparent, frameTime, _dogTrail, afterTimeLimitTime)
             Dim frameNumber As String = (frameindex).ToString("D4")
             Dim filename = IO.Path.Combine(pngDir.FullName, $"frame_{frameNumber}.png")
             frame.Save(filename, ImageFormat.Png)
@@ -121,7 +121,7 @@ Public Class PngRenderer
     Private trackBounds As RectangleF
     Private myWindArrow As Bitmap
     Private videoSize As Size
-    Private dogTrailSpeedColor As Boolean
+    Private dogTrailColorbySpeed As Boolean
 
     'Dim diagonal As Single
     Dim radius As Single ' poloměr kruhu pro poslední bod, ideálně 5m v pixelech, ale protože se mění s latitudou, bude se přepočítávat v konstruktoru
@@ -141,7 +141,7 @@ Public Class PngRenderer
         Me.windDirection = windDirection
         Me.windSpeed = windSpeed
         Me.videoSize = New Size(VideoSettings.VideoWidth, VideoSettings.VideoHeight)
-        Me.dogTrailSpeedColor = VideoSettings.DogTrailSpeedColor
+        Me.dogTrailColorbySpeed = VideoSettings.DogTrailSpeedColor
         Me.latitude = latitude
         Me.trackBounds = bgTiles.bgmap.GetBounds(GraphicsUnit.Pixel) 'přepočítá obdélník na souřadnice v pixelech
         Dim videoRatio = videoSize.Width / videoSize.Height
@@ -185,6 +185,7 @@ Public Class PngRenderer
         ' Vrátí bitmapu s podkladem
 
         Dim staticMap = New Bitmap(backgroundTiles.bgmap)
+        Dim afterTimeLimitTime As DateTime? = Nothing
 
         Using g As Graphics = Graphics.FromImage(staticMap)
             g.SmoothingMode = SmoothingMode.AntiAlias
@@ -195,6 +196,55 @@ Public Class PngRenderer
                 DrawWindArrow(g, position, scale, myWindArrow)
                 'DrawWindArrow(g, TrackPoints(0), arrowlength, windDirection, windSpeed)
             End If
+
+            If waypointsAsPointsF IsNot Nothing AndAlso waypointsAsPointsF.TrackPointsF.Count > 0 Then
+
+                ' 1. Seřadíme původní body (TrackPointsF) podle Time vzestupně (od nejstaršího k nejmladšímu)
+                Dim sortedTrackPoints = waypointsAsPointsF.TrackPointsF.OrderBy(Function(tp) tp.Time)
+
+                ' 2. Následně můžeme iterovat seřazenou kolekci, kde každý prvek je stále původní typ 
+                '    s vlastností Location a Time.
+                Dim i As Integer = 0
+                For Each wpt In sortedTrackPoints
+                    Dim description As String = wpt.Name ' $"checkpoint {i}" 'waypointsAsPointsF.Label
+
+                    ' Pro přístup k souřadnicím použijte Location
+                    Dim location As PointF = wpt.Location
+                    Dim _Color As Color = waypointsAsPointsF.Color
+
+                    Select Case True
+                        Case i = bestCheckPointIndex
+                            _Color = Color.Cyan
+                            description = "Best Checkpoint"
+                        Case wpt.Name = "Time Limit"
+                            _Color = Color.DarkGray
+                            afterTimeLimitTime = wpt.Time
+                            description = "Time Limit" ' Volitelné, pokud chcete nastavit i popisek
+                        Case wpt.Name = "First Contact"
+                            _Color = Color.Magenta
+                    End Select
+
+                    Dim contrastColor As Color = GetContrastColor(_Color)
+
+                    Dim brush As SolidBrush = New SolidBrush(_Color) ' plná barva pro statické stopy
+
+
+                    g.FillEllipse(brush, location.X - radius / 2, location.Y - radius / 2, radius, radius)
+                    Dim textSize = g.MeasureString(description, font)
+                    Dim textoffsetX As Single
+                    If location.X - textSize.Width - radius < 0 Then
+                        ' no space left, type text to the right of the ellipsis
+                        textoffsetX = radius
+                    Else
+                        ' there's room, write the text on the left
+                        textoffsetX = -textSize.Width - radius
+                    End If
+                    Dim textPos As New PointF(location.X + textoffsetX, location.Y - textSize.Height / 2)
+                    If Not waypointsAsPointsF.IsMoving Then DrawTextWithOutline(g, description, font, _Color, contrastColor, textPos, 5)
+                    i += 1
+                Next
+            End If
+
             For Each track In tracksAsPointsF
                 ' 2. Vytvoř pero a nastav mu kulaté spoje a zakončení
                 Dim alpha As Integer = 255
@@ -226,9 +276,13 @@ Public Class PngRenderer
                             Dim speed As Double = If(timeDiff > 0, distance / timeDiff, 0) ' Rychlost mezi dvěma body v m/s, ošetření dělení nulou
                             'Debug.WriteLine($"render:  {speed}")
                             Dim maxExpectedSpeed As Double = 1.3888 'm/s = 5 km/h, rychlost, která odpovídá přibližně rychlosti pohybu psa na stopě, použijeme ji pro určení barevné škály, kde rychlejší pohyb bude červenější a pomalejší zelenější
-                            speed = If(dogTrailSpeedColor, speed, maxExpectedSpeed) ' pokud nechceme barevně odlišovat rychlost pohybu psa, nastavíme všechny úseky na maxExpectedSpeed, aby byly všechny stejně červené)
+
+                            Dim isAfterTimeLimit As Boolean = False
+                            If track.TrackPointsF(i).Time > afterTimeLimitTime Then
+                                isAfterTimeLimit = True
+                            End If
                             ' Použijeme Using, aby se Pen (pero) správně uvolnilo z paměti
-                            Using pen As New Pen(GetColorBySpeed(speed, maxExpectedSpeed), penWidth)
+                            Using pen As New Pen(GetColorBySpeed(speed, maxExpectedSpeed, isAfterTimeLimit, dogTrailColorbySpeed), penWidth)
                                 ' Zakulacení konců čar, aby na sebe plynule navazovaly
                                 pen.StartCap = Drawing2D.LineCap.Round
                                 pen.EndCap = Drawing2D.LineCap.Round
@@ -297,52 +351,7 @@ Public Class PngRenderer
                 DrawTextWithOutline(g, description, font, deviationColor, contrastColor, textPos, 5)
             End If
 
-            If waypointsAsPointsF IsNot Nothing AndAlso waypointsAsPointsF.TrackPointsF.Count > 0 Then
 
-                ' 1. Seřadíme původní body (TrackPointsF) podle Time vzestupně (od nejstaršího k nejmladšímu)
-                Dim sortedTrackPoints = waypointsAsPointsF.TrackPointsF.OrderBy(Function(tp) tp.Time)
-
-                ' 2. Následně můžeme iterovat seřazenou kolekci, kde každý prvek je stále původní typ 
-                '    s vlastností Location a Time.
-                Dim i As Integer = 0
-                For Each wpt In sortedTrackPoints
-                    Dim description As String = wpt.Name ' $"checkpoint {i}" 'waypointsAsPointsF.Label
-
-                    ' Pro přístup k souřadnicím použijte Location
-                    Dim location As PointF = wpt.Location
-                    Dim _Color As Color = waypointsAsPointsF.Color
-
-                    Select Case True
-                        Case i = bestCheckPointIndex
-                            _Color = Color.Cyan
-                            description = "Best Checkpoint"
-                        Case wpt.Name = "Time Limit"
-                            _Color = Color.Red
-                            description = "Time Limit" ' Volitelné, pokud chcete nastavit i popisek
-                        Case wpt.Name = "First Contact"
-                            _Color = Color.Magenta
-                    End Select
-
-                    Dim contrastColor As Color = GetContrastColor(_Color)
-
-                    Dim brush As SolidBrush = New SolidBrush(_Color) ' plná barva pro statické stopy
-
-
-                    g.FillEllipse(brush, location.X - radius / 2, location.Y - radius / 2, radius, radius)
-                    Dim textSize = g.MeasureString(description, font)
-                    Dim textoffsetX As Single
-                    If location.X - textSize.Width - radius < 0 Then
-                        ' no space left, type text to the right of the ellipsis
-                        textoffsetX = radius
-                    Else
-                        ' there's room, write the text on the left
-                        textoffsetX = -textSize.Width - radius
-                    End If
-                    Dim textPos As New PointF(location.X + textoffsetX, location.Y - textSize.Height / 2)
-                    If Not waypointsAsPointsF.IsMoving Then DrawTextWithOutline(g, description, font, _Color, contrastColor, textPos, 5)
-                    i += 1
-                Next
-            End If
         End Using
 
         Return staticMap
@@ -462,8 +471,9 @@ Public Class PngRenderer
     ''' <param name="frameTime">The current time for which to render the frame.</param>
     ''' <param name="_dogTrail">A list of points representing the dog's trail, which will be updated by this method.</param>
     ''' <returns>A <see cref="Bitmap"/> representing the rendered frame.</returns>
-    Public Function RenderFrame(tracks As List(Of TrackAsPointsF), staticBackground As Bitmap, frameTime As DateTime, ByRef _dogTrail As List(Of PointF)) As Bitmap
+    Public Function RenderFrame(tracks As List(Of TrackAsPointsF), staticBackground As Bitmap, frameTime As DateTime, ByRef _dogTrail As List(Of TrackPointF), Optional afterTimeLimitTime As DateTime? = Nothing) As Bitmap
         ' Vykresli aktuální snímek s pohybujícím se psem
+
 
         Dim bmp As New Bitmap(staticBackground.Width, staticBackground.Height, PixelFormat.Format32bppArgb)
         Using g As Graphics = Graphics.FromImage(bmp)
@@ -474,9 +484,15 @@ Public Class PngRenderer
 
             For Each track As TrackAsPointsF In tracks
                 If track.TrackPointsF.Count = 0 Then Continue For
-                If track.IsMoving Then
 
-                    Dim p As PointF = InterpolatedDogPosition(track, frameTime)
+                If track.IsMoving Then
+                    ' Zjistíme, zda je SOUČASNÁ pozice psa (hlava/elipsa) po limitu
+                    Dim isDogHeadAfterTimeLimit As Boolean = False
+                    If afterTimeLimitTime.HasValue AndAlso frameTime > afterTimeLimitTime.Value Then
+                        isDogHeadAfterTimeLimit = True
+                    End If
+
+                    Dim p As TrackPointF = InterpolatedDogPosition(track, frameTime)
                     _dogTrail.Add(p)
                     Dim maxExpectedSpeed As Double = 1.666 'm/s = 6 km/h
                     Dim speed As Double = 0
@@ -491,47 +507,53 @@ Public Class PngRenderer
                             haloPen.LineJoin = LineJoin.Round
                             haloPen.StartCap = LineCap.Round
                             haloPen.EndCap = LineCap.Round
-                            g.DrawLines(haloPen, _dogTrail.ToArray())
+                            ' Pro DrawLines musíme ze seznamu TrailPoint vyextrahovat pouze body (Location)
+                            Dim haloPoints = _dogTrail.Select(Function(tp) tp.Location).ToArray()
+                            g.DrawLines(haloPen, haloPoints)
                         End Using
 
-                        Dim startIndex As Integer = Math.Max(0, _dogTrail.Count - 180) ' omezíme počet bodů na tři minuty
+                        Dim startIndex As Integer = Math.Max(0, _dogTrail.Count - 300) ' omezíme počet bodů na posledních 5 minut
 
                         ' Cyklus končí u Count - 2, protože bereme vždy bod a ten následující
                         For i As Integer = startIndex To _dogTrail.Count - 2
                             Dim p1 = _dogTrail(i)
                             Dim p2 = _dogTrail(i + 1)
-                            speed = Math.Sqrt((p1.X - p2.X) ^ 2 + (p1.Y - p2.Y) ^ 2) / pixelsPerMeter ' Rychlost mezi dvěma body v m/s předpokládá frameinterval = 1 s
-                            speed = If(dogTrailSpeedColor, speed, maxExpectedSpeed)
-                            'Debug.WriteLine($"render:  {speed}")
+                            speed = Math.Sqrt((p1.Location.X - p2.Location.X) ^ 2 + (p1.Location.Y - p2.Location.Y) ^ 2) / pixelsPerMeter ' Rychlost mezi dvěma body v m/s předpokládá frameinterval = 1 s
+
+                            'Zjišťujeme, zda je TENTO KONKRÉTNÍ ÚSEK po limitu
+                            Dim isSegmentAfterTimeLimit As Boolean = False
+                            If afterTimeLimitTime.HasValue AndAlso p2.Time > afterTimeLimitTime.Value Then
+                                isSegmentAfterTimeLimit = True
+                            End If
+
                             ' Použijeme Using, aby se Pen (pero) správně uvolnilo z paměti
-                            Using pen As New Pen(GetColorBySpeed(speed, maxExpectedSpeed), penWidth)
-                                ' Zakulacení konců čar, aby na sebe plynule navazovaly
+                            Using pen As New Pen(GetColorBySpeed(speed, maxExpectedSpeed, isSegmentAfterTimeLimit, dogTrailColorbySpeed), penWidth) ' Zakulacení konců čar, aby na sebe plynule navazovaly
                                 pen.StartCap = Drawing2D.LineCap.Round
                                 pen.EndCap = Drawing2D.LineCap.Round
                                 pen.LineJoin = Drawing2D.LineJoin.Round
 
-                                g.DrawLine(pen, p1, p2)
+                                g.DrawLine(pen, p1.Location, p2.Location)
                             End Using
                         Next
                     End If
-                    speed = If(dogTrailSpeedColor, speed, maxExpectedSpeed)
-                    'Debug.WriteLine($"ellipse----:  {speed}")
-                    Using brush As New SolidBrush(GetColorBySpeed(speed, maxExpectedSpeed))
-                        g.FillEllipse(brush, p.X - radius / 2, p.Y - radius / 2, radius, radius)
+
+                    ' Vykreslení aktuální pozice psa (elipsa)
+                    Using brush As New SolidBrush(GetColorBySpeed(speed, maxExpectedSpeed, isDogHeadAfterTimeLimit, dogTrailColorbySpeed))
+                        g.FillEllipse(brush, p.Location.X - radius / 2, p.Location.Y - radius / 2, radius, radius)
                     End Using
 
 
                     Dim popis As String = "Dog " & frameTime.ToString("HH:mm:ss")
                     Dim textSize = g.MeasureString(popis, font)
                     Dim offsetX As Single
-                    If p.X - textSize.Width - radius < 0 Then
+                    If p.Location.X - textSize.Width - radius < 0 Then
                         ' není místo vlevo, napiš text vpravo od elipsy
                         offsetX = radius
                     Else
                         ' je místo, napiš text vlevo
                         offsetX = -textSize.Width - radius
                     End If
-                    Dim textPos As New PointF(p.X + offsetX, p.Y - textSize.Height / 2)
+                    Dim textPos As New PointF(p.Location.X + offsetX, p.Location.Y - textSize.Height / 2)
                     Dim contrastColor As Color = GetContrastColor(track.Color)
 
                     'Dim textPos As New PointF(imgWidth - textSize.Width, 0)'alternativně vpravo nahoře
@@ -545,16 +567,30 @@ Public Class PngRenderer
 
     End Function
 
-    Private Function GetColorBySpeed(speed As Double, maxSpeed As Double) As Color
-        ' Normalizace rychlosti na hodnotu 0.0 až 1.0
+    Private Function GetColorBySpeed(speed As Double, maxSpeed As Double, isAfterTimeLimit As Boolean, dogTrailSpeedColor As Boolean) As Color
+        ' 1. Spočítáme klasickou barvu podle rychlosti
         Dim ratio As Single = CSng(Math.Min(speed / maxSpeed, 1.0))
-
-        ' Výpočet barevných složek (přechod Modrá -> Zelená -> Červená)
         Dim r As Integer = CInt(255 * ratio)
-        Dim g As Integer = CInt(255 * (1 - Math.Abs(ratio - 0.5) * 2)) ' Nejvíc zelené uprostřed
+        Dim g As Integer = CInt(255 * (1 - Math.Abs(ratio - 0.5) * 2))
         Dim b As Integer = CInt(255 * (1 - ratio))
 
-        ' 200 je průhlednost (Alpha) - ideální pro video overlay
+        If Not dogTrailSpeedColor Then
+            ' Pokud nechceme barevnou trasu podle rychlosti, použijeme neutrální barvu (červenou)
+            r = 255
+            g = 0
+            b = 0
+        End If
+
+        ' 2. Pokud jsme za Time Limitem, převedeme RGB na odstín šedi (Luminance)
+        If isAfterTimeLimit Then
+            ' Standardní ITU-R vážený průměr pro lidské oko
+            Dim gray As Integer = CInt((r * 0.299) + (g * 0.587) + (b * 0.114))
+
+            ' Snížíme průhlednost na 130, aby byla "mrtvá" trasa ještě nenápadnější
+            Return Color.FromArgb(130, gray, gray, gray)
+        End If
+
+        ' Klasická barevná trasa před limitem
         Return Color.FromArgb(200, r, g, b)
     End Function
 
@@ -1004,19 +1040,20 @@ Public Class PngRenderer
     ''' <param name="track">The track containing location and time data.</param>
     ''' <param name="frameTime">The time for which to interpolate the position.</param>
     ''' <returns>The interpolated <see cref="PointF"/> position of the track at the given time.</returns>
-    Private Function InterpolatedDogPosition(track As TrackAsPointsF, frameTime As DateTime) As PointF
+    Private Function InterpolatedDogPosition(track As TrackAsPointsF, frameTime As DateTime) As TrackPointF
 
         Dim TrackPoints As List(Of PointF) = track.TrackPointsF.Select(Function(tp) tp.Location).ToList()
         Dim TrackTimes As List(Of DateTime) = track.TrackPointsF.Select(Function(tp) tp.Time).ToList()
 
         ' Pokud je frameTime před prvním časem, vrať první bod
         If frameTime <= TrackTimes.First() Then
-            Return TrackPoints.First()
+
+            Return New TrackPointF(TrackPoints.First(), TrackTimes.First())
         End If
 
         ' Pokud je frameTime po posledním čase, vrať poslední bod
         If frameTime >= TrackTimes.Last() Then
-            Return TrackPoints.Last()
+            Return New TrackPointF(TrackPoints.Last(), TrackTimes.Last())
         End If
 
         ' Najdi dva sousední body mezi kterými frameTime leží
@@ -1037,12 +1074,12 @@ Public Class PngRenderer
                 ' Lineární interpolace
                 Dim x As Single = CSng(p1.X + (p2.X - p1.X) * ratio)
                 Dim y As Single = CSng(p1.Y + (p2.Y - p1.Y) * ratio)
-                Return New PointF(x, y)
+                Return New TrackPointF(New PointF(x, y), frameTime)
             End If
         Next
 
         ' Teoreticky by to sem nemělo dojít, ale fallback:
-        Return TrackPoints.Last()
+        Return New TrackPointF(TrackPoints.Last(), TrackTimes.Last())
     End Function
 
 
