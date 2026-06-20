@@ -394,21 +394,33 @@ Public Class GpxFileManager
         Dim GPXFRecords As New List(Of GPXRecord)
 
         If remoteFiles Then
-            'Dim downloadedPath = Path.Combine(Application.StartupPath, "AppData", "downloaded.json")
             Dim downloadedPath = Path.Combine(Application.StartupPath, CategoryInfo.LocalBaseDirectory, "downloaded.json")
             Dim tracker As New FileTracker(downloadedPath)
-            Dim Files As List(Of String) = Directory.GetFiles(CategoryInfo.RemoteDirectory, "*.gpx").ToList()
+
+            ' 1. NAČTENÍ: Vezmeme jak *.gpx, tak *.gpx.bin pomocí LINQ (Remote složku neměníme)
+            Dim Files As List(Of String) = Directory.GetFiles(CategoryInfo.RemoteDirectory) _
+                .Where(Function(f) f.EndsWith(".gpx", StringComparison.OrdinalIgnoreCase) OrElse
+                                   f.EndsWith(".gpx.bin", StringComparison.OrdinalIgnoreCase)) _
+                .ToList()
+
             Dim i As Integer = 0
             For Each remoteFilePath In Files
 
                 Try
-                    If tracker.IsNewOrChanged(remoteFilePath) Then 'new files!!!
+                    If tracker.IsNewOrChanged(remoteFilePath) Then ' Nové nebo změněné soubory
+
+                        ' Zde ošetříme název: pokud končí na .bin, odsekneme ho, aby do Originals šlo čisté .gpx
                         Dim fileName As String = Path.GetFileName(remoteFilePath)
-                        Dim fileNameWithoutExtension As String = Path.GetFileNameWithoutExtension(remoteFilePath)
-                        Dim extension As String = Path.GetExtension(remoteFilePath)
+                        If fileName.EndsWith(".bin", StringComparison.OrdinalIgnoreCase) Then
+                            fileName = fileName.Substring(0, fileName.Length - 4) ' Odstraní ".bin"
+                        End If
+
+                        Dim fileNameWithoutExtension As String = Path.GetFileNameWithoutExtension(fileName)
+                        Dim extension As String = Path.GetExtension(fileName) ' Bude to vždy .gpx
+
                         Dim localOriginalsFilePath As String = Path.Combine(CategoryInfo.OriginalsDirectory, fileName)
 
-                        ' Pokud soubor existuje, najdeme novou variantu jména
+                        ' Pokud soubor v Originals existuje, najdeme novou variantu jména (Tvoje logická ochrana)
                         If File.Exists(localOriginalsFilePath) Then
                             Dim counter As Integer = 1
                             Dim newFileName As String
@@ -421,43 +433,45 @@ Public Class GpxFileManager
                                 counter += 1
                             Loop While File.Exists(newFilePath)
 
-                            ' Aktualizujeme cílovou cestu na tu s číslem
                             localOriginalsFilePath = newFilePath
                             RaiseEvent WarningOccurred($"Soubor již existoval, ukládám jako: {newFileName}", Color.Orange)
                         End If
 
-                        ' Teď už máme v localOriginalsFilePath buď původní jméno, nebo očíslovanou variantu
+                        ' Kopírujeme ze vzdáleného umístění (klidně z .bin) do čistého .gpx v Originals
                         IO.File.Copy(remoteFilePath, localOriginalsFilePath, False)
                         Debug.WriteLine("Zkopírováno do: " & localOriginalsFilePath)
                         i += 1
+
+                        ' Tracker si pamatuje původní cestu (včetně případného .bin), což je správně
                         tracker.MarkAsDownloadeded(remoteFilePath)
+
                         Try
-                            'načte z Originals:
+                            ' Načte z Originals (zde už je to stoprocentně validní .gpx)
                             Dim _reader As New GpxReader(localOriginalsFilePath)
                             Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess, CategoryInfo)
-                            Dim fileNameWithDate As String = _gpxRecord.PrependDateToFilename(Path.GetFileName(remoteFilePath))
+
+                            ' Pro zpracovanou složku použijeme vyčištěný název bez .bin
+                            Dim fileNameWithDate As String = _gpxRecord.PrependDateToFilename(Path.GetFileName(localOriginalsFilePath))
                             Dim localProcessedFilePath As String = Path.Combine(CategoryInfo.ProcessedDirectory, fileNameWithDate)
 
                             If File.Exists(localProcessedFilePath) Then
                                 Dim dialogResult = mboxQEx($"File {fileNameWithDate} already exists in localProcessed directory!" & vbCrLf & "It's probably a duplicate trail. Do you still want to add it?", MessageBoxDefaultButton.Button2)
                                 If dialogResult = DialogResult.No Then
                                     RaiseEvent WarningOccurred($"File {fileNameWithDate} was skipped because it is duplicate", Color.DarkOrange)
-                                    Continue For 'přejde na další soubor
+                                    Continue For
                                 End If
                             End If
 
                             _reader.FilePath = localProcessedFilePath
-
-                            _gpxRecord.SplitSegmentsIntoTracks() 'rozdělí trk s více segmenty na jednotlivé trk
-                            _gpxRecord.IsAlreadyProcessed = False 'nastaví, že soubor ještě nebyl zpracován
-                            '_gpxRecord.CreateTracks() 'seřadí trk podle času
+                            _gpxRecord.SplitSegmentsIntoTracks()
+                            _gpxRecord.IsAlreadyProcessed = False
                             GPXFRecords.Add(_gpxRecord)
+
                         Catch ex As Exception
-                            'pokud dojde k chybě při čtení souboru, vypíše se varování a pokračuje se na další soubor
                             RaiseEvent WarningOccurred($"Error reading file {Path.GetFileName(remoteFilePath)}: {ex.Message}", Color.Red)
                         End Try
 
-                    Else 'zpracované soubory
+                    Else ' Zpracované soubory
                         Debug.WriteLine("Skipping: " & Path.GetFileName(remoteFilePath))
                     End If
                 Catch ex As Exception
@@ -465,6 +479,7 @@ Public Class GpxFileManager
                 End Try
             Next
             RaiseEvent WarningOccurred($"Found {i} new files.", Color.OrangeRed)
+
 
         Else 'local files
             Dim Files As List(Of String) = Directory.GetFiles(CategoryInfo.ProcessedDirectory, "*.gpx").ToList()
@@ -2245,11 +2260,11 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             Dim dogTrkAsGeoPoints = conv.ConvertTrackTrkPtsToGeoPoints(conv.ConvertTrackAsTrkNodeToTrkPts(New TrackAsTrkNode(dogTrkNode, trackType:=TrackType.DogTrack)))
             'track vyčistíme od šumu způsobeného GPS chybami, které se projevují jako náhlé skoky v trase, které by mohly být mylně vyhodnoceny
             'a po vyčistění zahustíme trasu tak, aby body byly přibližně každý 2 metry, což umožní přesnější vyhodnocení checkpointů a odchylek od trasy běžce
-            If dogTrkAsGeoPoints.TrackGeoPoints.Count > 30 Then ' vyhlazují se jen delší trasy 
-                Dim purifiedTrack As TrackAsGeoPoints
+            'If dogTrkAsGeoPoints.TrackGeoPoints.Count > 30 Then ' vyhlazují se jen delší trasy 
+            Dim purifiedTrack As TrackAsGeoPoints
                 purifiedTrack = TrackConverter.PurifyTrackAsGeoPoints(dogTrkAsGeoPoints, 10) ' Filtr pro maximální rychlost 10 km/h
                 dogTrkAsGeoPoints = purifiedTrack
-            End If
+            'End If
             dogGeoPoints = dogTrkAsGeoPoints.TrackGeoPoints
         End If
 
@@ -2258,11 +2273,11 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             Dim runnerTrkAsGeoPoints = conv.ConvertTrackTrkPtsToGeoPoints(conv.ConvertTrackAsTrkNodeToTrkPts(New TrackAsTrkNode(runnerTrkNode, trackType:=TrackType.Unknown)))
             'track vyčistíme od šumu způsobeného GPS chybami, které se projevují jako náhlé skoky v trase, které by mohly být mylně vyhodnoceny
             'a po vyčistění zahustíme trasu tak, aby body byly přibližně každý 2 metry, což umožní přesnější vyhodnocení checkpointů a odchylek od trasy běžce
-            If runnerTrkAsGeoPoints.TrackGeoPoints.Count > 30 Then ' vyhlazují se jen delší trasy 
-                Dim purifiedTrack As TrackAsGeoPoints
+            'If runnerTrkAsGeoPoints.TrackGeoPoints.Count > 30 Then ' vyhlazují se jen delší trasy 
+            Dim purifiedTrack As TrackAsGeoPoints
                 purifiedTrack = TrackConverter.PurifyTrackAsGeoPoints(runnerTrkAsGeoPoints, 10) ' Filtr pro maximální rychlost 10 km/h
                 runnerTrkAsGeoPoints = purifiedTrack
-            End If
+            'End If
             runnerGeoPoints = runnerTrkAsGeoPoints.TrackGeoPoints
         End If
 
