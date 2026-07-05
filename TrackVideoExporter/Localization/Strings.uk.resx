@@ -150,4 +150,7 @@
   <data name="TimeLimit" xml:space="preserve">
     <value>Обмеження часу</value>
   </data>
+  <data name="TimeLimitExceeded" xml:space="preserve">
+    <value>перевищено</value>
+  </data>
 </root>

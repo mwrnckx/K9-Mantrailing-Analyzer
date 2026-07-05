@@ -284,12 +284,6 @@
 -&gt; Інші люди переправи.
 Якщо є лише два маршрути, це досить просто - перший - це предметний слід, другий - це маршрут собаки. Але якщо є лише один трек або більше двох, ви повинні вирішити.</value>
   </data>
-  <data name="CrossingTrail" xml:space="preserve">
-    <value>Перехрещення сліду</value>
-  </data>
-  <data name="RunnerTrail" xml:space="preserve">
-    <value>бігун</value>
-  </data>
   <data name="article" xml:space="preserve">
     <value>контрольна точка</value>
   </data>

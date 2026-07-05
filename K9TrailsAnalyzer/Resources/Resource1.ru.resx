@@ -284,12 +284,6 @@
 -&gt; Другие люди, пересекающие.
 Если есть только два маршрута, это довольно просто - первая - это тропа субъекта, вторая - это маршрут для собак. Но если есть только один трек или более двух, вы должны решить.</value>
   </data>
-  <data name="CrossingTrail" xml:space="preserve">
-    <value>Пересечение следа</value>
-  </data>
-  <data name="RunnerTrail" xml:space="preserve">
-    <value>бегун</value>
-  </data>
   <data name="article" xml:space="preserve">
     <value>Контрольная точка</value>
   </data>

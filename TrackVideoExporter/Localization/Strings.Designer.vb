@@ -137,6 +137,24 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný exceeded.
+        '''</summary>
+        Friend Shared ReadOnly Property TimeLimitExceeded() As String
+            Get
+                Return ResourceManager.GetString("TimeLimitExceeded", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný met.
+        '''</summary>
+        Friend Shared ReadOnly Property TimeLimitMet() As String
+            Get
+                Return ResourceManager.GetString("TimeLimitMet", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Total.
         '''</summary>
         Friend Shared ReadOnly Property Total() As String

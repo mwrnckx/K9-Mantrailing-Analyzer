@@ -137,28 +137,28 @@ Public Class PngRenderer
     ''' <param name="windDirection">The direction of the wind in degrees (0-360), or null if not available.</param>
     ''' <param name="windSpeed">The speed of the wind in m/s, or null if not available.</param>
     ''' <param name="bgTiles">A tuple containing the background bitmap and its minimum tile X and Y coordinates.</param>
-    Public Sub New(windDirection As Double?, windSpeed As Double?, bgTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single), VideoSettings As VideoSettingsConfig, latitude As Double)
+    Public Sub New(windDirection As Double?, windSpeed As Double?, bgTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single), VideoSettings As VideoSettingsConfig, latitude As Double, Optional fontScale As Single = 0.03)
         Me.windDirection = windDirection
         Me.windSpeed = windSpeed
         Me.videoSize = New Size(VideoSettings.VideoWidth, VideoSettings.VideoHeight)
         Me.dogTrailColorbySpeed = VideoSettings.DogTrailSpeedColor
         Me.latitude = latitude
         Me.trackBounds = bgTiles.bgmap.GetBounds(GraphicsUnit.Pixel) 'přepočítá obdélník na souřadnice v pixelech
+
         Dim videoRatio = videoSize.Width / videoSize.Height
         Dim bgRatio = trackBounds.Width / trackBounds.Height
-        Dim fontScale As Single
+
         If bgRatio > videoRatio Then
             'background je širší než video, vypočteme poměr šířek
-            fontScale = trackBounds.Width / videoSize.Width 'zmenší se výška backgroundu, aby se vešel do videa, proto zvětšíme výšku textu aby zůstal čitelný
+            fontScale *= bgRatio / videoRatio 'zmenší se výška backgroundu, aby se vešel do videa, proto zvětšíme výšku textu aby zůstal čitelný
         Else
-            fontScale = 1 'výška pozadí se nemění - výšku písma ponecháme jak je
+            'výška pozadí se nemění - výšku písma ponecháme jak je
         End If
-        'Dim videoDiagonal = Math.Sqrt(Me.videoSize.Width ^ 2 + Me.videoSize.Height ^ 2)
-        'Dim bgmapDiagonal = Math.Sqrt(bgTiles.bgmap.Width ^ 2 + bgTiles.bgmap.Height ^ 2)
+
         pixelsPerMeter = (OsmTileDownloader.TileSize * Math.Pow(2.0, OsmTileDownloader.zoom)) / (Math.Cos(TrackConverter.DegToRad(latitude)) * 2 * Math.PI * TrackConverter.EarthRadiusM) 'přepočet z metrů na pixely, protože se mění s latitudou
         Me.radius = 4 * VideoSettings.TrailWidth_m * pixelsPerMeter '0.015 * diagonal ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
         Me.penWidth = VideoSettings.TrailWidth_m * pixelsPerMeter '0.008 * diagonal ' šířka pera pro kreslení čar, 1% šířky obrázku
-        Me.emSize = 0.03 * trackBounds.Height * fontScale '
+        Me.emSize = trackBounds.Height * fontScale '
         Me.font = New Font("Cascadia Code", emSize, FontStyle.Bold)
     End Sub
 
@@ -282,7 +282,7 @@ Public Class PngRenderer
                                 isAfterTimeLimit = True
                             End If
                             ' Použijeme Using, aby se Pen (pero) správně uvolnilo z paměti
-                            Using pen As New Pen(GetColorBySpeed(speed, maxExpectedSpeed, isAfterTimeLimit, dogTrailColorbySpeed), penWidth)
+                            Using pen As New Pen(GetDogColorBySpeed(speed, maxExpectedSpeed, isAfterTimeLimit, dogTrailColorbySpeed, track.Color), penWidth)
                                 ' Zakulacení konců čar, aby na sebe plynule navazovaly
                                 pen.StartCap = Drawing2D.LineCap.Round
                                 pen.EndCap = Drawing2D.LineCap.Round
@@ -433,11 +433,18 @@ Public Class PngRenderer
                     Dim wpt As TrackPointF = waypointsAsPointsF.TrackPointsF(i)
                     Dim location As PointF = wpt.Location
                     Dim popis As String = wpt.Name
-                    Dim _Color As Color = If(wpt.Name = "First Contact", Color.Magenta, waypointsAsPointsF.Color) ' First Contact Point je červeně
-                    If i = bestCheckPointIndex Then
-                        _Color = Color.Cyan ' 
-                        popis = "Best Check Point"
-                    End If
+                    Dim _Color As Color
+
+                    Select Case True
+                        Case i = bestCheckPointIndex
+                            _Color = Color.Cyan
+                            popis = "Best ChPt"
+                        Case wpt.Name = "Time Limit"
+                            _Color = Color.DarkGray
+                        Case wpt.Name = "First Contact"
+                            _Color = Color.Magenta
+                    End Select
+
                     Dim contrastColor As Color = GetContrastColor(_Color)
 
                     Dim brush As SolidBrush = New SolidBrush(_Color) ' plná barva pro statické stopy
@@ -485,17 +492,14 @@ Public Class PngRenderer
             For Each track As TrackAsPointsF In tracks
                 If track.TrackPointsF.Count = 0 Then Continue For
 
-                If track.IsMoving Then
-                    ' Zjistíme, zda je SOUČASNÁ pozice psa (hlava/elipsa) po limitu
-                    Dim isDogHeadAfterTimeLimit As Boolean = False
-                    If afterTimeLimitTime.HasValue AndAlso frameTime > afterTimeLimitTime.Value Then
-                        isDogHeadAfterTimeLimit = True
-                    End If
+                If track.IsMoving Then 'dog...
 
                     Dim p As TrackPointF = InterpolatedDogPosition(track, frameTime)
                     _dogTrail.Add(p)
                     Dim maxExpectedSpeed As Double = 1.666 'm/s = 6 km/h
                     Dim speed As Double = 0
+                    Dim isLastSegmentAfterTimeLimit As Boolean = False
+                    Dim ActualColor As Color
                     If _dogTrail.Count > 1 Then
                         ' --- 1. KROK: HALO (OBRYS) ---
                         ' Pro obrys zvolíme černou barvu s nižší průhledností než má hlavní čára
@@ -520,14 +524,16 @@ Public Class PngRenderer
                             Dim p2 = _dogTrail(i + 1)
                             speed = Math.Sqrt((p1.Location.X - p2.Location.X) ^ 2 + (p1.Location.Y - p2.Location.Y) ^ 2) / pixelsPerMeter ' Rychlost mezi dvěma body v m/s předpokládá frameinterval = 1 s
 
-                            'Zjišťujeme, zda je TENTO KONKRÉTNÍ ÚSEK po limitu
-                            Dim isSegmentAfterTimeLimit As Boolean = False
-                            If afterTimeLimitTime.HasValue AndAlso p2.Time > afterTimeLimitTime.Value Then
-                                isSegmentAfterTimeLimit = True
+                            'Zjišťujeme, zda je TENTO KONKRÉTNÍ ÚSEK už po limitu
+                            If Not isLastSegmentAfterTimeLimit Then
+                                If afterTimeLimitTime.HasValue AndAlso p2.Time > afterTimeLimitTime.Value Then
+                                    isLastSegmentAfterTimeLimit = True
+                                End If
                             End If
 
+                            ActualColor = GetDogColorBySpeed(speed, maxExpectedSpeed, isLastSegmentAfterTimeLimit, dogTrailColorbySpeed, track.Color)
                             ' Použijeme Using, aby se Pen (pero) správně uvolnilo z paměti
-                            Using pen As New Pen(GetColorBySpeed(speed, maxExpectedSpeed, isSegmentAfterTimeLimit, dogTrailColorbySpeed), penWidth) ' Zakulacení konců čar, aby na sebe plynule navazovaly
+                            Using pen As New Pen(ActualColor, penWidth) ' Zakulacení konců čar, aby na sebe plynule navazovaly
                                 pen.StartCap = Drawing2D.LineCap.Round
                                 pen.EndCap = Drawing2D.LineCap.Round
                                 pen.LineJoin = Drawing2D.LineJoin.Round
@@ -538,7 +544,7 @@ Public Class PngRenderer
                     End If
 
                     ' Vykreslení aktuální pozice psa (elipsa)
-                    Using brush As New SolidBrush(GetColorBySpeed(speed, maxExpectedSpeed, isDogHeadAfterTimeLimit, dogTrailColorbySpeed))
+                    Using brush As New SolidBrush(ActualColor)
                         g.FillEllipse(brush, p.Location.X - radius / 2, p.Location.Y - radius / 2, radius, radius)
                     End Using
 
@@ -554,10 +560,10 @@ Public Class PngRenderer
                         offsetX = -textSize.Width - radius
                     End If
                     Dim textPos As New PointF(p.Location.X + offsetX, p.Location.Y - textSize.Height / 2)
-                    Dim contrastColor As Color = GetContrastColor(track.Color)
+                    Dim contrastColor As Color = GetContrastColor(ActualColor)
 
                     'Dim textPos As New PointF(imgWidth - textSize.Width, 0)'alternativně vpravo nahoře
-                    DrawTextWithOutline(g, popis, font, track.Color, contrastColor, textPos, 5)
+                    DrawTextWithOutline(g, popis, font, ActualColor, contrastColor, textPos, 5)
                 End If
             Next
         End Using
@@ -567,7 +573,7 @@ Public Class PngRenderer
 
     End Function
 
-    Private Function GetColorBySpeed(speed As Double, maxSpeed As Double, isAfterTimeLimit As Boolean, dogTrailSpeedColor As Boolean) As Color
+    Private Shared Function GetDogColorBySpeed(speed As Double, maxSpeed As Double, isAfterTimeLimit As Boolean, dogTrailSpeedColor As Boolean, trackColor As Color) As Color
         ' 1. Spočítáme klasickou barvu podle rychlosti
         Dim ratio As Single = CSng(Math.Min(speed / maxSpeed, 1.0))
         Dim r As Integer = CInt(255 * ratio)
@@ -576,9 +582,9 @@ Public Class PngRenderer
 
         If Not dogTrailSpeedColor Then
             ' Pokud nechceme barevnou trasu podle rychlosti, použijeme neutrální barvu (červenou)
-            r = 255
-            g = 0
-            b = 0
+            r = trackColor.R
+            g = trackColor.G
+            b = trackColor.B
         End If
 
         ' 2. Pokud jsme za Time Limitem, převedeme RGB na odstín šedi (Luminance)
@@ -586,8 +592,8 @@ Public Class PngRenderer
             ' Standardní ITU-R vážený průměr pro lidské oko
             Dim gray As Integer = CInt((r * 0.299) + (g * 0.587) + (b * 0.114))
 
-            ' Snížíme průhlednost na 130, aby byla "mrtvá" trasa ještě nenápadnější
-            Return Color.FromArgb(130, gray, gray, gray)
+            ' Snížíme průhlednost na 130, aby byla "mrtvá" trasa ještě nenápadnější (nerealizováno)
+            Return Color.FromArgb(200, gray, gray, gray)
         End If
 
         ' Klasická barevná trasa před limitem

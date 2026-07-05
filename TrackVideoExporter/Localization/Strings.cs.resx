@@ -150,4 +150,10 @@
   <data name="TimeLimit" xml:space="preserve">
     <value>Časový limit</value>
   </data>
+  <data name="TimeLimitExceeded" xml:space="preserve">
+    <value>překročen</value>
+  </data>
+  <data name="TimeLimitMet" xml:space="preserve">
+    <value>dodržen</value>
+  </data>
 </root>

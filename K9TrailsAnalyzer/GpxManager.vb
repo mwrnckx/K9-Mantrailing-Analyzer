@@ -776,103 +776,6 @@ Public Class GPXRecord
     Private _First_Contact As TrackGeoPoint = Nothing
     Private _LastWithinTimeLimit As TrackGeoPoint = Nothing
 
-
-    'Public ReadOnly Property WptNodes As TrackAsTrkPts
-    '    Get
-    '        If _wptNodes IsNot Nothing Then Return _wptNodes
-    '        If Me.Reader Is Nothing Then
-    '            Throw New InvalidOperationException("Reader nebyl nastaven.")
-    '        End If
-
-
-    '        ' --- TADY PŘIDÁME VIRTUÁLNÍ START ---
-    '        If _First_Contact IsNot Nothing Then
-    '            Dim wptNodeList As XmlNodeList = Me.Reader.SelectNodes("wpt") 'když není žádný, vrátí prázdný list
-
-    '            Dim combinedNodes As List(Of XmlNode) = wptNodeList.Cast(Of XmlNode)().ToList()
-    '            Dim i As Integer
-    '            For i = combinedNodes.Count - 1 To 0 Step -1 'projdeme list pozpátku, protože budeme odstraňovat uzly
-    '                ' Najdi uzel <name> uvnitř <wpt> s použitím namespace
-    '                Dim nameNode As XmlNode = TrackConverter.SelectSingleChildNode("name", combinedNodes(i))
-    '                If nameNode IsNot Nothing AndAlso nameNode.InnerText = "First Contact" Then
-    '                    ' vymaže dříve definovaný first contact
-    '                    combinedNodes.Remove(combinedNodes(i))
-    '                End If
-    '            Next
-
-
-    '            ' Vytvoříme uzel 
-    '            Dim startNode As XmlElement = Me.Reader.CreateElement("wpt")
-    '            startNode.SetAttribute("lat", _First_Contact.Location.Lat.ToString(System.Globalization.CultureInfo.InvariantCulture))
-    '            startNode.SetAttribute("lon", _First_Contact.Location.Lon.ToString(System.Globalization.CultureInfo.InvariantCulture))
-
-    '            ' Přidáme čas, aby fungovalo řazení
-    '            ' Nejdříve převedeme na UniversalTime a pak teprve formátujeme
-    '            TrackConverter.CreateAndAddElement(startNode, "time", _First_Contact.Time.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ"), False)
-    '            TrackConverter.CreateAndAddElement(startNode, "name", "First Contact", False) ' Identifikátor
-
-    '            combinedNodes.Add(startNode)
-
-    '            ' 1. Převedeme XmlNodeList na IEnumerable(Of XmlNode) pomocí .Cast(Of XmlNode)
-    '            ' 2. Seřadíme uzly pomocí .OrderBy()
-    '            ' Seřazení (teď už i s tím naším startem)
-    '            Dim sortedWptNodeList As List(Of XmlNode) = combinedNodes.
-    '        OrderBy(Function(node)
-    '                    Dim timenode As XmlNode = TrackConverter.SelectSingleChildNode("time", node)
-    '                    Return If(timenode Is Nothing, DateTime.MinValue, DateTime.Parse(timenode.InnerText))
-    '                End Function).ToList()
-    '            Dim parentNode As XmlNode
-    '            If wptNodeList.Count > 0 Then
-    '                parentNode = wptNodeList(0)?.ParentNode
-    '                For Each wptNode As XmlNode In wptNodeList
-    '                    parentNode.RemoveChild(wptNode) 'odstraní uzel z původního umístění
-    '                Next
-    '            End If
-    '            ' 4. Přidání Seřazených Uzlů Zpět
-    '            ' Přidáme seřazené uzly na konec rodičovského uzlu v novém pořadí.
-    '            i = 1
-    '            '  Dim newName As String = My.Resources.Resource1.article
-    '            ' Pokud je to náš START, pojmenujeme ho 
-    '            For Each wptNode In sortedWptNodeList
-    '                ' Najdi uzel <name> uvnitř <wpt> s použitím namespace
-    '                Dim nameNode As XmlNode = TrackConverter.SelectSingleChildNode("name", wptNode)
-    '                If nameNode IsNot Nothing AndAlso nameNode.InnerText = "First Contact" Then
-    '                    ' Pokud je to místo kde se pes přiblíží na 5 m k trase, pojmenujeme ho "First Contact"
-    '                    nameNode.InnerText = "First Contact"
-    '                Else
-
-    '                    Dim newNamei As String = $"{i}"
-    '                    i += 1
-
-    '                    If nameNode IsNot Nothing Then
-    '                        ' Přepiš hodnotu <name> na newname
-    '                        nameNode.InnerText = $"{newNamei}"
-    '                    Else
-    '                        TrackConverter.CreateAndAddElement(wptNode, "name", newNamei, False)
-    '                    End If
-    '                End If
-    '                If wptNode.ParentNode Is Nothing Then
-    '                    ' Toto je ten náš nový uzel - vložíme ho taky, aby byl vidět v mapě/UI
-    '                    Me.Tracks(0).TrkNode.ParentNode.InsertBefore(wptNode, Me.Tracks(0).TrkNode)
-    '                Else
-    '                    parentNode.InsertBefore(wptNode, Me.Tracks(0).TrkNode)
-    '                End If
-    '                ' ... (konec tvého cyklu For Each wptNode In sortedWptNodeList)
-    '            Next
-    '        End If
-    '        ' TADY JE TO KOUZLO:
-    '        ' Protože jsi všechny uzly (včetně "First Contact") vložil do dokumentu,
-    '        ' prostě se znovu zeptej dokumentu na všechny "wpt" uzly.
-    '        ' Výsledkem bude nový, čerstvý XmlNodeList, který obsahuje vše a v novém pořadí.
-
-    '        Dim finalNodeList As XmlNodeList = Me.Reader.SelectNodes("wpt") ' 
-
-    '        _wptNodes = New TrackAsTrkPts(TrackType.Article, finalNodeList)
-    '        Return _wptNodes
-
-    '    End Get
-    'End Property
-
     Public ReadOnly Property WptNodes As TrackAsTrkPts
         Get
             If _wptNodes IsNot Nothing Then Return _wptNodes
@@ -1816,6 +1719,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             Dim txtDogReading = Localizer.GetString("DogReading", kvp.Key)
             Dim txtTrailPickup = Localizer.GetString("TrailPickup", kvp.Key)
             Dim txtTimeLimit = Localizer.GetString("TimeLimit", kvp.Key)
+            Dim txtTimeLimitExceeded = If(Me.TrailStats.TimeLimitExceeded, Localizer.GetString("TimeLimitExceeded", kvp.Key), Localizer.GetString("TimeLimitMet", kvp.Key))
             Dim pointsTotal As Integer = Me.TrailStats.PointsInMTCompetition.RunnerFoundPoints + Me.TrailStats.PointsInMTCompetition.DogSpeedPoints + Me.TrailStats.PointsInMTCompetition.DogAccuracyPoints + Me.TrailStats.PointsInMTCompetition.DogReadingPoints + Me.TrailStats.PointsInMTCompetition.TrailPickupPoints
             Dim pointsMax As Integer = Me.ActiveCategoryInfo.PointsForFindMax + Me.ActiveCategoryInfo.PointsPerTempoMax + Me.ActiveCategoryInfo.PointsForAccuracyMax + Me.ActiveCategoryInfo.PointsForDogReadingMax + Me.ActiveCategoryInfo.PointsForTrailPickupMax
             Dim performancePoints As String = $"🏆{txtTotal}: {pointsTotal} {txtpoints} ({txtof} {pointsMax}){vbCrLf}
@@ -1824,7 +1728,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         🎯{txtAccuracy}: {Me.TrailStats.PointsInMTCompetition.DogAccuracyPoints} {txtpoints} ({txtof} {Me.ActiveCategoryInfo.PointsForAccuracyMax}){vbCrLf}
         🚀{txtSpeed}: {Me.TrailStats.PointsInMTCompetition.DogSpeedPoints} {txtpoints} ({txtof} {Me.ActiveCategoryInfo.PointsPerTempoMax}){vbCrLf}
         🔀{txtTrailPickup}: {Me.TrailStats.PointsInMTCompetition.TrailPickupPoints} {txtpoints} ({txtof} {Me.ActiveCategoryInfo.PointsForTrailPickupMax}){vbCrLf}
-        ⏱{txtTimeLimit}:  {Me.ActiveCategoryInfo.TimeLimitMinutesPerKm} min/km
+        ⏱{txtTimeLimit}:  {Me.ActiveCategoryInfo.TimeLimitMinutesPerKm} min/km ({txtTimeLimitExceeded})
        "
 
             kvp.Value.PerformancePointsText = performancePoints
@@ -2220,6 +2124,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             .BestCheckPointIndex = max_index
             .DogName = If(.DogName, Me.ActiveCategoryInfo.Name)
             .TimeLimit = preparedData.timeLimit
+            .TimeLimitExceeded = preparedData.TimeLimitExceeded
         End With
 
         Return True
@@ -2249,7 +2154,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
     ''' Pokud trasa běžce neexistuje, First Contact se nehledá a ořezání se neprovádí.
     ''' </remarks>
     Private Function PrepareTrackData(dogTrkNode As XmlNode, runnerTrkNode As XmlNode) _
-    As (PurifiedDogGeoPoints As List(Of TrackGeoPoint), PurifiedRunnerGeoPoints As List(Of TrackGeoPoint), Lat0 As Double, Lon0 As Double, RunnerTotalDistance As Double, dogTotalDistance As Double, dogTotalTime As TimeSpan, RunnerFound As Boolean, timeLimit As TimeSpan)
+    As (PurifiedDogGeoPoints As List(Of TrackGeoPoint), PurifiedRunnerGeoPoints As List(Of TrackGeoPoint), Lat0 As Double, Lon0 As Double, RunnerTotalDistance As Double, dogTotalDistance As Double, dogTotalTime As TimeSpan, RunnerFound As Boolean, timeLimit As TimeSpan, TimeLimitExceeded As Boolean)
 
         Dim conv As New TrackConverter()
         Const PICKUP_ACTIVATION_THRESHOLD_M As Double = 5.0
@@ -2262,8 +2167,8 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             'a po vyčistění zahustíme trasu tak, aby body byly přibližně každý 2 metry, což umožní přesnější vyhodnocení checkpointů a odchylek od trasy běžce
             'If dogTrkAsGeoPoints.TrackGeoPoints.Count > 30 Then ' vyhlazují se jen delší trasy 
             Dim purifiedTrack As TrackAsGeoPoints
-                purifiedTrack = TrackConverter.PurifyTrackAsGeoPoints(dogTrkAsGeoPoints, 10) ' Filtr pro maximální rychlost 10 km/h
-                dogTrkAsGeoPoints = purifiedTrack
+            purifiedTrack = TrackConverter.PurifyTrackAsGeoPoints(dogTrkAsGeoPoints, 10) ' Filtr pro maximální rychlost 10 km/h
+            dogTrkAsGeoPoints = purifiedTrack
             'End If
             dogGeoPoints = dogTrkAsGeoPoints.TrackGeoPoints
         End If
@@ -2275,13 +2180,13 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             'a po vyčistění zahustíme trasu tak, aby body byly přibližně každý 2 metry, což umožní přesnější vyhodnocení checkpointů a odchylek od trasy běžce
             'If runnerTrkAsGeoPoints.TrackGeoPoints.Count > 30 Then ' vyhlazují se jen delší trasy 
             Dim purifiedTrack As TrackAsGeoPoints
-                purifiedTrack = TrackConverter.PurifyTrackAsGeoPoints(runnerTrkAsGeoPoints, 10) ' Filtr pro maximální rychlost 10 km/h
-                runnerTrkAsGeoPoints = purifiedTrack
+            purifiedTrack = TrackConverter.PurifyTrackAsGeoPoints(runnerTrkAsGeoPoints, 10) ' Filtr pro maximální rychlost 10 km/h
+            runnerTrkAsGeoPoints = purifiedTrack
             'End If
             runnerGeoPoints = runnerTrkAsGeoPoints.TrackGeoPoints
         End If
 
-        If dogGeoPoints Is Nothing OrElse dogGeoPoints.Count = 0 Then Return (Nothing, Nothing, 0, 0, 0, 0, TimeSpan.Zero, False, TimeSpan.Zero)
+        If dogGeoPoints Is Nothing OrElse dogGeoPoints.Count = 0 Then Return (Nothing, Nothing, 0, 0, 0, 0, TimeSpan.Zero, False, TimeSpan.Zero, False)
 
         ' Reference (Lat0, Lon0)
         Dim lat0 As Double = If(runnerGeoPoints IsNot Nothing AndAlso runnerGeoPoints.Count > 0, runnerGeoPoints(0).Location.Lat, dogGeoPoints(0).Location.Lat)
@@ -2291,6 +2196,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         Dim finalRunnerGeoPoints As List(Of TrackGeoPoint) = Nothing
         Dim runnerTotalDistance As Double = 0
         Dim timeLimit As TimeSpan = TimeSpan.Zero
+        Dim TimeLimitExceeded = False
         'vypočteme celkovou délku trasy kladeče, která bude použita pro kontrolu zda je time limit smysluplný
         If runnerGeoPoints IsNot Nothing AndAlso runnerGeoPoints.Count > 1 Then
             For i As Integer = 0 To runnerGeoPoints.Count - 2
@@ -2336,6 +2242,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
                         finalDogGeoPoints = finalDogGeoPoints.Take(i - 1).ToList()
                         'poslední bod trasy psa přidat jako waypoint s informací o překročení časového limitu
                         Me._LastWithinTimeLimit = finalDogGeoPoints.Last()
+                        TimeLimitExceeded = True
                         Exit For
                     End If
                 Next i
@@ -2387,7 +2294,8 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         dogTotalDistance:=dogTotalDist,
         dogTotalTime:=dogTotalTime,
         RunnerFound:=RunnerFound,
-        timelimit:=timelimit)
+        timelimit:=timeLimit,
+        TimeLimitExceeded:=TimeLimitExceeded)
     End Function
 
 
@@ -3638,6 +3546,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
         ' 5. Nastavení atributů pro Boolean
         SetAttributeBoolean(trailStatsNode, "runnerFound", statsData.RunnerFound)
+        SetAttributeBoolean(trailStatsNode, "TimeLimitExceeded", statsData.TimeLimitExceeded)
 
 
         ' --------------------------------------------------------------------------------
@@ -3739,6 +3648,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
              .TrailPickupFactorPerCent = ParseDouble(statsNode, "TrailPickupFactorPerCent"),' --- Read TimeSpan attributes (stored as seconds) ---
              .TrailAge = ParseTimeSpan(statsNode, "trailAge"),
              .RunnerFound = ParseBoolean(statsNode, "runnerFound"),
+             .TimeLimitExceeded = ParseBoolean(statsNode, "TimeLimitExceeded"),
               .RunnerTotalDistancekm = ParseDouble(statsNode, "runnerDistance"),
         .DogTotalDistancekm = ParseDouble(statsNode, "dogDistance"),
         .DogTotalTime = ParseTimeSpan(statsNode, "totalTime"),

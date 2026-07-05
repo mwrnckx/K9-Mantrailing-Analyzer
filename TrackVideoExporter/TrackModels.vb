@@ -50,8 +50,8 @@ Public MustInherit Class TrackAs 'track as vzor pro všechny třídy reprezentuj
             Select Case Me.TrackType
                 Case TrackType.RunnerTrail : Return Color.Blue
                 Case TrackType.DogTrack : Return Color.Red
-                Case TrackType.CrossTrail : Return Color.Green
-                Case TrackType.Article : Return Color.Black
+                Case TrackType.CrossTrail : Return Color.Yellow
+                Case TrackType.Article : Return Color.Green
                 Case Else : Return Color.DarkRed
             End Select
         End Get
@@ -559,6 +559,7 @@ Public Class TrailStats
     Public Property HandlerName As String
     Public Property LevelOfBlinding As LevelOfBlindingType
     Public Property NumberOfArticlesFound As Integer
+    Public Property TimeLimitExceeded As Boolean
 
 End Class
 

@@ -284,12 +284,6 @@ Zur weiteren Verarbeitung müssen Sie entscheiden, welcher Spur entspricht
 -&gt; Andere Personen kreuzen.
 Wenn es nur zwei Routen gibt, ist es ziemlich unkompliziert - der erste ist der Subjektweg, der zweite ist die Hundestrecke. Aber wenn es nur einen Track oder mehr als zwei gibt, müssen Sie sich entscheiden.</value>
   </data>
-  <data name="CrossingTrail" xml:space="preserve">
-    <value>Spurkreuzung</value>
-  </data>
-  <data name="RunnerTrail" xml:space="preserve">
-    <value>Läufer</value>
-  </data>
   <data name="article" xml:space="preserve">
     <value>Kontrollpunkt</value>
   </data>

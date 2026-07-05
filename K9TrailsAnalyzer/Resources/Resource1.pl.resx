@@ -284,12 +284,6 @@ Aby uzyskać dalsze przetwarzanie, musisz zdecydować, który tor odpowiada
 -&gt; Inne osoby przekraczające.
 Jeśli są tylko dwie trasy, jest to dość proste - pierwszy to szlak tematyczny, druga to droga psa. Ale jeśli jest tylko jeden utwór lub więcej niż dwa, musisz zdecydować.</value>
   </data>
-  <data name="CrossingTrail" xml:space="preserve">
-    <value>Skrzyżowanie śladów</value>
-  </data>
-  <data name="RunnerTrail" xml:space="preserve">
-    <value>Biegacz</value>
-  </data>
   <data name="article" xml:space="preserve">
     <value>Punkt kontrolny</value>
   </data>

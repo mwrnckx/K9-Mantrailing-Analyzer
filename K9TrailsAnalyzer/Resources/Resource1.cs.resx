@@ -285,9 +285,6 @@ Pro další zpracování je třeba rozhodnout, která trasa odpovídá
 -&gt; křížení.
 Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče, druhá je trasa psa. Ale pokud je trasa jen jedna nebo jich je více než dvě musíte to rozhodnout vy. Aplikace se to pokusí odhadnout, ale nemusí se vždy trefit 😉!</value>
   </data>
-  <data name="CrossingTrail" xml:space="preserve">
-    <value>Křížení stopy</value>
-  </data>
   <data name="article" xml:space="preserve">
     <value>Checkpoint</value>
   </data>
