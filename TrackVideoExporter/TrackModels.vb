@@ -51,7 +51,7 @@ Public MustInherit Class TrackAs 'track as vzor pro všechny třídy reprezentuj
                 Case TrackType.RunnerTrail : Return Color.Blue
                 Case TrackType.DogTrack : Return Color.Red
                 Case TrackType.CrossTrail : Return Color.Yellow
-                Case TrackType.Article : Return Color.Green
+                Case TrackType.Article : Return Color.Lime
                 Case Else : Return Color.DarkRed
             End Select
         End Get

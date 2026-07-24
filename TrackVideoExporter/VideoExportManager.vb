@@ -170,7 +170,7 @@ Namespace TrackVideoExporter
             Await Task.Run(Sub()
 
                                Dim renderer As New PngRenderer(windDirection, windSpeed, Me.backgroundTiles, Me.videoSettings, latitude)
-                               renderer.CreateWindArrowBitmap(outputDir)
+                               renderer.RenderWindArrow(outputDir)
                                Dim staticBgTransparent = renderer.RenderStaticTransparentBackground(_tracksAsPointsF, backgroundTiles, waypointsAsPointsF, bestCheckPointIndex)
                                Dim staticBgMap = renderer.RenderStaticMap(_tracksAsPointsF, backgroundTiles, maxDeviationAsPointsF, waypointsAsPointsF, maxDeviationMetres, bestCheckPointIndex)
                                Dim afterTimeLimitTime As DateTime? = Nothing

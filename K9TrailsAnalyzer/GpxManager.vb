@@ -3155,7 +3155,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         Dim datum As String = $"{TrailStart.Time:yyyy-MM-dd}"
         Dim url As String = $"https://api.open-meteo.com/v1/forecast?latitude={TrailStart.Location.Lat.ToString(CultureInfo.InvariantCulture)}&longitude={TrailStart.Location.Lon.ToString(CultureInfo.InvariantCulture)}&start_date={datum}&end_date={datum}&hourly=temperature_2m,wind_speed_10m,soil_temperature_0cm,wind_direction_10m,relative_humidity_2m,cloud_cover,precipitation&wind_speed_unit=ms"
 
-        If TrailStart.Time.Day < Today.Day Then
+        If TrailStart.Time.Date < Date.Today Then
             ' jsou k dispozici historická data z archivu
             url = $"https://archive-api.open-meteo.com/v1/archive?latitude={TrailStart.Location.Lat.ToString(CultureInfo.InvariantCulture)}&longitude={TrailStart.Location.Lon.ToString(CultureInfo.InvariantCulture)}&start_date={datum}&end_date={datum}&hourly=temperature_2m,wind_speed_10m,soil_temperature_0_to_7cm,wind_direction_10m,relative_humidity_2m,cloud_cover,precipitation&wind_speed_unit=ms"
         End If
@@ -3288,7 +3288,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "levelOfBlindingText", GPXRecord.LevelOfBlindingTypeToText(Me.TrailStats.LevelOfBlinding, key), True,,, GpxReader.K9_NAMESPACE_URI)
 
             Dim weatherNode As XmlNode = Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "weather", localizedReport.Weather.Text, True,,, GpxReader.K9_NAMESPACE_URI)
-            WriteWeatherDataToXml(weatherNode, localizedReport.WeatherData)
+            WriteWeatherDataToXml(weatherNode, Me.WeatherData)
             Dim ScoringNode As XmlNode = Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "scoring", localizedReport.PerformancePoints.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             WriteScoringDataToXml(ScoringNode, Me.TrailStats.PointsInMTCompetition)
         Next

@@ -156,9 +156,9 @@ Public Class PngRenderer
         End If
 
         pixelsPerMeter = (OsmTileDownloader.TileSize * Math.Pow(2.0, OsmTileDownloader.zoom)) / (Math.Cos(TrackConverter.DegToRad(latitude)) * 2 * Math.PI * TrackConverter.EarthRadiusM) 'přepočet z metrů na pixely, protože se mění s latitudou
-        Me.radius = 4 * VideoSettings.TrailWidth_m * pixelsPerMeter '0.015 * diagonal ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
         Me.penWidth = VideoSettings.TrailWidth_m * pixelsPerMeter '0.008 * diagonal ' šířka pera pro kreslení čar, 1% šířky obrázku
         Me.emSize = trackBounds.Height * fontScale '
+        Me.radius = Me.emSize / 2 '4 * VideoSettings.TrailWidth_m * pixelsPerMeter '' poloměr kruhu pro poslední bod, 1/2 výšky písma
         Me.font = New Font("Cascadia Code", emSize, FontStyle.Bold)
     End Sub
 
@@ -630,7 +630,7 @@ Public Class PngRenderer
     ''' The bitmap is saved as "windRose.png" in the specified output directory and stored in the myWindArrow field.
     ''' </summary>
     ''' <param name="outputDir">The directory where the wind arrow bitmap will be saved.</param>
-    Public Sub CreateWindArrowBitmap(outputDir As DirectoryInfo)
+    Public Sub RenderWindArrow(outputDir As DirectoryInfo)
         ' Size of the wind arrow widget
         Dim arrowSize As Single = 100
         ' Dynamic color of the arrow based on wind speed
@@ -715,7 +715,7 @@ Public Class PngRenderer
         Me.myWindArrow = bmp
         Dim filename = IO.Path.Combine(outputDir.FullName, "windRose.png")
         Me.myWindArrow.Save(filename, ImageFormat.Png)
-        SaveWindArrowOverlay(outputDir, Me.videoSize.Width, Me.videoSize.Height)
+        RenderWindArrowOverlay(outputDir, Me.videoSize.Width, Me.videoSize.Height)
     End Sub
 
     ''' <summary>
@@ -727,7 +727,7 @@ Public Class PngRenderer
     ''' <param name="width">The width of the overlay bitmap (default: 1920).</param>
     ''' <param name="height">The height of the overlay bitmap (default: 1440).</param>
     ''' <param name="scale">The scale of the wind arrow relative to the diagonal of the overlay (default: 0.12).</param>
-    Public Sub SaveWindArrowOverlay(outputDir As DirectoryInfo, Optional width As Integer = 1920, Optional height As Integer = 1440, Optional scale As Single = 0.12)
+    Public Sub RenderWindArrowOverlay(outputDir As DirectoryInfo, Optional width As Integer = 1920, Optional height As Integer = 1440, Optional scale As Single = 0.12)
         ' Create a transparent bitmap of the requested size
         Dim overlayBmp As New Bitmap(width, height, PixelFormat.Format32bppArgb)
         ' Cesta k vašemu logu (upravte dle potřeby)
