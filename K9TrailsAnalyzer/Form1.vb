@@ -1917,7 +1917,7 @@ Partial Public Class Form1
             End If
             _gpxRecord.TrailStats.PointsInMTCompetition = _gpxRecord.CalculateCompetitionScore(_gpxRecord.TrailStats)
             _gpxRecord.BuildLocalisedPerformancePoints()
-            _gpxRecord.BuildLocalisedWeatherText()
+            _gpxRecord.WriteScoringDataToXml(_gpxRecord.TrailStats.PointsInMTCompetition)
             _gpxRecord.WriteLocalizedReports()
             _gpxRecord.Save()
         Next
@@ -2174,11 +2174,12 @@ Partial Public Class Form1
             ' Pro test: vypiš vybrané cesty
             Debug.WriteLine(record)
             Try
-                record.Description = record.BuildLocalisedDescAndReports(record.Description) 'async kvůli počasí!
+                record.Description = record.EditAndBuildLocalisedReports(record.Description) 'async kvůli počasí!
                 record.WriteDescription() 'zapíše agregovaný popis do tracku Runner
-                record.BuildLocalisedPerformancePoints()
-                record.WriteLocalizedReports() 'zapíše popis do DogTracku
-                record.WriteTrailStatsToXml(record.TrailStats)
+                'record.BuildLocalisedPerformancePoints()
+                record.WriteLocalizedReports() 'zapíše popis do recordu
+                record.WriteTrailStatsToXml(record.TrailStats) 've frm se mění počet předmětů a level of blinding
+
                 record.IsAlreadyProcessed = True 'už byl soubor zpracován
                 record.Save()
             Catch ex As Exception
@@ -2494,6 +2495,9 @@ Public Class CategoryInfo
 
     <JsonPropertyName("TimeLimitMinutesPerKm")>
     Public Property TimeLimitMinutesPerKm As Integer = 40
+
+    <JsonPropertyName("ToleratedCorridor_m")>
+    Public Property ToleratedCorridor_m As Integer = 20
 
 
     <JsonIgnore>

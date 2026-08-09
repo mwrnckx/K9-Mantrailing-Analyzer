@@ -6,7 +6,7 @@ Imports TrackVideoExporter
 
 Public Class frmEditComments
     'Public Property Category As String
-    Public Property TrailDescription As TrailReport
+    Public Property TrailReport As TrailReport
     Public Property GoalPart As String
     Public Property TrailPart As String
     Public Property DogPart As String
@@ -60,11 +60,11 @@ Public Class frmEditComments
 
     Private Sub Me_Load(sender As Object, e As EventArgs) Handles Me.Load
         ' 1. Naplnění textových polí
-        txtGoal.Text = Me.TrailDescription.Goal.Text
-        txtTrail.Text = Me.TrailDescription.Trail.Text
-        txtPerformance.Text = Me.TrailDescription.Performance.Text
-        txtDogName.Text = Me.TrailDescription.DogNameText
-        txtHandlerName.Text = Me.TrailDescription.HandlerNameText
+        txtGoal.Text = Me.TrailReport.Goal.Text
+        txtTrail.Text = Me.TrailReport.Trail.Text
+        txtPerformance.Text = Me.TrailReport.Performance.Text
+        txtDogName.Text = Me.TrailReport.DogNameText
+        txtHandlerName.Text = Me.TrailReport.HandlerNameText
 
 
         ' 2. Nastavení výběru jazyka (cbLanguage)
@@ -156,18 +156,18 @@ Public Class frmEditComments
         If cbLevelOfBlinding.SelectedItem IsNot Nothing Then
             'Dim selectedLevelOfBlindingType As LevelOfBlindingType = DirectCast(cbLevelOfBlinding.SelectedValue, LevelOfBlindingType)
             Me.LevelOfBlinding = cbLevelOfBlinding.SelectedValue
-            Me.TrailDescription.LevelOfBlindingText = cbLevelOfBlinding.SelectedItem.Text
+            Me.TrailReport.LevelOfBlindingText = cbLevelOfBlinding.SelectedItem.Text
         End If
         If cbNumberOfArticlesFound.SelectedItem IsNot Nothing Then
             Me.NumberOfArticlesFound = cbNumberOfArticlesFound.SelectedItem.ToString
         End If
 
-        Me.TrailDescription.GoalText = txtGoal.Text
-        Me.TrailDescription.TrailText = txtTrail.Text
-        Me.TrailDescription.PerformanceText = txtPerformance.Text
-        Me.TrailDescription.HandlerNameText = txtHandlerName.Text '
-        Me.TrailDescription.DogNameText = txtDogName.Text
-        Me.TrailDescription.HandlerNameText = txtHandlerName.Text
+        Me.TrailReport.GoalText = txtGoal.Text
+        Me.TrailReport.TrailText = txtTrail.Text
+        Me.TrailReport.PerformanceText = txtPerformance.Text
+        Me.TrailReport.HandlerNameText = txtHandlerName.Text '
+        Me.TrailReport.DogNameText = txtDogName.Text
+        Me.TrailReport.HandlerNameText = txtHandlerName.Text
         If Me.Language Is Nothing Then
             Me.Language = cbLanguage.SelectedItem?.ToString()?.ToLowerInvariant() ' Uloží vybraný jazyk
         ElseIf Me.Language <> cbLanguage.SelectedItem?.ToString()?.ToLowerInvariant() Then

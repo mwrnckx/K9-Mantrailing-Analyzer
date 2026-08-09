@@ -87,8 +87,12 @@ Public Class TrackGeoPoint
 End Class
 
 Public Class Coordinates
+    Public Const BASE_ERROR_DEFAULT_VALUE As Double = 2.5 'typická základní chyba gps přístroje v metrech
+    Public Const HDOP_DEFAULT_VALUE As Double = 2.5 'typická základní chyba gps signálu - bezrozměrná (chyba polohy = hdop*base_error)
+
     Public Property Lat As Double
     Public Property Lon As Double
+    Public Property hdop As Double = HDOP_DEFAULT_VALUE
 End Class
 ''' <summary>
 ''' TrackAsGeoPoints class represents a track with geographic points (latitude, longitude, timestamp).
@@ -397,7 +401,7 @@ Public Class TrailReport
         End Get
     End Property
 
-    Public ReadOnly Property Weather As StyledText
+    Public ReadOnly Property WeatherStyledText As StyledText
         Get
             Return New StyledText(_weatherText, Color.Maroon, mainFont, "")
         End Get
@@ -454,8 +458,15 @@ Public Class TrailReport
     End Property
 
 
-    Public Property LevelOfBlindingText As String 'todo: předělat aby se načítalo lokalizovaně dle trailstats.levelofblinding nebo to udělat při vytváření nového reportu?
-
+    Public Property LevelOfBlindingText As String '
+    Public Property WeatherText As String '
+        Get
+            Return _weatherText
+        End Get
+        Set(value As String)
+            _weatherText = value
+        End Set
+    End Property
 
     Public Property PerformanceText As String
         Get
@@ -466,38 +477,26 @@ Public Class TrailReport
         End Set
     End Property
 
-    Public Property PerformancePointsText As String
-        Get
-            Return _performancePointsText
-        End Get
-        Set(value As String)
-            _performancePointsText = value
-        End Set
-    End Property
-
-    Public Property WeatherText As String
-        Get
-            Return _weatherText
-        End Get
-        Set(value As String)
-            _weatherText = value
-        End Set
-    End Property
-
-    ' Ponecháme i WeatherData
-    Public Property WeatherData As WeatherData
-
+    'Public Property PerformancePointsText As String
+    '    Get
+    '        Return _performancePointsText
+    '    End Get
+    '    Set(value As String)
+    '        _performancePointsText = value
+    '    End Set
+    'End Property
 
     ' Konstruktor pro snadné vytvoření a nastavení
-    Public Sub New(ByVal title As String, ByVal goal As String, ByVal trail As String, ByVal performance As String, Optional points As String = "", Optional _weatherdata As WeatherData = Nothing, Optional weather As String = " ", Optional _levelofBlindingText As String = " ")
+    Public Sub New(ByVal title As String, ByVal goal As String, ByVal trail As String, ByVal performance As String, Optional dogname As String = "", Optional handlerName As String = "", Optional weathertext As String = "", Optional levelofBlindingText As String = " ")
         Me.TitleText = title
         Me.GoalText = goal
         Me.TrailText = trail
         Me.PerformanceText = performance
-        Me.PerformancePointsText = points
-        Me.WeatherText = weather
-        Me.WeatherData = _weatherdata
-        Me.LevelOfBlindingText = _levelofBlindingText
+        'Me.PerformancePointsText = points
+        Me.DogNameText = dogname
+        Me.HandlerNameText = handlerName
+        Me.WeatherText = _weatherText
+        Me.LevelOfBlindingText = levelofBlindingText
     End Sub
 
     ' Přetížený konstruktor pro new() bez argumentů
@@ -514,7 +513,7 @@ Public Class TrailReport
             Me.Goal,
             Me.Trail,
             Me.Performance,
-            Me.Weather
+            Me.WeatherStyledText
         }
         Return result
     End Function
@@ -538,28 +537,53 @@ Public Class TrailStats
 
     End Sub
 
-    Public Property MaxDistAlongTrailkm As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
-    Public Property MaxDistAlongTrailkmWeighted As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
-    Public Property MaxDistAlongTrailWeightedPerCent As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
-    Public Property TrailAge As TimeSpan ' age of the trail 
-    Public Property DogTotalTime As TimeSpan ' total time of the dog's route
-    Public Property TimeLimit As TimeSpan ' time limit dle délky trailu
-    Public Property DogGrossSpeedkmh As Double 'gross speed calculated from the last checkpoint or the dog's last point if the dog is close to the track
-    Public Property AverDeviation As Double ' average deviation in metres of the entire dog's route from the runner's track
-    Public Property AverWeightOfDeviation As Double 'average weight of deviation in <0,1> of the entire dog's route from the runner's track
+    Public Property MaxDistAlongTrailkm As Double = -1 ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
+    Public Property MaxDistAlongTrailkmWeighted As Double = -1 ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
+    Public Property MaxDistAlongTrailWeightedPerCent As Double = -1 ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
+    Public Property TrailAge As TimeSpan = TimeSpan.Zero ' age of the trail 
+    Public Property DogTotalTime As TimeSpan = TimeSpan.Zero ' total time of the dog's route
+    Public Property TimeLimit As TimeSpan = TimeSpan.Zero ' time limit dle délky trailu
+    Public Property DogGrossSpeedkmh As Double = -1 'gross speed calculated from the last checkpoint or the dog's last point if the dog is close to the track
+    Public Property AverDeviation As Double = -1 ' average deviation in metres of the entire dog's route from the runner's track
+    Public Property AverWeightOfDeviation As Double = -1 'average weight of deviation in <0,1> of the entire dog's route from the runner's track
     Public Property MaxDeviationGeoPoints As TrackAsGeoPoints ' maximum deviation of the entire dog's route from the runner's track
     Public Property PointsInMTCompetition As ScoringData '(RunnerFoundPoints As Integer, DogSpeedPoints As Integer, DogAccuracyPoints As Integer, DogReadingPoints As Integer, dogName As String, handlerName As String) ' number of points in MT Competition according to the rules
     Public Property CheckpointsEval As List(Of CheckpointData) '(distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double)) ' evaluation of checkpoints: distance from start along the runner's route and distance from the route in meters
-    Public Property DogTotalDistancekm As Double ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
-    Public Property RunnerTotalDistancekm As Double ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
-    Public Property BestCheckPointIndex As Integer ' index of the checkpoint with the best score (closest to the track and most far)
-    Public Property RunnerFound As Boolean ' whether dog found the runner or not
-    Public Property TrailPickupFactorPerCent As Double 'whether dog found trail quickly
-    Public Property DogName As String
-    Public Property HandlerName As String
-    Public Property LevelOfBlinding As LevelOfBlindingType
-    Public Property NumberOfArticlesFound As Integer
-    Public Property TimeLimitExceeded As Boolean
+    Public Property DogTotalDistancekm As Double = -1 ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
+    Public Property RunnerTotalDistancekm As Double = -1 ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
+    Public Property BestCheckPointIndex As Integer = -1 ' index of the checkpoint with the best score (closest to the track and most far)
+    Public Property RunnerFound As Boolean = False ' whether dog found the runner or not
+    Public Property TrailPickupFactorPerCent As Double = -1 'whether dog found trail quickly
+    Public Property DogName As String = ""
+    Public Property HandlerName As String = ""
+    Public Property LevelOfBlinding As LevelOfBlindingType = LevelOfBlindingType.Unknown
+    Public Property NumberOfArticlesFound As Integer = -1
+    Public Property TimeLimitExceeded As Boolean = False
+
+    Public Function IsValid() As Boolean
+        Return GetInvalidFields().Count = 0
+    End Function
+
+    Public Function GetInvalidFields() As List(Of String)
+        Dim invalid As New List(Of String)
+
+        If MaxDistAlongTrailkmWeighted = -1 Then invalid.Add(NameOf(MaxDistAlongTrailkmWeighted))
+        If MaxDistAlongTrailkm = -1 Then invalid.Add(NameOf(MaxDistAlongTrailkm))
+        If MaxDistAlongTrailWeightedPerCent = -1 Then invalid.Add(NameOf(MaxDistAlongTrailWeightedPerCent))
+        If AverWeightOfDeviation = -1 Then invalid.Add(NameOf(AverWeightOfDeviation))
+        If DogGrossSpeedkmh = -1 Then invalid.Add(NameOf(DogGrossSpeedkmh))
+        If AverDeviation = -1 Then invalid.Add(NameOf(AverDeviation))
+        If TrailPickupFactorPerCent = -1 Then invalid.Add(NameOf(TrailPickupFactorPerCent))
+        If RunnerTotalDistancekm = -1 Then invalid.Add(NameOf(RunnerTotalDistancekm))
+        If DogTotalDistancekm = -1 Then invalid.Add(NameOf(DogTotalDistancekm))
+        If TrailAge.TotalSeconds = -1 Then invalid.Add(NameOf(TrailAge))
+        If DogTotalTime.TotalSeconds = -1 Then invalid.Add(NameOf(DogTotalTime))
+        If TimeLimit.TotalSeconds = -1 Then invalid.Add(NameOf(TimeLimit))
+
+        Return invalid
+    End Function
+
+
 
 End Class
 
@@ -571,6 +595,7 @@ Public Structure CheckpointData
     Public distAlongTrailkm As Double
     Public time As DateTime
     Public chPtIndex As Integer
+    Public hdop As Double
 End Structure
 
 Public Class ScoringData
@@ -590,6 +615,31 @@ Public Class WeatherData
     Public Property precipitation As Double
     Public Property relHumidity As Double
     Public Property cloudCover As Double
+
+    ' 🌧🌦☀ Počasí
+
+    Public Overrides Function ToString() As String
+
+        Const NBSP As String = ChrW(160)
+        Return $"🌡{temperature.ToString("0.#")}{NBSP}°C,  🌬{windSpeed.ToString("0.#")}{NBSP}m/s {WindDirectionToText(windDirection)}, 💧{relHumidity}{NBSP}%,   ☔​{precipitation}{NBSP}mm/h, 🌥{cloudCover}{NBSP}%"
+
+    End Function
+
+    Function WindDirectionToText(direction As Double?) As String
+        Dim windDir = {
+    "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+    "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"
+            }
+        If direction IsNot Nothing Then
+            Dim index As Integer = CInt(Math.Floor(CDbl((direction + 11.25) / 22.5))) Mod 16
+            Return windDir(index)
+        Else
+            Return ""
+        End If
+        ' Každý díl má 22.5°
+
+    End Function
+
 End Class
 
 

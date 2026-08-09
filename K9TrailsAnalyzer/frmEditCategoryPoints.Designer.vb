@@ -21,12 +21,15 @@ Partial Class frmEditCategoryPoints
         btnCancel = New Button()
         numTimeLimit = New NumericUpDown()
         lblTimeLimit = New Label()
+        lblToleratedCorridor = New Label()
+        numCorridor = New NumericUpDown()
         CType(numFind, ComponentModel.ISupportInitialize).BeginInit()
         CType(numSpeed, ComponentModel.ISupportInitialize).BeginInit()
         CType(numAcc, ComponentModel.ISupportInitialize).BeginInit()
         CType(numRead, ComponentModel.ISupportInitialize).BeginInit()
         CType(numPick, ComponentModel.ISupportInitialize).BeginInit()
         CType(numTimeLimit, ComponentModel.ISupportInitialize).BeginInit()
+        CType(numCorridor, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
         ' lblFind
@@ -120,11 +123,25 @@ Partial Class frmEditCategoryPoints
         resources.ApplyResources(lblTimeLimit, "lblTimeLimit")
         lblTimeLimit.Name = "lblTimeLimit"
         ' 
+        ' lblToleratedCorridor
+        ' 
+        resources.ApplyResources(lblToleratedCorridor, "lblToleratedCorridor")
+        lblToleratedCorridor.Name = "lblToleratedCorridor"
+        ' 
+        ' numCorridor
+        ' 
+        resources.ApplyResources(numCorridor, "numCorridor")
+        numCorridor.BackColor = SystemColors.Window
+        numCorridor.Name = "numCorridor"
+        numCorridor.Value = New Decimal(New Integer() {20, 0, 0, 0})
+        ' 
         ' frmEditCategoryPoints
         ' 
         resources.ApplyResources(Me, "$this")
         AutoScaleMode = AutoScaleMode.Font
         BackColor = Color.LightYellow
+        Controls.Add(lblToleratedCorridor)
+        Controls.Add(numCorridor)
         Controls.Add(lblTimeLimit)
         Controls.Add(numTimeLimit)
         Controls.Add(btnCancel)
@@ -149,6 +166,7 @@ Partial Class frmEditCategoryPoints
         CType(numRead, ComponentModel.ISupportInitialize).EndInit()
         CType(numPick, ComponentModel.ISupportInitialize).EndInit()
         CType(numTimeLimit, ComponentModel.ISupportInitialize).EndInit()
+        CType(numCorridor, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
         PerformLayout()
 
@@ -170,5 +188,7 @@ Partial Class frmEditCategoryPoints
     Friend WithEvents btnCancel As Button
     Friend WithEvents numTimeLimit As NumericUpDown
     Friend WithEvents lblTimeLimit As Label
+    Private WithEvents lblToleratedCorridor As Label
+    Friend WithEvents numCorridor As NumericUpDown
 
 End Class

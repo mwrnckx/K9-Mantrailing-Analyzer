@@ -92,6 +92,14 @@ Public Class TrackConverter
         For Each trkptnode As XmlNode In track.TrackPoints
             Dim lat = Double.Parse(trkptnode.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
             Dim lon = Double.Parse(trkptnode.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
+            Dim hdopnode = SelectSingleChildNode("hdop", trkptnode)
+            Dim hdop As Double
+            If hdopnode IsNot Nothing Then
+                hdop = Double.Parse(hdopnode.InnerText, Globalization.CultureInfo.InvariantCulture)
+            Else
+                Debug.WriteLine("hdop node not found in trkpt.")
+                hdop = Coordinates.HDOP_DEFAULT_VALUE
+            End If
             Dim timenode = SelectSingleChildNode("time", trkptnode)
             Dim time As DateTime
             If timenode IsNot Nothing Then
@@ -109,7 +117,7 @@ Public Class TrackConverter
 
 
             Dim geopoint As New TrackGeoPoint With {
-                .Location = New Coordinates With {.Lat = lat, .Lon = lon},
+                .Location = New Coordinates With {.Lat = lat, .Lon = lon, .hdop = hdop},
                 .Time = time,
                 .name = name
             }
