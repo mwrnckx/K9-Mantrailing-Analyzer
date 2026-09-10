@@ -1,6 +1,7 @@
 ﻿Imports System.ComponentModel
 Imports System.Globalization
 Imports System.IO
+Imports System.Runtime.Intrinsics
 Imports System.Text
 Imports System.Text.Encodings.Web
 Imports System.Text.Json
@@ -564,10 +565,10 @@ Partial Public Class Form1
                 Else
                     rtbOutput.AppendText(("-" & manySpaces).Substring(0, 8))
                 End If
+                Dim report = _gpxRecord.LocalisedReports.FirstOrDefault.Value
+                Dim description As String = _gpxRecord.BuildDescription(report).Replace("<br>", " ")
+                rtbOutput.AppendText(description)
 
-                If Not _gpxRecord.Description = Nothing Then
-                    rtbOutput.AppendText(_gpxRecord.Description)
-                End If
 
                 If Not _gpxRecord.Link = Nothing Then
 

@@ -1546,7 +1546,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
     End Function
 
 
-    Private Function BuildDescription(_trailReport As TrailReport) As String
+    Public Function BuildDescription(_trailReport As TrailReport) As String
         Dim crlf As String = "<br>"
         Dim sb As New System.Text.StringBuilder()
 
@@ -2235,6 +2235,8 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             analysedCheckPoints = AnalyzeCheckPoints(Me.WptNodes, preparedData.PurifiedDogGeoPoints, preparedData.PurifiedRunnerGeoPoints, preparedData.RunnerFound, Me.ActiveCategoryInfo.ToleratedCorridor_m)
 
             Dim maxWeight As Double = 0
+            maxWeightedDistance = analysedCheckPoints(0).distAlongTrailkmWeighted
+            maxDistance = analysedCheckPoints(0).distAlongTrailkm
 
             For i = 0 To analysedCheckPoints.Count - 1
                 Dim cp = analysedCheckPoints(i)
