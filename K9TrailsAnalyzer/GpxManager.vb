@@ -1819,9 +1819,10 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
                 ' Zpracování případné změny jazyka ve formuláři
                 If currentLang <> frm.Language AndAlso Not String.IsNullOrWhiteSpace(frm.Language) Then
                     Me.LocalisedReports.Add(frm.Language, frm.TrailReport)
-
                 End If
 
+                ' *** ZÁPIS UPRAVENÉHO REPORTU ZPĚT DO LOCALISEDREPORTS ***
+                Me.LocalisedReports(currentLang) = frm.TrailReport
 
                 ' Pokud uživatel nechce pokračovat na další jazyk, ukončíme cyklus
                 If result = DialogResult.OK Then
