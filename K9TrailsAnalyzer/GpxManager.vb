@@ -1626,126 +1626,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         Return False
     End Function
 
-    Public Function BuildLocalisedDescAndReports_old(summaryDescription As String) As String
-        Dim lang As String
-        Dim newDescription As String = ""
-        If Me.LocalisedReports Is Nothing OrElse Me.LocalisedReports.Count = 0 Then
-            Dim _localisedReport = ExtractDescriptionParts(summaryDescription)
-            _localisedReport.WeatherText = Me.WeatherData.ToString
-            _localisedReport.HandlerNameText = Me.TrailStats.HandlerName
-            _localisedReport.DogNameText = Me.TrailStats.DogName
 
-            lang = CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLowerInvariant()
-            Me.LocalisedReports.Add(lang, _localisedReport)
-            newDescription = BuildDescription(_localisedReport)
-        End If
-
-        Dim firstLocalisedReport As KeyValuePair(Of String, TrailReport) = Me.LocalisedReports.FirstOrDefault()
-        Dim keys = LocalisedReports.Keys.ToList()
-        Dim totalCount = keys.Count
-
-        For i = 0 To 3 'TODO: dočasně přeskakuji!!????
-            Dim frm As frmEditComments
-            Dim report As TrailReport
-            Dim result As DialogResult
-            If i < totalCount Then ' Existující položky
-                lang = keys(i)
-                report = LocalisedReports(lang)
-                'Debug.WriteLine($"{i + 1}. {lang} – {report.Goal.Text}")
-
-                frm = New frmEditComments With {.TrailReport = report,
-                                                .GpxFileName = Me.Reader.FileName,
-                                                .Language = lang}
-                If i = 0 Then
-                    frm.NumberOfArticlesFound = Me.WptNodes.TrackPoints.Count - 1
-                    frm.LevelOfBlinding = Me.TrailStats.LevelOfBlinding
-                Else
-                    frm.txtDogName.Visible = False
-                    frm.lblDogName.Visible = False
-                    frm.txtHandlerName.Visible = False
-                    frm.lblHandlerName.Visible = False
-                    frm.cbLevelOfBlinding.Visible = False
-                    frm.cbNumberOfArticlesFound.Visible = False
-                    frm.lblLevelOfBlinding.Visible = False
-                    frm.lblNoOFArticles.Visible = False
-                    frm.LevelOfBlinding = Me.TrailStats.LevelOfBlinding
-                    frm.NumberOfArticlesFound = Me.TrailStats.NumberOfArticlesFound
-                End If
-
-                result = frm.ShowDialog()
-
-                If i = 0 Then
-                    Me.TrailStats.HandlerName = frm.TrailReport.HandlerNameText
-                    Me.TrailStats.DogName = frm.TrailReport.DogNameText
-                    Me.TrailStats.LevelOfBlinding = frm.LevelOfBlinding
-                    Me.TrailStats.NumberOfArticlesFound = frm.NumberOfArticlesFound
-                End If
-                newDescription = BuildDescription(frm.TrailReport)
-                If lang <> frm.Language Then ' aktualizace jazyka
-                    LocalisedReports.Remove(lang) ' odstranění starého jazyka
-                    lang = frm.Language ' aktualizace jazyka
-                    Debug.WriteLine($"Jazyk změněn na: {lang}")
-                    frm.TrailReport.WeatherText = Me.WeatherData.ToString
-
-                    Me.LocalisedReports.Add(lang, frm.TrailReport) ' přidání nového jazyka
-                Else
-                    frm.TrailReport.WeatherText = Me.WeatherData.ToString ' aktualizace počasí
-                    Me.LocalisedReports(lang) = frm.TrailReport ' aktualizace existujícího reportu
-                End If
-
-                Select Case result
-                    Case DialogResult.Retry ' třeba tlačítko "Znovu" nebo "Pokračovat"
-                        ' smyčka poběží dál
-                    Case Else
-                        Exit For
-                End Select
-            Else 'přidáme nový jazyk!!!!
-                report = New TrailReport("", firstLocalisedReport.Value.Goal.Text,
-                                        firstLocalisedReport.Value.Trail.Text,
-                                        firstLocalisedReport.Value.Performance.Text)
-
-                ' Nová položka – prázdná, připravená k vyplnění
-                Debug.WriteLine($"{i + 1}. [Nový záznam]")
-
-                frm = New frmEditComments With {.TrailReport = report,
-                                                    .GpxFileName = Me.Reader.FileName,
-                                                    .Language = Nothing,
-                                                    .LevelOfBlinding = Me.TrailStats.LevelOfBlinding,
-                                                    .NumberOfArticlesFound = Me.TrailStats.NumberOfArticlesFound
-                                              }
-                frm.txtDogName.Visible = False
-                frm.lblDogName.Visible = False
-
-                frm.TrailReport.HandlerNameText = firstLocalisedReport.Value.HandlerNameText
-                frm.TrailReport.DogNameText = firstLocalisedReport.Value.DogNameText
-
-                frm.txtHandlerName.Visible = False
-                frm.lblHandlerName.Visible = False
-
-                frm.cbLevelOfBlinding.Visible = False
-                frm.cbNumberOfArticlesFound.Visible = False
-                frm.lblLevelOfBlinding.Visible = False
-                frm.lblNoOFArticles.Visible = False
-
-                result = frm.ShowDialog()
-                lang = frm.Language
-                If Not LocalisedReports.ContainsKey(lang) Then
-                    'frm.TrailDescription.WeatherData = Me.WeatherData
-                    LocalisedReports.Add(lang, frm.TrailReport)
-                    newDescription = BuildDescription(frm.TrailReport)
-                End If
-                Select Case result
-                    Case DialogResult.Retry ' třeba tlačítko "Znovu" nebo "Pokračovat"
-                        ' smyčka poběží dál
-                    Case Else
-                        Exit For
-                End Select
-            End If
-        Next i
-
-        Return newDescription.ToString().Trim()
-
-    End Function
 
     Public Function EditAndBuildLocalisedReports(summaryDescription As String) As String
         ' 1. Inicializace, pokud kolekce ještě neexistuje nebo je prázdná
@@ -1880,7 +1761,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         ⏱{txtTimeLimit}:  {Me.ActiveCategoryInfo.TimeLimitMinutesPerKm} min/km ({txtTimeLimitExceeded})
        "
 
-            'kvp.Value.PerformancePointsText = performancePoints
+            kvp.Value.PerformancePointsText = performancePoints
 
         Next
     End Sub
@@ -2223,11 +2104,11 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
         Dim analysedCheckPoints As List(Of CheckpointData) '(distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double)) = Nothing
         Dim analyzedDeviation As (averagedWeight As Double, averagedDeviation As Double, MaxDeviationGeoPoints As TrackAsGeoPoints)
-        Dim maxWeightedDistance As Double = -1.0
-        Dim maxDistance As Double = -1.0
+        Dim maxWeightedDistance As Double = 0.0
+        Dim maxDistance As Double = 0.0
 
         Dim dogGrossSpeed As Double = 0.0
-        Dim max_index As Integer = -1.0
+        Dim max_index As Integer = 0
         If runnerTrkNode IsNot Nothing Then
             ' --- KROK 2: Analýza přesnosti sledování stopy ---
             analyzedDeviation = AnalyzeDeviation(preparedData.PurifiedDogGeoPoints, preparedData.PurifiedRunnerGeoPoints, preparedData.dogTotalDistance, preparedData.dogTotalTime, Me.ActiveCategoryInfo.ToleratedCorridor_m)

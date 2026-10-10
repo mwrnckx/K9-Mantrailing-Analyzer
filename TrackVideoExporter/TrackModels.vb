@@ -477,22 +477,22 @@ Public Class TrailReport
         End Set
     End Property
 
-    'Public Property PerformancePointsText As String
-    '    Get
-    '        Return _performancePointsText
-    '    End Get
-    '    Set(value As String)
-    '        _performancePointsText = value
-    '    End Set
-    'End Property
+    Public Property PerformancePointsText As String
+        Get
+            Return _performancePointsText
+        End Get
+        Set(value As String)
+            _performancePointsText = value
+        End Set
+    End Property
 
     ' Konstruktor pro snadné vytvoření a nastavení
-    Public Sub New(ByVal title As String, ByVal goal As String, ByVal trail As String, ByVal performance As String, Optional dogname As String = "", Optional handlerName As String = "", Optional weathertext As String = "", Optional levelofBlindingText As String = " ")
+    Public Sub New(ByVal title As String, ByVal goal As String, ByVal trail As String, ByVal performance As String, Optional dogname As String = "", Optional handlerName As String = "", Optional weathertext As String = "", Optional levelofBlindingText As String = " ", Optional points As String = " ")
         Me.TitleText = title
         Me.GoalText = goal
         Me.TrailText = trail
         Me.PerformanceText = performance
-        'Me.PerformancePointsText = points
+        Me.PerformancePointsText = points
         Me.DogNameText = dogname
         Me.HandlerNameText = handlerName
         Me.WeatherText = _weatherText
