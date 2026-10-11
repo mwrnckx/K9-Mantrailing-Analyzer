@@ -3959,7 +3959,15 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
     ' Helper pro bezpečné parsování Boolean (předpokládá, že je uložen jako "True" nebo "False").
     Private Shared Function ParseBoolean(node As XmlNode, attributeName As String) As Boolean
         Dim attrValue As String = node?.Attributes(attributeName)?.Value
-        Return Boolean.TryParse(attrValue, Nothing) ' TryParse vrátí False při selhání
+        Dim result As Boolean
+
+        ' TryParse vrátí True/False podle úspěchu parsování, 
+        ' ale samotná hodnota (True/False) se uložila do proměnné result.
+        If Boolean.TryParse(attrValue, result) Then
+            Return result
+        End If
+
+        Return False ' Výchozí hodnota, pokud atribut chybí nebo je neplatný
     End Function
 
 End Class
